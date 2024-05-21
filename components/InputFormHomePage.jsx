@@ -32,6 +32,9 @@ const InputFormHomePage = () => {
                 },
                 body: JSON.stringify(data) 
               })
+
+              const result = await res.json()
+              
         } catch (error) {
             console.log(error)
         }
@@ -49,12 +52,12 @@ const InputFormHomePage = () => {
 
     <div className="flex flex-wrap">
       <label htmlFor="codeforcesId2" className="w-full mb-1 text-sm font-medium">Codeforces ID 2:</label>
-      <input type="text" id="codeforcesId2" name="codeforcesId2" className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" onChange =  {(e) => handleChange(e)} value={data.codeforcesId2}/>
+      <input type="text" id="codeforcesId2" name="codeforcesId2" className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" onChange =  {(e) => handleChange(e)} value={data.codeforcesId2} placeholder='(Optional)'/>
     </div>
 
     <div className="flex flex-wrap">
       <label htmlFor="codeforcesId3" className="w-full mb-1 text-sm font-medium">Codeforces ID 3:</label>
-      <input type="text" id="codeforcesId3" name="codeforcesId3" className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" onChange =  {(e) => handleChange(e)} value={data.codeforcesId3}/>
+      <input type="text" id="codeforcesId3" name="codeforcesId3" className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" onChange =  {(e) => handleChange(e)} value={data.codeforcesId3} placeholder='(Optional)'/>
     </div>
     </div>
 
