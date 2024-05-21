@@ -1,4 +1,7 @@
 import connectDB from "@/config/database";
+import Contest from '@/models/Contest'
+import User from "@/models/User";
+
 
 export const POST = async (request) => {
   try {
@@ -111,20 +114,51 @@ export const POST = async (request) => {
         problem.rating >= lowerDifficulty
       ) {
         newList.push(
-          `https://codeforces.com/contest/${problem.contestId}/problem/${problem.index}`
+          problem
         );
       }
     }
 
-    return new Response(
-      JSON.stringify({ message: "Contest created", questionList: newList , ok : true }),
-      { status: 200 }
-    );
+    const user1 = await User.find({ codeforcesId : codeforcesId1 })
+    const user2 = await User.find({ codeforcesId : codeforcesId2 })
+    const user3 = await User.find({ codeforcesId : codeforcesId3 })
+
+    let users = []
+
+    if(user1.length > 0){
+      users.push(user1._id)
+    }
+    if(user2.length > 0){
+      users.push(user2._id)
+    }
+    if(user3.length > 0){
+      users.push(user3._id)
+    }
+
+    const now = new Date()
+    const newDate = new Date(now.getTime() + timeLimit * 60000)
+
+    const contest = new Contest({
+      users,
+      problemList : newList,
+      numberOfQuestions : numQuestions,
+      lowerLimit : lowerDifficulty,
+      upperLimit : upperDifficulty,
+      timeLimit,
+      timeEnding : newDate
+    })
+
+    await contest.save()
+
+    const id = contest._id;
+
+    return new Response(JSON.stringify({ message : 'Contest created' , id :  id , ok : true }) , { status : 200 })
+
   } catch (error) {
     console.log(error);
     return new Response(
         JSON.stringify({ message: "Failed to create a contest" , ok : false }),
-        { status: 400 }
+        { status: 500 }
       );;
   }
 };

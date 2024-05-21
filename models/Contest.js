@@ -3,7 +3,7 @@ import { Schema , models , model } from "mongoose";
 const ContestSchema = new Schema({
     users : [
         {
-            type : Schema.type.ObjectId,
+            type : Schema.Types.ObjectId,
             ref : 'User'
         }
     ],
@@ -36,4 +36,6 @@ const ContestSchema = new Schema({
     timestamps : true
 })
 
-export const Contest = model.Contest || model('Contest' , ContestSchema)
+const Contest = models.Contest || model('Contest' , ContestSchema)
+
+export default Contest

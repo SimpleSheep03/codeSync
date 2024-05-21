@@ -2,11 +2,13 @@
 import React, { useState } from 'react'
 import { ratings , questions , time } from '@/constants/formData'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 
 const InputFormHomePage = () => {
 
+  const router = useRouter()
+
     const [loading , setLoading] = useState(false)
-    const [questionList, setQuestionList] = useState([])
     const [data , setData] = useState({
         codeforcesId1 : '',
         codeforcesId2 : '',
@@ -38,9 +40,10 @@ const InputFormHomePage = () => {
               })
 
               const result = await res.json()
-              setQuestionList(result.questionList)
               if(result.ok){
                 toast.success(result.message)
+                const id = result.id
+                router.push(`/contest/${id}`)
               }
               else{
                 toast.error(result.message)
