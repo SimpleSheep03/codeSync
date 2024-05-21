@@ -1,9 +1,12 @@
 'use client'
 import React, { useState } from 'react'
 import { ratings , questions , time } from '@/constants/formData'
+import { toast } from 'react-toastify'
 
 const InputFormHomePage = () => {
 
+    const [loading , setLoading] = useState(false)
+    const [questionList, setQuestionList] = useState([])
     const [data , setData] = useState({
         codeforcesId1 : '',
         codeforcesId2 : '',
@@ -24,6 +27,7 @@ const InputFormHomePage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setLoading(true)
         try {
             const res = await fetch('/api/create-contest' , {
                 method: 'POST', 
@@ -34,9 +38,20 @@ const InputFormHomePage = () => {
               })
 
               const result = await res.json()
+              setQuestionList(result.questionList)
+              if(result.ok){
+                toast.success(result.message)
+              }
+              else{
+                toast.error(result.message)
+              }
               
         } catch (error) {
             console.log(error)
+            toast.error(result.message)
+        }
+        finally{
+            setLoading(false)
         }
     }
 
@@ -47,7 +62,7 @@ const InputFormHomePage = () => {
     <div className='md:flex md:justify-between space-y-4'>
     <div className="flex flex-wrap">
       <label htmlFor="codeforcesId1" className="w-full mb-1 text-sm font-medium">Codeforces ID 1:</label>
-      <input type="text" id="codeforcesId1" name="codeforcesId1" className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" required onChange =  {(e) => handleChange(e)} value={data.codeforcesId1}/>
+      <input type="text" id="codeforcesId1" name="codeforcesId1" className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500" onChange =  {(e) => handleChange(e)} value={data.codeforcesId1}/>
     </div>
 
     <div className="flex flex-wrap">
@@ -106,8 +121,8 @@ const InputFormHomePage = () => {
       </select>
     </div>
 
-    <button className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" onClick={handleSubmit}>
-      Create Contest
+    <button className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" onClick={handleSubmit} disabled={loading}>
+      {!loading ? <>Create Contest</> : <>Loading...</>}
     </button>
   </form>
 </div>
