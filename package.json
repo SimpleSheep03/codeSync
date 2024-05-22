@@ -1,5 +1,6 @@
 {
   "name": "codesync",
+  "homepage": "https://code-sync-sandy.vercel.app/",
   "version": "0.1.0",
   "private": true,
   "scripts": {
