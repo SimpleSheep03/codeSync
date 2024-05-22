@@ -12,7 +12,6 @@ const InputFormHomePage = () => {
   const { data: session } = useSession()
   const [teams, setTeams] = useState([])
   const [loading, setLoading] = useState(false)
-  const [mounted , setMounted] = useState(false)
   const [data, setData] = useState({
     codeforcesId1: '',
     codeforcesId2: '',
@@ -36,9 +35,6 @@ const InputFormHomePage = () => {
       } catch (error) {
         console.log(error)
         toast.error('Could not fetch teams')
-      }
-      finally {
-        setMounted(true)
       }
     }
 
@@ -125,7 +121,7 @@ const InputFormHomePage = () => {
     }
   };
 
-  return !mounted ? <Spinner loading={loading}/> :  (
+  return  (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center text-pink-700">Create Custom Contest</h1>
       <form className="space-y-4">
