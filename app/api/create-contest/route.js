@@ -17,6 +17,7 @@ export const POST = async (request) => {
       lowerDifficulty,
       upperDifficulty,
       timeLimit,
+      tags
     } = data;
 
     if (
@@ -24,7 +25,8 @@ export const POST = async (request) => {
       !numQuestions ||
       !lowerDifficulty ||
       !upperDifficulty ||
-      !timeLimit
+      !timeLimit ||
+      !tags
     ) {
       return new Response(JSON.stringify({ message: "Fill all the fields" , ok : false }), {
         status: 400,
@@ -111,7 +113,8 @@ export const POST = async (request) => {
       if (
         !st.has(`${problem.contestId}${problem.index}`) &&
         problem.rating <= upperDifficulty &&
-        problem.rating >= lowerDifficulty
+        problem.rating >= lowerDifficulty && 
+        tags.every((tag) => problem.tags.includes(tag))
       ) {
         newList.push(
           problem

@@ -1,4 +1,5 @@
 import connectDB from "@/config/database"
+import Team from "@/models/Team"
 import User from "@/models/User"
 
 
@@ -7,17 +8,19 @@ export const GET = async (request , { params }) => {
         await connectDB()
         const { id } = params
         if(!id){
-            return new Response(JSON.stringify({ message : 'User Id is required' , ok : false }) , { status : 400 })
+            return new Response(JSON.stringify({ message : 'Unauthorized' , ok : false }) , { status : 401 })
         }
         const user = await User.findById(id)
 
-        if(user.length == 0){
-            return new Response(JSON.stringify({ message : 'Unauthorized' , ok : false }) , { status : 401 })
+        if(!user){
+            return new Response(JSON.stringify({ message : 'No such user exists' , ok : false }) , { status : 400 })
         }
 
         const { codeforcesId } = user
 
-        return new Response(JSON.stringify({ message : 'User found' , ok : true , codeforcesId }) , { status : 200 })
+        const teams = await Team.find({ codeforcesHandles : { $in : [codeforcesId] }})
+
+        return new Response(JSON.stringify({ message : 'User found' , ok : true , codeforcesId , teams }) , { status : 200 })
 
     } catch (error) {
         console.log(error)
@@ -29,12 +32,12 @@ export const PUT = async (request , { params }) => {
         await connectDB()
         const { id } = params
         if(!id){
-            return new Response(JSON.stringify({ message : 'User Id is required' , ok : false }) , { status : 400 })
+            return new Response(JSON.stringify({ message : 'Unauthorized' , ok : false }) , { status : 401 })
         }
         const user = await User.findById(id)
 
-        if(user.length == 0){
-            return new Response(JSON.stringify({ message : 'Unauthorized' , ok : false }) , { status : 401 })
+        if(!user){
+            return new Response(JSON.stringify({ message : 'No such user exists' , ok : false }) , { status : 400 })
         }
 
         const data = await request.json()
