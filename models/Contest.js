@@ -12,6 +12,11 @@ const ContestSchema = new Schema({
             type : Object,
         }
     ],
+    contestants : [
+        {
+            type : String,
+        }
+    ],
     numberOfQuestions : {
         type : Number,
         required : true
@@ -27,6 +32,10 @@ const ContestSchema = new Schema({
     timeLimit : {
         type : Number,
         required : true
+    },
+    timeStart : {
+        type : Date,
+        required : true,
     },
     timeEnding : {
         type : Date,

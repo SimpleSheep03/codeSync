@@ -126,13 +126,21 @@ export const POST = async (request) => {
     let users = []
 
     if(user1.length > 0){
-      users.push(user1._id)
+      users.push(user1[0]._id)
     }
     if(user2.length > 0){
-      users.push(user2._id)
+      users.push(user2[0]._id)
     }
     if(user3.length > 0){
-      users.push(user3._id)
+      users.push(user3[0]._id)
+    }
+
+    let contestants = [codeforcesId1]
+    if(codeforcesId2 != ''){
+      contestants.push(codeforcesId2)
+    }
+    if(codeforcesId3 != ''){
+      contestants.push(codeforcesId3)
     }
 
     const now = new Date()
@@ -141,10 +149,12 @@ export const POST = async (request) => {
     const contest = new Contest({
       users,
       problemList : newList,
+      contestants,
       numberOfQuestions : numQuestions,
       lowerLimit : lowerDifficulty,
       upperLimit : upperDifficulty,
       timeLimit,
+      timeStart : now,
       timeEnding : newDate
     })
 

@@ -18,3 +18,46 @@ for(let i = 30 ; i <= 300 ; i += 30){
 }
 
 export const time = timeArray
+
+let tagsArray = [
+    'data structures',
+    'greedy',
+    'sortings',
+    'binary search',
+    'brute force',
+    'implementation',
+    'two pointers',
+    'dp',
+    'constructive algorithms',
+    'combinatorics',
+    'strings',
+    'math',
+    'bitmasks',
+    'number theory',
+    'graphs',
+    'interactive',
+    'games',
+    '2-sat',
+    'dfs and similar',
+    'dsu',
+    'geometry',
+    'trees',
+    'matrices',
+    'probabilities',
+    'hashing',
+    'divide and conquer',
+    'string suffix structures',
+    'fft',
+    'shortest paths',
+    'flows',
+    '*special', 
+    'meet-in-the-middle',
+    'graph matchings',
+    'schedules',
+    'expression parsing',
+    'ternary search',
+    'chinese remainder theorem'
+  ];
+  
+
+export const tags = tagsArray

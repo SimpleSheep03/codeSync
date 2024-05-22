@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { ratings , questions , time } from '@/constants/formData'
+import { ratings , questions , time, tags } from '@/constants/formData'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 
@@ -16,16 +16,42 @@ const InputFormHomePage = () => {
         numQuestions : '6',
         lowerDifficulty : '1200',
         upperDifficulty : '1800',
-        timeLimit : '120'
-
+        timeLimit : '120',
+        tags: []
     })
 
     const handleChange = (e) => {
-        setData({
-            ...data , 
-            [e.target.id] : e.target.value
-        })
+        const { id, value } = e.target;
+        if (id === 'tags') {
+            const selectedTags = Array.from(e.target.selectedOptions, option => option.value);
+            setData({
+                ...data,
+                [id]: selectedTags
+            });
+        } else {
+            setData({
+                ...data,
+                [id]: value
+            });
+        }
     }
+
+    const handleCheckboxChange = (e) => {
+      const { checked, value } = e.target;
+      setData((prevData) => ({
+        ...prevData,
+        tags: checked ? [...prevData.tags, value] : prevData.tags.filter((tag) => tag !== value),
+      }));
+    };
+    
+    const handleSelectAll = (e) => {
+      e.preventDefault()
+      const areAllSelected = data.tags.length === tags.length;
+      setData((prevData) => ({
+        ...prevData,
+        tags: areAllSelected ? [] : tags, // Toggle selection state
+      }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -123,6 +149,28 @@ const InputFormHomePage = () => {
         }
       </select>
     </div>
+
+    <div className="grid grid-cols-3 gap-4">
+  <label className="col-span-3 text-sm font-medium mb-1">Select Problem Tags:</label>
+  <button className="col-span-1 py-1 px-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" onClick={handleSelectAll}>
+    All
+  </button>
+  {tags.map((tag) => (
+    <div key={tag} className="flex items-center mb-1">
+      <input
+        type="checkbox"
+        id={tag}
+        name="tags"
+        value={tag}
+        className="mr-2"
+        onChange={handleCheckboxChange}
+        checked={data.tags.includes(tag)}
+      />
+      <label htmlFor={tag} className="text-sm">{tag}</label>
+    </div>
+  ))}
+</div>
+
 
     <button className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400" onClick={handleSubmit} disabled={loading}>
       {!loading ? <>Create Contest</> : <>Loading...</>}

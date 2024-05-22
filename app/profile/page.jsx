@@ -7,6 +7,8 @@ import profileDefault from '@/assets/images/profile.png';
 import Spinner from '@/components/Spinner';
 import { toast } from 'react-toastify';
 import { FaEdit } from 'react-icons/fa'; // Importing the edit icon
+import { Router } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const ProfilePage = () => {
   const { data: session } = useSession();
@@ -17,6 +19,11 @@ const ProfilePage = () => {
   const [codeforcesId, setCodeforcesId] = useState('Not provided yet');
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter()
+
+  if(!session){
+    router.push('/')
+  }
 
   useEffect(() => {
     const fetchUserCfId = async (userId) => {
