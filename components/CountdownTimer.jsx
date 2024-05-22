@@ -39,15 +39,17 @@ const CountdownTimer = ({ targetDate }) => {
 
     timerComponents.push(
       <span key={interval}>
-        {timeLeft[interval]} {interval}{' '}
+        {timeLeft[interval]} <span>{interval}{' '}</span>
       </span>
     );
   });
 
   return (
     <div className='text-2xl mt-10'>
-        <p>Time remaining : </p>
-      <span className='mt-3'>{timerComponents.length ? timerComponents : <span>Contest Over</span>}</span>
+      {
+        timerComponents.length ? <><p>Time remaining : </p>
+        <span className='mt-3'>{timerComponents}</span></> : <span>Contest over</span>
+      }
     </div>
   );
 };

@@ -20,3 +20,4 @@ export const GET = async (request , { params }) => {
         return new Response(JSON.stringify({ message : 'Failed to fetch contest data' , ok : false}) , { status : 500 })
     }
 }
+

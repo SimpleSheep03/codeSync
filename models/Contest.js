@@ -9,7 +9,7 @@ const ContestSchema = new Schema({
     ],
     problemList : [
         {
-            type : String,
+            type : Object,
         }
     ],
     numberOfQuestions : {

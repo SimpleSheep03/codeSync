@@ -152,7 +152,7 @@ export const POST = async (request) => {
 
     const id = contest._id;
 
-    return new Response(JSON.stringify({ message : 'Contest created' , id :  id , ok : true }) , { status : 200 })
+    return new Response(JSON.stringify({ message : 'Contest created' , id , ok : true }) , { status : 200 })
 
   } catch (error) {
     console.log(error);

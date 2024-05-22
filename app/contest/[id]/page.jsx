@@ -1,6 +1,7 @@
 'use client'
 import CountdownTimer from '@/components/CountdownTimer'
 import Spinner from '@/components/Spinner'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -50,12 +51,21 @@ const page = () => {
   
 
   return loading ? (
-    <Spinner />
+    <Spinner loading={loading} />
   ) : (
     <div className="container mx-auto px-4 py-8 mt-5">
       <h1 className='text-4xl text-pink-700 font-bold text-center'>Contest Page</h1>
       <div className='mt-5 mx-auto text-center'>
         <CountdownTimer targetDate={new Date(contestData.timeEnding)}/>
+        <div className='pt-5'>
+        {contestData.problemList.map((problem , index) => (
+          <div className='md:flex mt-10 md:justify-center'>
+            <span className='text-blue-900 font-semibold'>{index + 1}. {problem.name}</span>
+            <Link href={`https://codeforces.com/contest/${problem.contestId}/problem/${problem.index}`} className='text-pink-900 bg-gray-100 p-1 rounded-xl ms-3  border hover:border-blue-200' target='_blank'>Open
+            </Link>
+          </div>
+        ))}
+        </div>
       </div>
     </div>
   )

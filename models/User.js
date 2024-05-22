@@ -8,6 +8,14 @@ const UserSchema = new Schema({
     codeforcesId : {
         type : String,
     },
+    email : {
+        type : String,
+        required : true
+    },
+    image : {
+        type : String,
+        required : true
+    }
 })
 
 const User = models.User || model('User' , UserSchema)
