@@ -4,6 +4,7 @@ import { ratings, questions, time, tags } from '@/constants/formData'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import Spinner from './Spinner'
 
 const InputFormHomePage = () => {
 
@@ -11,6 +12,7 @@ const InputFormHomePage = () => {
   const { data: session } = useSession()
   const [teams, setTeams] = useState([])
   const [loading, setLoading] = useState(false)
+  const [mounted , setMounted] = useState(false)
   const [data, setData] = useState({
     codeforcesId1: '',
     codeforcesId2: '',
@@ -36,7 +38,7 @@ const InputFormHomePage = () => {
         toast.error('Could not fetch teams')
       }
       finally {
-        setLoading(false)
+        setMounted(true)
       }
     }
 
@@ -123,7 +125,7 @@ const InputFormHomePage = () => {
     }
   };
 
-  return (
+  return !mounted ? <Spinner loading={loading}/> :  (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center text-pink-700">Create Custom Contest</h1>
       <form className="space-y-4">
