@@ -1,12 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import profileDefault from '@/assets/images/profile.png';
 import Spinner from '@/components/Spinner';
-import { toast } from 'react-toastify';
-import { FaEdit } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
 const ProfilePage = () => {
@@ -18,13 +15,18 @@ const ProfilePage = () => {
   const [codeforcesId, setCodeforcesId] = useState('Not provided yet');
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(() => {
     const fetchUserCfId = async (userId) => {
       if (!userId) {
+        setLoading(false)
+        router.push('/')
         return;
+      }
+      if(session.codeforcesId == ''){
+        router.push('/provide-codeforces-handle')
+        return
       }
 
       try {
@@ -48,32 +50,6 @@ const ProfilePage = () => {
       fetchUserCfId(session.user.id);
     }
   }, [session]);
-
-  const handleEditClick = () => {
-    setIsEditing(!isEditing);
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const res = await fetch(`/api/profile/${session.user.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ codeforcesId }),
-      });
-      const data = await res.json();
-      if (data.ok) {
-        toast.success(data.message);
-        setIsEditing(false);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error('Could not update ID');
-      console.log(error);
-    }
-  };
 
   return loading ? (
     <Spinner loading={loading} />
@@ -117,19 +93,9 @@ const ProfilePage = () => {
                     className="border rounded w-full py-2 px-3 mb-2"
                     required
                     value={codeforcesId}
-                    disabled={!isEditing}
-                    onChange={(e) => setCodeforcesId(e.target.value)}
+                    readOnly
                   />
-                  <FaEdit className="ml-2 cursor-pointer" onClick={handleEditClick} />
                 </div>
-                {isEditing && (
-                  <button
-                    className="mt-2 bg-blue-500 text-white py-2 px-4 rounded"
-                    onClick={handleSubmit}
-                  >
-                    Update
-                  </button>
-                )}
               </div>
               <div className="mt-6">
                 <h3 className="text-2xl font-bold mb-2 text-gray-700">Teams</h3>

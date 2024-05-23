@@ -1,15 +1,26 @@
 'use client'
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 const CodeforcesForm = () => {
   const [teamName, setTeamName] = useState('');
   const [loading , setLoading] = useState(false)
-  const [ids, setIds] = useState(['']);
   const { data : session } = useSession()
+  const [ids, setIds] = useState(['']);
   const router = useRouter()
+
+  useEffect(() => {
+    if(!session) return
+    if(session && session.user && session.codeforcesId == ''){
+      router.push('/provide-codeforces-handle')
+      return
+    }
+    else{
+      setIds([session.codeforcesId , ''])
+    }
+  }, [session])
 
   const handleTeamNameChange = (event) => {
     setTeamName(event.target.value);
@@ -82,16 +93,17 @@ const CodeforcesForm = () => {
             <input
               type="text"
               value={id}
+              disabled = {index === 0}
               onChange={(e) => handleChange(index, e)}
               placeholder={`Codeforces ID ${index + 1}`}
               className="flex-1 border border-gray-300 p-2 rounded-md"
               required
             />
-            {ids.length > 1 && (
+            {ids.length > 1 && index != 0 && (
               <button
                 type="button"
                 onClick={() => handleRemoveField(index)}
-                className="ml-2 text-red-500 hover:text-red-700"
+                className="ml-2 text-red-500 hover:text-red-700" 
               >
                 Remove
               </button>

@@ -61,10 +61,6 @@ const page = () => {
       }
     }, 30000)
 
-    const reloadTime = setInterval(async () => {
-
-    })
-
     return () => clearInterval(timer)
   })
 

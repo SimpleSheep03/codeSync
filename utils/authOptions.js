@@ -32,9 +32,13 @@ export const authOptions = {
         await User.create({
           email: profile.email,
           name,
-          image : profile.picture
+          image : profile.picture,
+          codeforcesId : ''
         });
+
+        return true 
       }
+      
       // 4. Return true to allow sign in
       return true;
     },
@@ -44,6 +48,7 @@ export const authOptions = {
       const user = await User.findOne({ email: session.user.email });
       // 2. Assign the user id to the session
       session.user.id = user._id.toString();
+      session.codeforcesId = user.codeforcesId
       // 3. return session
       return session;
     },

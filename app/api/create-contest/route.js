@@ -50,7 +50,7 @@ export const POST = async (request) => {
 
     if (user1_from_cf_submissions.status == "FAILED") {
         return new Response(
-            JSON.stringify({ message: "Could not find the first user details" , ok : false }),
+            JSON.stringify({ message: `Codeforces handle ${codeforcesId1} is invalid` , ok : false }),
             { status: 400 }
           );
     }
@@ -70,7 +70,7 @@ export const POST = async (request) => {
 
       if (user2_from_cf_submissions.status == "FAILED") {
         return new Response(
-          JSON.stringify({ message: "Could not find the second user details" , ok : false }),
+          JSON.stringify({ message: `Codeforces handle ${codeforcesId2} is invalid` , ok : false }),
           { status: 400 }
         );
       }
@@ -89,7 +89,7 @@ export const POST = async (request) => {
 
       if (user3_from_cf_submissions.status == "FAILED") {
         return new Response(
-          JSON.stringify({ message: "Could not find the third user details" , ok : false}),
+          JSON.stringify({ message: `Codeforces handle ${codeforcesId3} is invalid` , ok : false}),
           { status: 400 }
         );
       }
