@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { FaCheckCircle } from 'react-icons/fa'
 
-
 const page = () => {
   const { id } = useParams()
   const [contestData, setContestData] = useState({})
@@ -91,15 +90,15 @@ const page = () => {
         <CountdownTimer targetDate={new Date(contestData.timeEnding)} />
         <div className='pt-5'>
           {contestData.problemList.map((problem, index) => (
-            <div className='md:flex mt-10 md:justify-center' key={index}>
+            <div className='flex flex-wrap mt-10 justify-center items-center' key={index}>
               <span className='text-blue-900 font-semibold'>{index + 1}. {problem.name}</span>
               <Link href={`https://codeforces.com/contest/${problem.contestId}/problem/${problem.index}`} className='text-pink-900 bg-gray-100 p-1 rounded-xl ms-3 border hover:border-blue-200' target='_blank'>
                 Open
               </Link>
               {solved.some(solvedProblem =>
                 solvedProblem.contestId === problem.contestId && solvedProblem.index === problem.index
-              ) && <FaCheckCircle className='text-green-500 ms-5' style={{ width: '24px', height: '24px' }} />
-            }
+              ) && <FaCheckCircle className='text-green-500 ms-2' style={{ width: '24px', height: '24px' }} />
+              }
             </div>
           ))}
         </div>
