@@ -18,8 +18,15 @@ export const POST = async (request) => {
 
         const { ids , teamName } = data
 
-        if(!ids || !teamName){
+        if(!ids || !teamName || ids == []){
             return new Response(JSON.stringify({ message : 'Required fields not provided' , ok : false}) , { status : 400 })
+        }
+
+        for(const id of ids){
+            const user = await fetch(`https://codeforces.com/api/user.info?handles=${id}&checkHistoricHandles=false`).then(async(data) => await data.json())
+            if(user.status == 'FAILED'){
+                return new Response(JSON.stringify({ message : `Could not find the handle ${id}` , ok : false }) , { status : 400 })
+            }
         }
 
         const team = new Team({

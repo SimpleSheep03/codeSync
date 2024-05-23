@@ -16,7 +16,7 @@ export const GET = async (request , { params }) => {
             return new Response(JSON.stringify({ message : 'No such user exists' , ok : false }) , { status : 400 })
         }
 
-        const contests = await Contest.find({ users : { $in : [id] } })
+        const contests = await Contest.find({ users : { $in : [id] } }).sort({ timeStart : -1 })
         
         return new Response(JSON.stringify({ message : 'Found contests' , ok : true , contests }) , { status : 200 })
     } catch (error) {

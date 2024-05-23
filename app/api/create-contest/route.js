@@ -114,7 +114,7 @@ export const POST = async (request) => {
         !st.has(`${problem.contestId}${problem.index}`) &&
         problem.rating <= upperDifficulty &&
         problem.rating >= lowerDifficulty && 
-        tags.every((tag) => problem.tags.includes(tag))
+        problem.tags.some((tag) => tags.includes(tag))
       ) {
         newList.push(
           problem
