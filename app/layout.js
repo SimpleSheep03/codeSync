@@ -3,10 +3,11 @@ import '@/assets/styles/globals.css'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthProvider from "@/components/AuthProvider";
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "CodeSync",
-  description: "Feature-rich Coding Arena",
+  description: "Collaborative coding & problem-solving platform.",
 };
 
 export default function RootLayout({ children }) {
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
       <body>
         <Navbar/>
         {children}
+        <Footer/>
         <ToastContainer/>
         </body>
     </html>
