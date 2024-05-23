@@ -244,7 +244,7 @@ const InputFormHomePage = () => {
                 ))}
               </select>
             </div>)}
-            {contestantType === "Team" || !session && (
+            {(contestantType === "Team" || !session) && (
             <div className="flex flex-wrap md:px-3">
               <label
                 htmlFor="codeforcesId1"
