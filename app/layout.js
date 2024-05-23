@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "CodeSync",
-  description: "Collaborative coding & problem-solving platform.",
+  description: "Create custom contests and more.",
 };
 
 export default function RootLayout({ children }) {
