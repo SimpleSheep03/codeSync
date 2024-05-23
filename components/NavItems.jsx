@@ -3,13 +3,14 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { signIn, signOut, useSession, getProviders } from 'next-auth/react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 const NavItems = () => {
   const { data: session } = useSession()
   const [providers, setProviders] = useState()
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const profileImage = session?.user?.image
+  const pathname = usePathname()
   const router = useRouter()
 
   useEffect(() => {
@@ -29,11 +30,13 @@ const NavItems = () => {
 
   return (
     <div className="flex items-center space-x-4">
-      <Link href='/'>
-        <button className='bg-gray-100 px-3 text-blue-700 rounded-xl py-1 border-[3px] hover:border-pink-300 hover:text-blue-900'>
-          Home
-        </button>
-      </Link>
+      {pathname !== '/' && (
+        <Link href='/'>
+          <button className='bg-gray-100 px-3 text-blue-700 rounded-xl py-1 border-[3px] hover:border-pink-300 hover:text-blue-900'>
+            Home
+          </button>
+        </Link>
+      )}
 
       {!session && (
         <>
