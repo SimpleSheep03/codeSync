@@ -122,20 +122,26 @@ export const POST = async (request) => {
       }
     }
 
-    const user1 = await User.find({ codeforcesId : codeforcesId1 })
-    const user2 = await User.find({ codeforcesId : codeforcesId2 })
-    const user3 = await User.find({ codeforcesId : codeforcesId3 })
-
     let users = []
-
-    if(user1.length > 0){
-      users.push(user1[0]._id)
+    
+    if(codeforcesId1 != ''){
+      const user1 = await User.find({ codeforcesId : codeforcesId1 })
+      if(user1.length > 0){
+        users.push(user1[0]._id)
+      }
     }
-    if(user2.length > 0){
-      users.push(user2[0]._id)
+    if(codeforcesId2 != ''){
+      const user2 = await User.find({ codeforcesId : codeforcesId2 })
+      if(user2.length > 0){
+        users.push(user2[0]._id)
+      }
     }
-    if(user3.length > 0){
-      users.push(user3[0]._id)
+    
+    if(codeforcesId3 != ''){
+      const user3 = await User.find({ codeforcesId : codeforcesId3 })
+      if(user3.length > 0){
+        users.push(user3[0]._id)
+      }
     }
 
     let contestants = [codeforcesId1]

@@ -6,27 +6,11 @@ import { getSessionUser } from "@/utils/getSessionUser";
 
 export const GET = async (request, { params }) => {
     try {
-        await connectDB();
+    await connectDB();
 
     const { id } = params;
 
-    const sessionUser = await getSessionUser();
-
-    if (!sessionUser || !sessionUser.user) {
-      return new Response('User ID is required', {
-        status: 401,
-      });
-    }
-
-    const { userId } = sessionUser;
-
-    const user = await User.findById(userId)
-
     const contest = await Contest.findById(id)
-
-    if(!contest.contestants.includes(user.codeforcesId)){
-        return new Response(JSON.stringify({ message : 'Unauthorized' , ok : false }), { status : 401 })
-    }
 
     const common_questions = new Set([])
 
