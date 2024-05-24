@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { signIn, signOut, useSession, getProviders } from 'next-auth/react'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
@@ -12,6 +12,8 @@ const NavItems = () => {
   const profileImage = session?.user?.image
   const pathname = usePathname()
   const router = useRouter()
+  const menuButtonRef = useRef(null)
+  const menuRef = useRef(null)
 
   useEffect(() => {
     const setAuthProviders = async () => {
@@ -27,6 +29,29 @@ const NavItems = () => {
 
     setAuthProviders()
   }, [session])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        menuButtonRef.current &&
+        !menuButtonRef.current.contains(event.target) &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target)
+      ) {
+        setIsProfileMenuOpen(false)
+      }
+    }
+
+    if (isProfileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isProfileMenuOpen])
 
   return (
     <div className="flex items-center space-x-4">
@@ -62,6 +87,7 @@ const NavItems = () => {
               aria-expanded={isProfileMenuOpen}
               aria-haspopup='true'
               onClick={() => setIsProfileMenuOpen((prev) => !prev)}
+              ref={menuButtonRef}
             >
               <span className='absolute -inset-1.5'></span>
               <span className='sr-only'>Open user menu</span>
@@ -82,6 +108,7 @@ const NavItems = () => {
                 aria-orientation='vertical'
                 aria-labelledby='user-menu-button'
                 tabIndex='-1'
+                ref={menuRef}
               >
                 <Link
                   href='/profile'
