@@ -7,11 +7,19 @@ const ContestSchema = new Schema({
             ref : 'User'
         }
     ],
+    contestantType : {
+        type : String,
+        required : true,
+    },
     problemList : [
         {
             type : Object,
         }
     ],
+    team : {
+        type : Schema.Types.ObjectId,
+        ref : 'Team',
+    },
     contestants : [
         {
             type : String,

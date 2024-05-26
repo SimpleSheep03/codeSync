@@ -3,24 +3,24 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { FaMinusCircle } from 'react-icons/fa';
 
 const CodeforcesForm = () => {
   const [teamName, setTeamName] = useState('');
-  const [loading , setLoading] = useState(false)
-  const { data : session } = useSession()
+  const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
   const [ids, setIds] = useState(['']);
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
-    if(!session) return
-    if(session && session.user && session.codeforcesId == ''){
-      router.push('/provide-codeforces-handle')
-      return
+    if (!session) return;
+    if (session && session.user && session.codeforcesId === '') {
+      router.push('/provide-codeforces-handle');
+      return;
+    } else {
+      setIds([session.codeforcesId, '']);
     }
-    else{
-      setIds([session.codeforcesId , ''])
-    }
-  }, [session])
+  }, [session]);
 
   const handleTeamNameChange = (event) => {
     setTeamName(event.target.value);
@@ -45,35 +45,35 @@ const CodeforcesForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true)
+    setLoading(true);
     try {
-        const res = await fetch('/api/add-team',{
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ teamName , ids }),
-          })
-        const data = await res.json()
-        if(data.ok){
-            toast.success(data.message)
-            router.push('/profile')
-        }
-        else{
-            toast.error(data.message)
-        }
+      const res = await fetch('/api/add-team', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ teamName, ids }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        toast.success(data.message);
+        router.push('/profile');
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
-        console.log(error)
-        toast.error('Failed to create team')
-    }
-    finally{
-        setLoading(false)
+      console.log(error);
+      toast.error('Failed to create team');
+    } finally {
+      setLoading(false);
     }
   };
 
-  return !session ? <div className="flex mt-10 justify-center h-screen">
-  <span className='text-3xl text-pink-700'>Please Sign In to add a team</span>
-</div> : (
+  return !session ? (
+    <div className="flex mt-10 justify-center h-screen">
+      <span className='text-3xl text-pink-700'>Please Sign In to add a team</span>
+    </div>
+  ) : (
     <div className="max-w-md mx-auto mt-10 p-5 bg-white shadow-md rounded-md">
       <h2 className="text-2xl font-bold mb-4 text-pink-700">Enter Team Details</h2>
       <form onSubmit={handleSubmit}>
@@ -93,19 +93,19 @@ const CodeforcesForm = () => {
             <input
               type="text"
               value={id}
-              disabled = {index === 0}
+              disabled={index === 0}
               onChange={(e) => handleChange(index, e)}
               placeholder={`Codeforces ID ${index + 1}`}
               className="flex-1 border border-gray-300 p-2 rounded-md"
               required
             />
-            {ids.length > 1 && index != 0 && (
+            {ids.length > 1 && index !== 0 && (
               <button
                 type="button"
                 onClick={() => handleRemoveField(index)}
-                className="ml-2 text-red-500 hover:text-red-700" 
+                className="ml-2 text-red-500 hover:text-red-700"
               >
-                Remove
+                <FaMinusCircle className="w-6 h-6" />
               </button>
             )}
           </div>

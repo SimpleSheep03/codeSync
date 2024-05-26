@@ -4,14 +4,15 @@ import Spinner from '@/components/Spinner'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
-import { FaCheckCircle } from 'react-icons/fa'
+import { FaCheckCircle, FaCopy, FaCheck } from 'react-icons/fa'
 
 const page = () => {
   const { id } = useParams()
   const [contestData, setContestData] = useState({})
   const [loading, setLoading] = useState(true)
   const [solved, setSolved] = useState([])
+  const [copyButtonText, setCopyButtonText] = useState('Copy link to share')
+  const [isCopied, setIsCopied] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +21,6 @@ const page = () => {
         const data = await res.json()
         if (!data.ok) {
           console.log(data.message)
-          toast.error(data.message)
           return
         }
         setContestData(data.contest)
@@ -61,25 +61,23 @@ const page = () => {
     }, 30000)
 
     return () => clearInterval(timer)
-  })
+  }, [id])
 
-  const now = new Date()
-  const targetDate = new Date(contestData.timeEnding)
-
-  const difference = targetDate - now
-
-  const millisecondsInSecond = 1000
-  const millisecondsInMinute = millisecondsInSecond * 60
-  const millisecondsInHour = millisecondsInMinute * 60
-  const millisecondsInDay = millisecondsInHour * 24
-
-  const days = Math.floor(difference / millisecondsInDay)
-  const hours = Math.floor((difference % millisecondsInDay) / millisecondsInHour)
-  const minutes = Math.floor((difference % millisecondsInHour) / millisecondsInMinute)
-  const seconds = Math.floor((difference % millisecondsInMinute) / millisecondsInSecond)
-
-  console.log(solved)
-  console.log(contestData.problemList)
+  const handleCopyLink = () => {
+    const contestUrl = window.location.href
+    navigator.clipboard.writeText(contestUrl)
+      .then(() => {
+        setIsCopied(true)
+        setCopyButtonText('Copied!')
+        setTimeout(() => {
+          setIsCopied(false)
+          setCopyButtonText('Copy link to share')
+        }, 2000)
+      })
+      .catch((error) => {
+        console.error('Failed to copy text: ', error)
+      })
+  }
 
   return loading ? (
     <Spinner loading={loading} />
@@ -88,6 +86,16 @@ const page = () => {
       <h1 className='text-4xl text-pink-700 font-bold text-center'>Contest Page</h1>
       <div className='mt-5 mx-auto text-center'>
         <CountdownTimer targetDate={new Date(contestData.timeEnding)} />
+        <div className='mt-10 flex justify-center'>
+          <button onClick={handleCopyLink} className='flex items-center text-blue-500 hover:text-blue-700'>
+            {isCopied ? (
+              <FaCheck className='mr-2' style={{ width: '24px', height: '24px' }} />
+            ) : (
+              <FaCopy className='mr-2' style={{ width: '24px', height: '24px' }} />
+            )}
+            {copyButtonText}
+          </button>
+        </div>
         <div className='pt-5'>
           {contestData.problemList.map((problem, index) => (
             <div className='flex flex-wrap mt-10 justify-center items-center' key={index}>

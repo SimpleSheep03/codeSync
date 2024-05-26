@@ -42,6 +42,7 @@ const InputFormHomePage = () => {
           ...prevData,
           codeforcesId1: result.codeforcesId,
         }));
+      // console.log(session?.lastContest)
       } catch (error) {
         console.log(error);
         toast.error("Could not fetch teams");
@@ -73,7 +74,14 @@ const InputFormHomePage = () => {
         ...data,
         [id]: selectedTags,
       });
-    } else {
+    } else if (id === "lowerDifficulty") {
+      const newUpperDifficulty = Math.max(parseInt(value), parseInt(data.upperDifficulty));
+      setData({
+        ...data,
+        upperDifficulty: newUpperDifficulty.toString(),
+        [id] : value
+      });
+    }else {
       setData({
         ...data,
         [id]: value,
@@ -119,6 +127,8 @@ const InputFormHomePage = () => {
           upperDifficulty,
           timeLimit,
           tags: temp,
+          contestantType,
+          selectedTeam
         }),
       });
 
@@ -196,6 +206,8 @@ const InputFormHomePage = () => {
     });
     return `/add-team?${params.toString()}`;
   };
+
+  console.log(data.upperDifficulty)
 
   return (
     <div className="container mx-auto px-4 py-8">

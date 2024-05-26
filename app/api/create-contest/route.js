@@ -1,5 +1,6 @@
 import connectDB from "@/config/database";
 import Contest from '@/models/Contest'
+import Team from "@/models/Team";
 import User from "@/models/User";
 
 
@@ -17,7 +18,9 @@ export const POST = async (request) => {
       lowerDifficulty,
       upperDifficulty,
       timeLimit,
-      tags
+      tags,
+      contestantType,
+      selectedTeam
     } = data;
 
     if (
@@ -26,13 +29,15 @@ export const POST = async (request) => {
       !lowerDifficulty ||
       !upperDifficulty ||
       !timeLimit ||
-      !tags
+      !tags ||
+      !contestantType
     ) {
       return new Response(JSON.stringify({ message: "Fill all the fields" , ok : false }), {
         status: 400,
       });
     }
 
+    
     const total_questions = await fetch(
       `https://codeforces.com/api/problemset.problems`
     ).then(async (data) => await data.json());
@@ -58,9 +63,7 @@ export const POST = async (request) => {
     const st = new Set([]);
 
     user1_from_cf_submissions.result.map((problem) => {
-      if (problem.verdict == "OK") {
         st.add(`${problem.problem.contestId}${problem.problem.index}`);
-      }
     });
 
     if (codeforcesId2 != '') {
@@ -76,9 +79,7 @@ export const POST = async (request) => {
       }
 
       user2_from_cf_submissions.result.map((problem) => {
-        if (problem.verdict == "OK") {
           st.add(`${problem.problem.contestId}${problem.problem.index}`);
-        }
       });
     }
 
@@ -95,9 +96,7 @@ export const POST = async (request) => {
       }
 
       user3_from_cf_submissions.result.map((problem) => {
-        if (problem.verdict == "OK") {
           st.add(`${problem.problem.contestId}${problem.problem.index}`);
-        }
       });
     }
 
@@ -155,6 +154,11 @@ export const POST = async (request) => {
     const now = new Date()
     const newDate = new Date(now.getTime() + timeLimit * 60000)
 
+    let teamId = selectedTeam
+    if(!teamId || teamId == '' || teamId == 'Select Team'){
+      teamId = undefined
+    }
+
     const contest = new Contest({
       users,
       problemList : newList,
@@ -164,7 +168,9 @@ export const POST = async (request) => {
       upperLimit : upperDifficulty,
       timeLimit,
       timeStart : now,
-      timeEnding : newDate
+      timeEnding : newDate,
+      contestantType,
+      team: teamId ? teamId : undefined,
     })
 
     await contest.save()

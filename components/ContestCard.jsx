@@ -3,14 +3,14 @@ import React from "react";
 
 const ContestCard = ({ contest }) => {
   return (
-    <div key={contest._id.$oid} className="p-4 bg-white shadow-md rounded-md">
+    <div key={contest._id} className="p-4 bg-white shadow-md rounded-md">
       <Link href={`/contest/${contest._id}`} target="_blank">
         <h2 className="text-2xl font-semibold mb-2 text-blue-700 underline">
           Contest ID: {contest._id}
         </h2>
       </Link>
       <h3 className="text-xl mb-2 text-gray-700">
-        Number of Questions: {contest.numberOfQuestions}
+        Participation Type: {contest.contestantType}
       </h3>
       <h3 className="text-xl mb-2 text-gray-700">
         Contestants: &nbsp;
@@ -27,6 +27,9 @@ const ContestCard = ({ contest }) => {
             {index < contest.contestants.length - 1 && " , "}
           </>
         ))}
+      </h3>
+      <h3 className="text-xl mb-2 text-gray-700">
+        Number of Questions: {contest.numberOfQuestions}
       </h3>
       <h3 className="text-xl mb-2 text-gray-700">
         Rating Range: {contest.lowerLimit} - {contest.upperLimit}
