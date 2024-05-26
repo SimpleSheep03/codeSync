@@ -15,18 +15,17 @@ const ProfilePage = () => {
   const [codeforcesId, setCodeforcesId] = useState('Not provided yet');
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserCfId = async (userId) => {
       if (!userId) {
-        setLoading(false)
-        router.push('/')
+        setLoading(false);
         return;
       }
-      if(session.codeforcesId == ''){
-        router.push('/provide-codeforces-handle')
-        return
+      if (session.codeforcesId == '') {
+        router.push('/provide-codeforces-handle');
+        return;
       }
 
       try {
@@ -48,6 +47,8 @@ const ProfilePage = () => {
 
     if (session?.user?.id) {
       fetchUserCfId(session.user.id);
+    } else {
+      setLoading(false);
     }
   }, [session]);
 
@@ -55,7 +56,7 @@ const ProfilePage = () => {
     <Spinner loading={loading} />
   ) : !session ? (
     <div className="flex mt-10 justify-center h-screen">
-      <span className="text-3xl text-pink-700">Please Sign In first</span>
+      <span className="text-3xl text-pink-700">Please Sign In to View Profile</span>
     </div>
   ) : (
     <section className="bg-blue-50">

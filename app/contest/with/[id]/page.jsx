@@ -52,7 +52,10 @@ const Page = () => {
         There are currently no past contests associated with this ID.
       </p>
     </div>
-  ) : (
+  ) : !session ? (
+    <div className="flex mt-10 justify-center h-screen">
+      <span className="text-3xl text-pink-700">Please Sign In to View Contests</span>
+    </div>) : (
     <div className='container mx-auto py-8'>
       <h1 className='text-4xl font-bold mb-6 text-center text-pink-700'>
         Past Contests
