@@ -121,34 +121,27 @@ export const POST = async (request) => {
       }
     }
 
-    let users = []
-    
+    let contestants = []
     if(codeforcesId1 != ''){
-      const user1 = await User.find({ codeforcesId : codeforcesId1 })
-      if(user1.length > 0){
-        users.push(user1[0]._id)
-      }
+      const user = await fetch(`https://codeforces.com/api/user.info?handles=${codeforcesId1}&checkHistoricHandles=false`).then(async(data) => await data.json())
+      contestants.push(user.result[0].handle)
     }
     if(codeforcesId2 != ''){
-      const user2 = await User.find({ codeforcesId : codeforcesId2 })
-      if(user2.length > 0){
-        users.push(user2[0]._id)
-      }
+      const user = await fetch(`https://codeforces.com/api/user.info?handles=${codeforcesId2}&checkHistoricHandles=false`).then(async(data) => await data.json())
+      contestants.push(user.result[0].handle)
     }
-    
     if(codeforcesId3 != ''){
-      const user3 = await User.find({ codeforcesId : codeforcesId3 })
-      if(user3.length > 0){
-        users.push(user3[0]._id)
-      }
+      const user = await fetch(`https://codeforces.com/api/user.info?handles=${codeforcesId3}&checkHistoricHandles=false`).then(async(data) => await data.json())
+      contestants.push(user.result[0].handle)
     }
 
-    let contestants = [codeforcesId1]
-    if(codeforcesId2 != ''){
-      contestants.push(codeforcesId2)
-    }
-    if(codeforcesId3 != ''){
-      contestants.push(codeforcesId3)
+    let users = []
+
+    for(const contestant of contestants){
+      const user = await User.findOne({ codeforcesId : contestant })
+      if(user){
+        users.push(user)
+      }
     }
 
     const now = new Date()

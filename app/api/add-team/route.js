@@ -22,27 +22,30 @@ export const POST = async (request) => {
             return new Response(JSON.stringify({ message : 'Required fields not provided' , ok : false}) , { status : 400 })
         }
 
+        let codeforcesHandles = []
+
         for(const id of ids){
             const user = await fetch(`https://codeforces.com/api/user.info?handles=${id}&checkHistoricHandles=false`).then(async(data) => await data.json())
             if(user.status == 'FAILED'){
                 return new Response(JSON.stringify({ message : `Could not find the handle ${id}` , ok : false }) , { status : 400 })
             }
+            codeforcesHandles.push(user.result[0].handle)
         }
 
         const team = new Team({
             teamName,
-            codeforcesHandles : ids
+            codeforcesHandles
         })
 
         await team.save()
 
         return new Response(JSON.stringify({
-            message : 'Created successfully' , ok : true
+            message : 'Team added successfully' , ok : true , team
         }), { status : 200 })
 
 
     } catch (error) {
         console.log(error)
-        return new Response(JSON.stringify({ message : 'Failed to create team' , ok : false }), { status : 500 })
+        return new Response(JSON.stringify({ message : 'Server error... Please try again' , ok : false }), { status : 500 })
     }
 }

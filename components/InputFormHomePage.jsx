@@ -4,16 +4,17 @@ import { ratings, questions, time, tags } from "@/constants/formData";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Spinner from "./Spinner";
-import Link from "next/link";
 
 const InputFormHomePage = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [teamLoading , setTeamLoading] = useState(true)
   const [contestantType, setContestantType] = useState("Team");
   const [selectedTeam, setSelectedTeam] = useState("");
+  const [showAddTeam, setShowAddTeam] = useState(false);
+  const [newTeamName, setNewTeamName] = useState("");
   const [data, setData] = useState({
     codeforcesId1: "",
     codeforcesId2: "",
@@ -42,7 +43,7 @@ const InputFormHomePage = () => {
           ...prevData,
           codeforcesId1: result.codeforcesId,
         }));
-      // console.log(session?.lastContest)
+        // console.log(session?.lastContest)
       } catch (error) {
         console.log(error);
         toast.error("Could not fetch teams");
@@ -75,13 +76,16 @@ const InputFormHomePage = () => {
         [id]: selectedTags,
       });
     } else if (id === "lowerDifficulty") {
-      const newUpperDifficulty = Math.max(parseInt(value), parseInt(data.upperDifficulty));
+      const newUpperDifficulty = Math.max(
+        parseInt(value),
+        parseInt(data.upperDifficulty)
+      );
       setData({
         ...data,
         upperDifficulty: newUpperDifficulty.toString(),
-        [id] : value
+        [id]: value,
       });
-    }else {
+    } else {
       setData({
         ...data,
         [id]: value,
@@ -128,7 +132,7 @@ const InputFormHomePage = () => {
           timeLimit,
           tags: temp,
           contestantType,
-          selectedTeam
+          selectedTeam,
         }),
       });
 
@@ -151,31 +155,81 @@ const InputFormHomePage = () => {
   const handleTeamSelect = (e) => {
     setSelectedTeam(e.target.value);
     const teamId = e.target.value;
-    const selectedTeam = teams.find((team) => team._id === teamId);
+    const selectedTeam = teams.find((team) => team?._id === teamId);
 
     if (selectedTeam) {
       const { codeforcesHandles } = selectedTeam;
+      const newHandles = codeforcesHandles.filter((handle) => handle != data.codeforcesId1)
       setData((prevData) => ({
         ...prevData,
-        codeforcesId1: codeforcesHandles[0] || "",
-        codeforcesId2: codeforcesHandles[1] || "",
-        codeforcesId3: codeforcesHandles[2] || "",
+        codeforcesId2: newHandles[0] || "",
+        codeforcesId3: newHandles[1] || "",
       }));
+    }
+  };
+
+  const handleAddTeamClick = (e) => {
+    e.preventDefault();
+    setShowAddTeam(!showAddTeam);
+  };
+
+  const handleNewTeamNameChange = (e) => {
+    setNewTeamName(e.target.value);
+  };
+
+  const handleNewTeamSubmit = async (e) => {
+    e.preventDefault();
+    let ids = [data.codeforcesId1]
+    if(data.codeforcesId2 != ''){
+      ids.push(data.codeforcesId2)
+    }
+    if(data.codeforcesId3 != ''){
+      ids.push(data.codeforcesId3)
+    }
+    setTeamLoading(true)
+    try {
+      const res = await fetch("/api/add-team", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          teamName: newTeamName,
+          ids
+        }),
+      });
+
+      const result = await res.json();
+      if (result.ok) {
+        toast.success(result.message);
+        setTeams((prevTeams) => [...prevTeams, result.team]);
+        setSelectedTeam(result.team)
+        setShowAddTeam(false);
+        setNewTeamName("");
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Could not add team");
+    }
+    finally{
+      setTeamLoading(false)
     }
   };
 
   useEffect(() => {
     if (contestantType === "Team") {
       const matchingTeam = teams.find((team) => {
-        const handles = team.codeforcesHandles;
+        const handles = team?.codeforcesHandles;
         const enteredHandles = [
-          data.codeforcesId1,
-          data.codeforcesId2,
-          data.codeforcesId3,
+          data.codeforcesId1.toLowerCase(),
+          data.codeforcesId2.toLowerCase(),
+          data.codeforcesId3.toLowerCase(),
         ].filter(Boolean); // remove empty values
         return (
           handles.length === enteredHandles.length &&
-          handles.every((handle) => enteredHandles.includes(handle))
+          handles.every((handle) => enteredHandles.includes(handle.toLowerCase()))
         );
       });
       if (matchingTeam) {
@@ -191,21 +245,6 @@ const InputFormHomePage = () => {
     teams,
     contestantType,
   ]);
-
-  const createAddTeamUrl = () => {
-    const params = new URLSearchParams();
-    const handles = [data.codeforcesId1];
-    if (data.codeforcesId2 != "") {
-      handles.push(data.codeforcesId2);
-    }
-    if (data.codeforcesId3) {
-      handles.push(data.codeforcesId3);
-    }
-    handles.map((handle, index) => {
-      params.append(`codeforcesId${index + 1}`, handle);
-    });
-    return `/add-team?${params.toString()}`;
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -230,8 +269,8 @@ const InputFormHomePage = () => {
             <option value={"Individual"}>Individual</option>
           </select>
         </div>
-          <div className="md:flex md:justify-between space-y-4">
-        {contestantType === "Team" && (
+        <div className="md:flex md:justify-between space-y-4">
+          {contestantType === "Team" && session && (
             <div className="flex flex-wrap md:px-3">
               <label
                 htmlFor="teamSelect"
@@ -245,16 +284,18 @@ const InputFormHomePage = () => {
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 onChange={handleTeamSelect}
                 value={selectedTeam}
-              >
-                <option value="Select Team">Select Team</option>
+              >{teams?.length == 0 ? 
+              <option value="Select Team">No teams added yet</option> :
+                <option value="Select Team">Select Team</option>}
                 {teams.map((team) => (
-                  <option key={team._id} value={team._id}>
-                    {team.teamName}
+                  <option key={team?._id} value={team?._id}>
+                    {team?.teamName}
                   </option>
                 ))}
               </select>
-            </div>)}
-            {(contestantType === "Team" || !session) && (
+            </div>
+          )}
+          {(contestantType === "Team" || !session) && (
             <div className="flex flex-wrap md:px-3">
               <label
                 htmlFor="codeforcesId1"
@@ -268,58 +309,99 @@ const InputFormHomePage = () => {
                 name="codeforcesId1"
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 value={data.codeforcesId1}
-                disabled={data.codeforcesId1 != '' && session}
+                disabled={data.codeforcesId1 != "" && session}
                 onChange={handleChange}
-              />
-            </div>)}
-            {contestantType === "Team" && (<>
-            <div className="flex flex-wrap md:px-3">
-              <label
-                htmlFor="codeforcesId2"
-                className="w-full mb-1 text-sm font-medium"
-              >
-                Codeforces ID 2:
-              </label>
-              <input
-                type="text"
-                id="codeforcesId2"
-                name="codeforcesId2"
-                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                onChange={handleChange}
-                value={data.codeforcesId2}
               />
             </div>
+          )}
+          {contestantType === "Team" && (
+            <>
+              <div className="flex flex-wrap md:px-3">
+                <label
+                  htmlFor="codeforcesId2"
+                  className="w-full mb-1 text-sm font-medium"
+                >
+                  Codeforces ID 2:
+                </label>
+                <input
+                  type="text"
+                  id="codeforcesId2"
+                  name="codeforcesId2"
+                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  onChange={handleChange}
+                  value={data.codeforcesId2}
+                />
+              </div>
 
+              <div className="flex flex-wrap md:px-3">
+                <label
+                  htmlFor="codeforcesId3"
+                  className="w-full mb-1 text-sm font-medium"
+                >
+                  Codeforces ID 3:
+                </label>
+                <input
+                  type="text"
+                  id="codeforcesId3"
+                  name="codeforcesId3"
+                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  onChange={handleChange}
+                  value={data.codeforcesId3}
+                  placeholder="(Optional)"
+                />
+              </div>
+              {selectedTeam === "" &&
+                (data.codeforcesId2 !== "" || data.codeforcesId3 !== "") &&
+                !showAddTeam && session && (
+                  <div className="flex flex-wrap md:px-3">
+                    <button
+                      className="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+                      onClick={handleAddTeamClick}
+                    >
+                      Add this team (optional) 
+                    </button>
+                  </div>
+                )}
+            </>
+          )}
+        </div>
+
+        {showAddTeam && (
+          <div className="md:flex md:justify-start space-y-4">
             <div className="flex flex-wrap md:px-3">
               <label
-                htmlFor="codeforcesId3"
+                htmlFor="newTeamName"
                 className="w-full mb-1 text-sm font-medium"
               >
-                Codeforces ID 3:
+                Provide Team Name:
               </label>
               <input
                 type="text"
-                id="codeforcesId3"
-                name="codeforcesId3"
+                id="newTeamName"
+                name="newTeamName"
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                onChange={handleChange}
-                value={data.codeforcesId3}
-                placeholder="(Optional)"
+                value={newTeamName}
+                onChange={handleNewTeamNameChange}
               />
             </div>
-            {selectedTeam === "" &&
-              (data.codeforcesId2 !== "" || data.codeforcesId3 !== "") && (
-                <div className="flex flex-wrap md:px-3">
-                  <Link
-                    href={createAddTeamUrl()}
-                    className="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
-                  >
-                    Add this team (optional)
-                  </Link>
-                </div>
-              )}
-        </>)}
+            <div className="flex flex-wrap md:px-3">
+              <button
+                className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 mt-3"
+                onClick={handleNewTeamSubmit}
+                disabled={teamLoading}
+              >
+               { !teamLoading ? <>Add this team</> : <>Loading...</>}
+              </button>
+              <button
+                className="inline-flex items-center mx-3 px-4 py-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 mt-3"
+                onClick={handleAddTeamClick}
+                disabled={teamLoading}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
+        )}
 
         <div className="flex flex-wrap">
           <label
