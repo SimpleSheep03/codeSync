@@ -4,7 +4,6 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import Spinner from '@/components/Spinner';
-import Swal from 'sweetalert2'
 
 
 const ProvideCodeforcesHandle = () => {
