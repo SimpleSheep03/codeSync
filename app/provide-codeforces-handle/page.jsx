@@ -3,16 +3,21 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import Spinner from '@/components/Spinner';
+import Swal from 'sweetalert2'
+
 
 const ProvideCodeforcesHandle = () => {
   const { data: session } = useSession();
   const [codeforcesHandle, setCodeforcesHandle] = useState('');
   const router = useRouter();
+  const [loading , setLoading] = useState(true)
 
   useEffect(() => {
     if(session && session.user && session.codeforcesId != ''){
         router.push('/')
     }
+    setLoading(false)
   }, [session])
 
   const handleSubmit = async (e) => {
@@ -33,7 +38,7 @@ const ProvideCodeforcesHandle = () => {
         }   
         else{
             toast.error(data.message)
-            console.log()
+            console.log(data.message)
         }
     }
     catch(error){
@@ -42,7 +47,9 @@ const ProvideCodeforcesHandle = () => {
     }
   };
 
-  return (
+  return loading ? <Spinner loading={loading}/> : !session ? <div className="flex mt-10 justify-center h-screen">
+  <span className="text-3xl text-pink-700">Please sign in first</span>
+</div> : (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold text-pink-700 mt-10">Provide Your Codeforces Handle</h1>
       <form onSubmit={handleSubmit}>

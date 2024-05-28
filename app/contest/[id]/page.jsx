@@ -20,7 +20,6 @@ const page = () => {
         const res = await fetch(`/api/contest/${id}`)
         const data = await res.json()
         if (!data.ok) {
-          console.log(data.message)
           return
         }
         setContestData(data.contest)
