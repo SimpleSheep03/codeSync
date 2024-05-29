@@ -58,7 +58,7 @@ const Page = () => {
     </div>) : (
     <div className='container mx-auto py-8'>
       <h1 className='text-4xl font-bold mb-6 text-center text-pink-700'>
-        Past Contests
+        Past Contests of {session.codeforcesId}
       </h1>
       <div className='space-y-4'>
         {contests.map((contest, index) => (

@@ -43,7 +43,6 @@ const InputFormHomePage = () => {
           ...prevData,
           codeforcesId1: result.codeforcesId,
         }));
-        // console.log(session?.lastContest)
       } catch (error) {
         console.log(error);
         toast.error("Could not fetch teams");
@@ -257,7 +256,7 @@ const InputFormHomePage = () => {
             htmlFor="contestantType"
             className="w-full mb-1 text-sm font-medium"
           >
-            Contestant Type
+            Participation Type
           </label>
           <select
             name="contestantType"

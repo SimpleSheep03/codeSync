@@ -47,8 +47,6 @@ export const authOptions = {
     async session({ session }) {
       // 1. Get user from database
       const user = await User.findOne({ email: session.user.email });
-      const contests = await Contest.find({ users : { $in : [ user._id ] } })
-      session.lastContest = contests.length > 0 ? contests[0] : null;
       // 2. Assign the user id to the session
       session.user.id = user._id.toString();
       session.codeforcesId = user.codeforcesId

@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import profileDefault from '@/assets/images/profile.png';
 import Spinner from '@/components/Spinner';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const ProfilePage = () => {
   const { data: session } = useSession();
@@ -83,19 +84,15 @@ const ProfilePage = () => {
             </div>
             <div className="md:w-3/4 md:pl-4 text-xl max-sm:mt-5">
               <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">
+                <h3 className="block text-gray-700 font-bold mb-2">
                   Codeforces ID:
-                </label>
+                </h3>
                 <div className="flex items-center">
-                  <input
-                    type="text"
-                    id="codeforcesId"
-                    name="codeforcesId"
-                    className="border rounded w-full py-2 px-3 mb-2"
-                    required
-                    value={codeforcesId}
-                    readOnly
-                  />
+                  <Link
+                    href={`https://codeforces.com/profile/${codeforcesId}`}
+                    className="rounded w-full py-2 px-3 mb-2 text-blue-900 underline"
+                  >{codeforcesId}
+                  </Link>
                 </div>
               </div>
               <div className="mt-6">
@@ -109,7 +106,11 @@ const ProfilePage = () => {
                       <p className="text-gray-700">Members:</p>
                       <ul className="list-disc list-inside">
                         {team.codeforcesHandles.map((handle, index) => (
-                          <li key={index}>{handle}</li>
+                          <li key={index}>
+                          <Link href={`https://codeforces.com/profile/${handle}`} target='_blank' className="text-pink-900 underline">
+                            {handle}
+                          </Link>
+                          </li>
                         ))}
                       </ul>
                     </div>
