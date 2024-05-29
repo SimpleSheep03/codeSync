@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 const Page = () => {
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [handle , setHandle] = useState(null)
   const { id } = useParams();
   const { data: session } = useSession();
   const router = useRouter();
@@ -23,13 +24,16 @@ const Page = () => {
 
       try {
         const res = await fetch(`/api/contest/with/${id}`);
+        const res2 = await fetch(`/api/profile/${id}`)
         const data = await res.json();
-        if (!data.ok) {
+        const data2 = await res2.json()
+        if (!data.ok || !data2.ok) {
           toast.error(data.message);
           return;
         }
 
         setContests(data.contests);
+        setHandle(data2.codeforcesId)
       } catch (error) {
         console.error(error);
         toast.error('Could not fetch contests');
@@ -58,7 +62,7 @@ const Page = () => {
     </div>) : (
     <div className='container mx-auto py-8'>
       <h1 className='text-4xl font-bold mb-6 text-center text-pink-700'>
-        Past Contests of {session.codeforcesId}
+        Past Contests of {handle}
       </h1>
       <div className='space-y-4'>
         {contests.map((contest, index) => (

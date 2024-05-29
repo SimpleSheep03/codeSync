@@ -90,7 +90,7 @@ const ProfilePage = () => {
                 <div className="flex items-center">
                   <Link
                     href={`https://codeforces.com/profile/${codeforcesId}`}
-                    className="rounded w-full py-2 px-3 mb-2 text-blue-900 underline"
+                    className="rounded w-full py-2 px-3 mb-2 text-blue-900 underline" target='_blank'
                   >{codeforcesId}
                   </Link>
                 </div>
