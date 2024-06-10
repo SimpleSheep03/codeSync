@@ -90,7 +90,7 @@ const NavItems = () => {
       )}
 
       {/* Notification Icon */}
-      <Link href="/notifications"> {/* Add proper href for notifications */}
+      {session && <Link href="/notifications"> {/* Add proper href for notifications */}
         <div className="relative">
           <FaBell className="text-gray-700 text-2xl" />
           {notificationCount > 0 && (
@@ -99,7 +99,7 @@ const NavItems = () => {
             </span>
           )}
         </div>
-      </Link>
+      </Link>}
 
       {!session && (
         <>

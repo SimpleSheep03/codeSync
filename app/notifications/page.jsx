@@ -16,7 +16,10 @@ const NotificationsPage = () => {
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      if (!session || !session?.user) return;
+      if (!session || !session?.user) {
+        setLoading(false)
+        return
+      }
       const id = session?.user?.id
       try {
         const response = await fetch(`/api/notifications`,{
@@ -64,7 +67,7 @@ const NotificationsPage = () => {
 
   return loading ? <Spinner loading={loading}/> : !session ? (
     <div className="flex mt-10 justify-center h-screen">
-      <span className="text-3xl text-pink-700">Please Sign In to view notifications</span>
+      <span className="text-3xl text-pink-700">Sign In to view notifications</span>
     </div>
   ) : (
     <div className="container mx-auto px-4 py-8">

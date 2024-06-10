@@ -69,6 +69,9 @@ const FeedbackPage = () => {
       <h1 className="text-3xl font-bold mb-6 text-center text-pink-700">
         Submit Feedback
       </h1>
+      <p className="text-center text-gray-600 mb-4">
+      Experiencing issues or need assistance? Share your feedback or concerns here, and we'll get back to you ASAP.
+      </p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-wrap">
           <label htmlFor="feedback" className="w-full mb-1 text-sm font-medium">
@@ -96,7 +99,7 @@ const FeedbackPage = () => {
           <button
             type="submit"
             className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 mt-5"
-            disabled = {click}
+            disabled={click}
           >
             {click ? 'Loading...' : 'Submit'}
           </button>
