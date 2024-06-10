@@ -10,7 +10,7 @@ const InputFormHomePage = () => {
   const { data: session } = useSession();
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [teamLoading, setTeamLoading] = useState(true);
+  const [teamLoading, setTeamLoading] = useState(false);
   const [contestantType, setContestantType] = useState("Team");
   const [selectedTeam, setSelectedTeam] = useState("");
   const [showAddTeam, setShowAddTeam] = useState(false);

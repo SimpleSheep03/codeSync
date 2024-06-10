@@ -1,34 +1,36 @@
 'use client'
-import Link from 'next/link'
-import React, { useEffect, useState, useRef } from 'react'
-import { signIn, signOut, useSession, getProviders } from 'next-auth/react'
-import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link';
+import React, { useEffect, useState, useRef } from 'react';
+import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import { FaBell } from 'react-icons/fa'; // Importing the notification icon
 
 const NavItems = () => {
-  const { data: session } = useSession()
-  const [providers, setProviders] = useState()
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
-  const profileImage = session?.user?.image
-  const pathname = usePathname()
-  const router = useRouter()
-  const menuButtonRef = useRef(null)
-  const menuRef = useRef(null)
+  const { data: session } = useSession();
+  const [providers, setProviders] = useState();
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileImage = session?.user?.image;
+  const pathname = usePathname();
+  const router = useRouter();
+  const menuButtonRef = useRef(null);
+  const menuRef = useRef(null);
+  const notificationCount = 2; // Dummy notification count for now
 
   useEffect(() => {
     const setAuthProviders = async () => {
       if (!session) { // Check if session is falsy before fetching providers
         try {
-          const res = await getProviders()
-          setProviders(res)
+          const res = await getProviders();
+          setProviders(res);
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
       }
-    }
+    };
 
-    setAuthProviders()
-  }, [session])
+    setAuthProviders();
+  }, [session]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,20 +40,20 @@ const NavItems = () => {
         menuRef.current &&
         !menuRef.current.contains(event.target)
       ) {
-        setIsProfileMenuOpen(false)
+        setIsProfileMenuOpen(false);
       }
-    }
+    };
 
     if (isProfileMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isProfileMenuOpen])
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileMenuOpen]);
 
   return (
     <div className="flex items-center space-x-4">
@@ -63,17 +65,30 @@ const NavItems = () => {
         </Link>
       )}
 
+      {/* Notification Icon */}
+      {pathname !== '/notifications' && <Link href="/notifications"> {/* Add proper href for notifications */}
+        <div className="relative">
+          <FaBell className="text-gray-700 text-2xl" />
+          {notificationCount > 0 && (
+            <span className="bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs absolute -top-1 -right-1">
+              {notificationCount}
+            </span>
+          )}
+        </div>
+      </Link>}
+
       {!session && (
         <>
-          {providers && Object.values(providers).map((provider, index) => (
-            <button
-              className='bg-gray-100 px-3 text-blue-700 rounded-xl py-1 border-[3px] hover:border-pink-300 hover:text-blue-900'
-              key={index}
-              onClick={() => {signIn(provider.id)}}
-            >
-              Sign In
-            </button>
-          ))}
+          {providers &&
+            Object.values(providers).map((provider, index) => (
+              <button
+                className='bg-gray-100 px-3 text-blue-700 rounded-xl py-1 border-[3px] hover:border-pink-300 hover:text-blue-900'
+                key={index}
+                onClick={() => {signIn(provider.id)}}
+              >
+                Sign In
+              </button>
+            ))}
         </>
       )}
 
@@ -147,18 +162,6 @@ const NavItems = () => {
                   Add Team
                 </Link>
                 <Link
-                  href={`/notifications`}
-                  className='block px-4 py-2 text-sm text-gray-700'
-                  role='menuitem'
-                  tabIndex='-1'
-                  id='user-menu-item-1'
-                  onClick={() => {
-                    setIsProfileMenuOpen(false)
-                  }}
-                >
-                  Notifications
-                </Link>
-                <Link
                   href={`/feedback`}
                   className='block px-4 py-2 text-sm text-gray-700'
                   role='menuitem'
@@ -188,7 +191,7 @@ const NavItems = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default NavItems
+export default NavItems;
