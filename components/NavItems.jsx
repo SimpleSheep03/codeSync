@@ -5,6 +5,7 @@ import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { FaBell } from 'react-icons/fa'; // Importing the notification icon
+import { useGlobalContext } from '@/context/GlobalContext';
 
 const NavItems = () => {
   const { data: session } = useSession();
@@ -15,7 +16,7 @@ const NavItems = () => {
   const router = useRouter();
   const menuButtonRef = useRef(null);
   const menuRef = useRef(null);
-  const notificationCount = 2; // Dummy notification count for now
+  const {notificationCount , setNotificationCount} = useGlobalContext()
 
   useEffect(() => {
     const setAuthProviders = async () => {
@@ -29,7 +30,30 @@ const NavItems = () => {
       }
     };
 
+    const fetchUnreadCount = async () => {
+      if(!session || !session?.user || !session?.user?.id){
+        return
+      }
+      const id = session?.user?.id
+      try {
+        const response = await fetch('/api/notifications/unread-count' , {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id }),
+        })
+        const data = await response.json()
+        if(data.ok){
+          setNotificationCount(data.count)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
     setAuthProviders();
+    fetchUnreadCount()
   }, [session]);
 
   useEffect(() => {
@@ -66,7 +90,7 @@ const NavItems = () => {
       )}
 
       {/* Notification Icon */}
-      {pathname !== '/notifications' && <Link href="/notifications"> {/* Add proper href for notifications */}
+      <Link href="/notifications"> {/* Add proper href for notifications */}
         <div className="relative">
           <FaBell className="text-gray-700 text-2xl" />
           {notificationCount > 0 && (
@@ -75,7 +99,7 @@ const NavItems = () => {
             </span>
           )}
         </div>
-      </Link>}
+      </Link>
 
       {!session && (
         <>

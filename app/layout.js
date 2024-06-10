@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthProvider from "@/components/AuthProvider";
 import Footer from "@/components/Footer";
+import { GlobalProvider } from "@/context/GlobalContext";
 
 export const metadata = {
   title: "CodeSync",
@@ -12,15 +13,17 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <AuthProvider>
-    <html lang="en">
-      <body>
-        <Navbar/>
-        {children}
-        {/* <Footer/> */}
-        <ToastContainer/>
-        </body>
-    </html>
-    </AuthProvider>
+    <GlobalProvider>
+      <AuthProvider>
+      <html lang="en">
+        <body>
+          <Navbar/>
+          {children}
+          {/* <Footer/> */}
+          <ToastContainer/>
+          </body>
+      </html>
+      </AuthProvider>
+    </GlobalProvider>
   );
 }

@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 
-const NotificationCard = ({ notification, markAsRead }) => {
+const NotificationCard = ({ notification, markAsRead , readClick }) => {
   return (
     <div className="border p-4 mb-4 rounded-md relative">
       {!notification.read && (
@@ -14,7 +14,7 @@ const NotificationCard = ({ notification, markAsRead }) => {
           onClick={() => markAsRead(notification._id)}
           className="block mt-2 text-blue-500 hover:text-blue-700"
         >
-          Mark as Read
+          {!readClick ? 'Mark as Read' : 'Wait...'}
         </button>
       )}
     </div>

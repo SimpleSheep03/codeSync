@@ -4,11 +4,15 @@ import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
 import Spinner from '@/components/Spinner';
 import NotificationCard from '@/components/NotificationCard';
+import { useGlobalContext } from '@/context/GlobalContext';
 
 const NotificationsPage = () => {
   const { data: session } = useSession();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [readClick , setReadClick] = useState(false)
+
+  const { setNotificationCount } = useGlobalContext()
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -35,6 +39,7 @@ const NotificationsPage = () => {
   }, [session]);
 
   const markAsRead = async (notificationId) => {
+    setReadClick(true)
     try {
       const response = await fetch(`/api/notifications/${notificationId}/mark-as-read`, {
         method: 'PUT',
@@ -45,11 +50,15 @@ const NotificationsPage = () => {
           notification._id === notificationId ? { ...notification, read: true } : notification
         ));
         console.log(result.message);
+        setNotificationCount((prevCount) => prevCount - 1)
       } else {
         toast.error(result.message);
       }
     } catch (error) {
       toast.error('Failed to mark as read.');
+    }
+    finally{
+      setReadClick(false)
     }
   };
 
@@ -64,7 +73,7 @@ const NotificationsPage = () => {
         <p className="text-center text-gray-500">No notifications available.</p>
       ) : (
         notifications.map(notification => (
-          <NotificationCard key={notification._id} notification={notification} markAsRead={markAsRead} />
+          <NotificationCard key={notification._id} notification={notification} markAsRead={markAsRead} readClick = {readClick} />
         ))
       )}
     </div>
