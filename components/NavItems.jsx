@@ -146,6 +146,30 @@ const NavItems = () => {
                 >
                   Add Team
                 </Link>
+                <Link
+                  href={`/notifications`}
+                  className='block px-4 py-2 text-sm text-gray-700'
+                  role='menuitem'
+                  tabIndex='-1'
+                  id='user-menu-item-1'
+                  onClick={() => {
+                    setIsProfileMenuOpen(false)
+                  }}
+                >
+                  Notifications
+                </Link>
+                <Link
+                  href={`/feedback`}
+                  className='block px-4 py-2 text-sm text-gray-700'
+                  role='menuitem'
+                  tabIndex='-1'
+                  id='user-menu-item-1'
+                  onClick={() => {
+                    setIsProfileMenuOpen(false)
+                  }}
+                >
+                  Feedback
+                </Link>
                 <button
                   onClick={() => {
                     setIsProfileMenuOpen(false)
