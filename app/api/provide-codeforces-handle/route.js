@@ -10,7 +10,7 @@ export const POST = async (request) => {
       await connectDB();
       const check_user = await User.find({ codeforcesId : codeforcesHandle })
       if(check_user.length > 0){
-        return new Response(JSON.stringify({ message : 'This ID has already been taken up by another user' , ok : false}), { status : 400 })
+        return new Response(JSON.stringify({ message : 'This ID has already been taken up by some other user' , ok : false}), { status : 400 })
       }
       const check_user_2 = await fetch(`https://codeforces.com/api/user.info?handles=${codeforcesHandle.toLowerCase()}&checkHistoricHandles=false`).then(async(data) => await data.json())
 

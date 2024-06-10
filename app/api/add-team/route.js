@@ -37,7 +37,7 @@ export const POST = async (request) => {
         }
 
         if (codeforcesHandles.length < 2) {
-            return new Response(JSON.stringify({ message: 'Provide at least 2 members', ok: false }), { status: 400 });
+            return new Response(JSON.stringify({ message: 'Please provide at least 2 members', ok: false }), { status: 400 });
         }
 
         // Check if a team with the same codeforcesHandles already exists
