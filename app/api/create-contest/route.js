@@ -41,6 +41,14 @@ export const POST = async (request) => {
       );
     }
 
+    const uniqueHandles = new Set([codeforcesId1, codeforcesId2, codeforcesId3].filter(Boolean));
+    if (uniqueHandles.size !== [codeforcesId1, codeforcesId2, codeforcesId3].filter(Boolean).length) {
+      return new Response(
+        JSON.stringify({ message: "Duplicate Codeforces handles are not allowed", ok: false }),
+        { status: 400 }
+      );
+    }
+
     const total_questions = await fetch(
       `https://codeforces.com/api/problemset.problems`
     ).then(async (data) => await data.json());

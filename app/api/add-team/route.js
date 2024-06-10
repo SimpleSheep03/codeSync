@@ -21,6 +21,11 @@ export const POST = async (request) => {
             return new Response(JSON.stringify({ message: 'Required fields not provided', ok: false }), { status: 400 });
         }
 
+        const uniqueIds = [...new Set(ids)];
+        if (uniqueIds.length !== ids.length) {
+            return new Response(JSON.stringify({ message: 'Duplicate Codeforces handles are not allowed', ok: false }), { status: 400 });
+        }
+
         let codeforcesHandles = [];
 
         for (const id of ids) {
