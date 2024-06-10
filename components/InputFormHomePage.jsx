@@ -10,7 +10,7 @@ const InputFormHomePage = () => {
   const { data: session } = useSession();
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [teamLoading , setTeamLoading] = useState(true)
+  const [teamLoading, setTeamLoading] = useState(true);
   const [contestantType, setContestantType] = useState("Team");
   const [selectedTeam, setSelectedTeam] = useState("");
   const [showAddTeam, setShowAddTeam] = useState(false);
@@ -24,6 +24,7 @@ const InputFormHomePage = () => {
     upperDifficulty: "1800",
     timeLimit: "120",
     tags: [],
+    shuffleOrder: true,
   });
 
   useEffect(() => {
@@ -92,6 +93,13 @@ const InputFormHomePage = () => {
     }
   };
 
+  const handleShuffleChange = (e) => {
+    setData((prevData) => ({
+      ...prevData,
+      shuffleOrder: !prevData.shuffleOrder,
+    }));
+  };
+
   const handleCheckboxChange = (e) => {
     const { checked, value } = e.target;
     setData((prevData) => ({
@@ -113,6 +121,7 @@ const InputFormHomePage = () => {
       lowerDifficulty,
       upperDifficulty,
       timeLimit,
+      shuffleOrder,
     } = data;
     const temp = data.tags.length == 0 ? tags : data.tags;
     try {
@@ -129,6 +138,7 @@ const InputFormHomePage = () => {
           lowerDifficulty,
           upperDifficulty,
           timeLimit,
+          shuffleOrder,
           tags: temp,
           contestantType,
           selectedTeam,
@@ -158,7 +168,9 @@ const InputFormHomePage = () => {
 
     if (selectedTeam) {
       const { codeforcesHandles } = selectedTeam;
-      const newHandles = codeforcesHandles.filter((handle) => handle != data.codeforcesId1)
+      const newHandles = codeforcesHandles.filter(
+        (handle) => handle != data.codeforcesId1
+      );
       setData((prevData) => ({
         ...prevData,
         codeforcesId2: newHandles[0] || "",
@@ -178,14 +190,14 @@ const InputFormHomePage = () => {
 
   const handleNewTeamSubmit = async (e) => {
     e.preventDefault();
-    let ids = [data.codeforcesId1]
-    if(data.codeforcesId2 != ''){
-      ids.push(data.codeforcesId2)
+    let ids = [data.codeforcesId1];
+    if (data.codeforcesId2 != "") {
+      ids.push(data.codeforcesId2);
     }
-    if(data.codeforcesId3 != ''){
-      ids.push(data.codeforcesId3)
+    if (data.codeforcesId3 != "") {
+      ids.push(data.codeforcesId3);
     }
-    setTeamLoading(true)
+    setTeamLoading(true);
     try {
       const res = await fetch("/api/add-team", {
         method: "POST",
@@ -194,7 +206,7 @@ const InputFormHomePage = () => {
         },
         body: JSON.stringify({
           teamName: newTeamName,
-          ids
+          ids,
         }),
       });
 
@@ -202,7 +214,7 @@ const InputFormHomePage = () => {
       if (result.ok) {
         toast.success(result.message);
         setTeams((prevTeams) => [...prevTeams, result.team]);
-        setSelectedTeam(result.team)
+        setSelectedTeam(result.team);
         setShowAddTeam(false);
         setNewTeamName("");
       } else {
@@ -211,9 +223,8 @@ const InputFormHomePage = () => {
     } catch (error) {
       console.log(error);
       toast.error("Could not add team");
-    }
-    finally{
-      setTeamLoading(false)
+    } finally {
+      setTeamLoading(false);
     }
   };
 
@@ -228,7 +239,9 @@ const InputFormHomePage = () => {
         ].filter(Boolean); // remove empty values
         return (
           handles.length === enteredHandles.length &&
-          handles.every((handle) => enteredHandles.includes(handle.toLowerCase()))
+          handles.every((handle) =>
+            enteredHandles.includes(handle.toLowerCase())
+          )
         );
       });
       if (matchingTeam) {
@@ -283,9 +296,12 @@ const InputFormHomePage = () => {
                 className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 onChange={handleTeamSelect}
                 value={selectedTeam}
-              >{teams?.length == 0 ? 
-              <option value="Select Team">No teams added yet</option> :
-                <option value="Select Team">Select Team</option>}
+              >
+                {teams?.length == 0 ? (
+                  <option value="Select Team">No teams added yet</option>
+                ) : (
+                  <option value="Select Team">Select Team</option>
+                )}
                 {teams.map((team) => (
                   <option key={team?._id} value={team?._id}>
                     {team?.teamName}
@@ -351,13 +367,14 @@ const InputFormHomePage = () => {
               </div>
               {selectedTeam === "" &&
                 (data.codeforcesId2 !== "" || data.codeforcesId3 !== "") &&
-                !showAddTeam && session && (
+                !showAddTeam &&
+                session && (
                   <div className="flex flex-wrap md:px-3">
                     <button
                       className="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
                       onClick={handleAddTeamClick}
                     >
-                      Add this team (optional) 
+                      Add this team (optional)
                     </button>
                   </div>
                 )}
@@ -389,7 +406,7 @@ const InputFormHomePage = () => {
                 onClick={handleNewTeamSubmit}
                 disabled={teamLoading}
               >
-               { !teamLoading ? <>Add this team</> : <>Loading...</>}
+                {!teamLoading ? <>Add this team</> : <>Loading...</>}
               </button>
               <button
                 className="inline-flex items-center mx-3 px-4 py-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 mt-3"
@@ -492,6 +509,20 @@ const InputFormHomePage = () => {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="flex flex-wrap">
+          <div className="flex items-center mb-1">
+            <input
+              type="checkbox"
+              id="shuffleOrder"
+              name="tags"
+              className="mr-2"
+              onChange={handleShuffleChange}
+              checked={data.shuffleOrder}
+            />
+            <label htmlFor="shuffleOrder">Shuffle Question Order</label>
+          </div>
         </div>
 
         <div className="grid grid-cols-6 max-sm:grid-cols-3 max-sm:gap-3 max-md:grid-cols-4 max-md:gap-2">
