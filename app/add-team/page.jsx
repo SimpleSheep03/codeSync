@@ -70,7 +70,7 @@ const CodeforcesForm = () => {
   };
 
   return !session ? (
-    <div className="flex mt-10 justify-center h-screen">
+    <div className="container mx-auto px-4 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md flex justify-center">
       <span className='text-3xl text-pink-700'>Please Sign In to add a team</span>
     </div>
   ) : (
