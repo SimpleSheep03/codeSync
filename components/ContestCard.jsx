@@ -6,7 +6,7 @@ const ContestCard = ({ contest }) => {
   return (
     <div key={contest._id} className="p-10 bg-gray-50 shadow-md rounded-md border border-pink-100">
       <div className="mb-4">
-        <Link href={`/contest/${contest._id}`} target="_blank">
+        <Link href={`/contest/${contest._id}`}>
           <span className="inline-flex items-center text-blue-700 underline">
             <h2 className="text-2xl mr-2 font-semibold">Contest Page</h2>
             <FaExternalLinkAlt />
