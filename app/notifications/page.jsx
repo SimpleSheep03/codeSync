@@ -66,11 +66,11 @@ const NotificationsPage = () => {
   };
 
   return loading ? <Spinner loading={loading}/> : !session ? (
-    <div className="flex mt-10 justify-center h-screen">
+    <div className="container mx-auto px-4 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md flex justify-center">
       <span className="text-3xl text-pink-700">Sign In to view notifications</span>
     </div>
   ) : (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md">
       <h1 className="text-3xl font-bold mb-6 text-center text-pink-700">Notifications</h1>
       {notifications.length === 0 ? (
         <p className="text-center text-gray-500">No notifications available.</p>

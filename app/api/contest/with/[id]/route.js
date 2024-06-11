@@ -8,15 +8,10 @@ export const GET = async (request , { params }) => {
         await connectDB()
         const { id } = params
         if(!id){
-            return new Response(JSON.stringify({ message : 'User Id is required' , ok : false }) , { status : 400 })
-        }
-        const user = await User.findById(id)
-
-        if(user.length == 0){
-            return new Response(JSON.stringify({ message : 'No such user exists' , ok : false }) , { status : 400 })
+            return new Response(JSON.stringify({ message : 'Fill all the fields' , ok : false }) , { status : 400 })
         }
 
-        const contests = await Contest.find({ users : { $in : [id] } }).sort({ timeStart : -1 })
+        const contests = await Contest.find({ contestants : { $in : [id] } }).sort({ timeStart : -1 })
         
         return new Response(JSON.stringify({ message : 'Found contests' , ok : true , contests }) , { status : 200 })
     } catch (error) {

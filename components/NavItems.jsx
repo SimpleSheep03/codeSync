@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { FaBell } from 'react-icons/fa'; // Importing the notification icon
+import { FaBell, FaHome } from 'react-icons/fa'; // Importing the notification icon
 import { useGlobalContext } from '@/context/GlobalContext';
 
 const NavItems = () => {
@@ -83,8 +83,8 @@ const NavItems = () => {
     <div className="flex items-center space-x-4">
       {pathname !== '/' && (
         <Link href='/'>
-          <button className='bg-gray-100 px-3 text-blue-700 rounded-xl py-1 border-[3px] hover:border-pink-300 hover:text-blue-900'>
-            Home
+          <button className='focus:outline-none'>
+            <FaHome className="text-2xl mr-2 text-gray-700" />
           </button>
         </Link>
       )}
@@ -162,7 +162,7 @@ const NavItems = () => {
                   Your Profile
                 </Link>
                 <Link
-                  href={`/contest/with/${session?.user?.id}`}
+                  href={`/contest/with/${session?.codeforcesId}`}
                   className='block px-4 py-2 text-sm text-gray-700'
                   role='menuitem'
                   tabIndex='-1'

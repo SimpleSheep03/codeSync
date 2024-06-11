@@ -56,7 +56,7 @@ const ProfilePage = () => {
   return loading ? (
     <Spinner loading={loading} />
   ) : !session ? (
-    <div className="flex mt-10 justify-center h-screen">
+    <div className="container mx-auto px-4 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md flex justify-center">
       <span className="text-3xl text-pink-700">Please Sign In to View Profile</span>
     </div>
   ) : (
@@ -65,7 +65,7 @@ const ProfilePage = () => {
         <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
           <h1 className="text-3xl font-bold mb-4">Your Profile</h1>
           <div className="flex flex-col md:flex-row">
-            <div className="md:w-1/4 mx-20 mt-10">
+            <div className="md:w-1/4 md:mx-20 mt-10">
               <div className="mb-4">
                 <Image
                   className="h-32 w-32 md:h-48 md:w-48 rounded-full mx-auto md:mx-0"
@@ -75,7 +75,7 @@ const ProfilePage = () => {
                   alt="User"
                 />
               </div>
-              <h2 className="text-2xl mb-4">
+              <h2 className="text-2xl mt-7 my-4">
                 <span className="font-bold block">Name: </span> {profileName}
               </h2>
               <h2 className="text-2xl">
@@ -83,17 +83,17 @@ const ProfilePage = () => {
               </h2>
             </div>
             <div className="md:w-3/4 md:pl-4 text-xl max-sm:mt-5">
-              <div className="mb-4">
-                <h3 className="block text-gray-700 font-bold mb-2">
+              <div className="mb-4 flex items-center">
+                <h3 className="block text-gray-700 font-bold mr-2">
                   Codeforces ID:
                 </h3>
-                <div className="flex items-center">
-                  <Link
-                    href={`https://codeforces.com/profile/${codeforcesId}`}
-                    className="rounded w-full py-2 px-3 mb-2 text-blue-900 underline" target='_blank'
-                  >{codeforcesId}
-                  </Link>
-                </div>
+                <Link
+                  href={`https://codeforces.com/profile/${codeforcesId}`}
+                  className="px-5 py-2 text-blue-900 underline"
+                  target='_blank'
+                >
+                  {codeforcesId}
+                </Link>
               </div>
               <div className="mt-6">
                 <h3 className="text-2xl font-bold mb-2 text-gray-700">Teams</h3>

@@ -65,7 +65,7 @@ const FeedbackPage = () => {
       </span>
     </div>
   ) : (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md">
       <h1 className="text-3xl font-bold mb-6 text-center text-pink-700">
         Submit Feedback
       </h1>

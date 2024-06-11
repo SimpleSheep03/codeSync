@@ -74,7 +74,7 @@ const CodeforcesForm = () => {
       <span className='text-3xl text-pink-700'>Please Sign In to add a team</span>
     </div>
   ) : (
-    <div className="max-w-md mx-auto mt-10 p-5 bg-white shadow-md rounded-md">
+    <div className="max-w-md mx-auto mt-10 p-5 bg-gray-50 shadow-md rounded-md border border-pink-100">
       <h2 className="text-2xl font-bold mb-4 text-pink-700">Enter Team Details</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

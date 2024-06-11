@@ -1,14 +1,18 @@
 import Link from "next/link";
 import React from "react";
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 const ContestCard = ({ contest }) => {
   return (
-    <div key={contest._id} className="p-4 bg-white shadow-md rounded-md">
-      <Link href={`/contest/${contest._id}`} target="_blank">
-        <h2 className="text-2xl font-semibold mb-2 text-blue-700 underline">
-          Contest ID: {contest._id}
-        </h2>
-      </Link>
+    <div key={contest._id} className="p-10 bg-gray-50 shadow-md rounded-md border border-pink-100">
+      <div className="mb-4">
+        <Link href={`/contest/${contest._id}`} target="_blank">
+          <span className="inline-flex items-center text-blue-700 underline">
+            <h2 className="text-2xl mr-2 font-semibold">Contest Page</h2>
+            <FaExternalLinkAlt />
+          </span>
+        </Link>
+      </div>
       <h3 className="text-xl mb-2 text-gray-700">
         Participation Type: {contest.contestantType}
       </h3>

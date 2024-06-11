@@ -22,18 +22,20 @@ const Page = () => {
         return;
       }
 
+      if(session && session.codeforcesId != id){
+        router.push(`/contest/with/${session.codeforcesId}`)
+      }
+
       try {
         const res = await fetch(`/api/contest/with/${id}`);
-        const res2 = await fetch(`/api/profile/${id}`)
-        const data = await res.json();
-        const data2 = await res2.json()
-        if (!data.ok || !data2.ok) {
+        const data = await res.json()
+        if (!data.ok) {
           toast.error(data.message);
           return;
         }
 
         setContests(data.contests);
-        setHandle(data2.codeforcesId)
+        setHandle(id)
       } catch (error) {
         console.error(error);
         toast.error('Could not fetch contests');
@@ -43,12 +45,12 @@ const Page = () => {
     };
 
     fetchContests();
-  }, [id]);
+  }, [id , session]);
 
   return loading ? (
     <Spinner loading={loading} />
   ) : contests.length === 0 ? (
-    <div className='container mx-auto p-8 mt-5'>
+    <div className='container mx-auto px-4 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md'>
       <h1 className='text-4xl font-bold mb-10 text-center text-pink-700'>
         No Past Contests Found
       </h1>
@@ -57,10 +59,10 @@ const Page = () => {
       </p>
     </div>
   ) : !session ? (
-    <div className="flex mt-10 justify-center h-screen">
+    <div className="container mx-auto px-4 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md flex justify-center">
       <span className="text-3xl text-pink-700">Please Sign In to View Contests</span>
     </div>) : (
-    <div className='container mx-auto py-8'>
+    <div className='container mx-auto my-10'>
       <h1 className='text-4xl font-bold mb-6 text-center text-pink-700'>
         Past Contests of {handle}
       </h1>

@@ -4,7 +4,7 @@ import Spinner from '@/components/Spinner'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { FaCheckCircle, FaCopy, FaCheck } from 'react-icons/fa'
+import { FaCheckCircle, FaCopy, FaCheck, FaExternalLinkAlt } from 'react-icons/fa'
 
 const page = () => {
   const { id } = useParams()
@@ -81,7 +81,7 @@ const page = () => {
   return loading ? (
     <Spinner loading={loading} />
   ) : (
-    <div className="container mx-auto px-4 py-8 mt-5">
+    <div className="container mx-auto px-4 py-10 mt-10 bg-gray-50 border border-pink-100 shadow-md rounded-md">
       <h1 className='text-4xl text-pink-700 font-bold text-center'>Contest Page</h1>
       <div className='mt-5 mx-auto text-center'>
         <CountdownTimer targetDate={new Date(contestData.timeEnding)} />
@@ -99,8 +99,12 @@ const page = () => {
           {contestData.problemList.map((problem, index) => (
             <div className='flex flex-wrap mt-10 justify-center items-center' key={index}>
               <span className='text-blue-900 font-semibold'>{index + 1}. {problem.name}</span>
-              <Link href={`https://codeforces.com/contest/${problem.contestId}/problem/${problem.index}`} className='text-pink-900 bg-gray-100 p-1 rounded-xl ms-3 border hover:border-blue-200' target='_blank'>
-                Open
+              <Link
+                href={`https://codeforces.com/contest/${problem.contestId}/problem/${problem.index}`}
+                className='text-blue-900 bg-gray-100 p-1 rounded-xl ms-3 border hover:border-blue-200 inline-flex items-center'
+                target='_blank'
+              >
+                <FaExternalLinkAlt/>
               </Link>
               {solved.some(solvedProblem =>
                 solvedProblem.contestId === problem.contestId && solvedProblem.index === problem.index

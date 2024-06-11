@@ -49,8 +49,8 @@ const ProvideCodeforcesHandle = () => {
   return loading ? <Spinner loading={loading}/> : !session ? <div className="flex mt-10 justify-center h-screen">
   <span className="text-3xl text-pink-700">Please sign in first</span>
 </div> : (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold text-pink-700 mt-10">Provide Your Codeforces Handle</h1>
+    <div className="container mx-auto px-10 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md">
+      <h1 className="text-2xl font-bold text-pink-700">Provide Your Codeforces Handle</h1>
       <form onSubmit={handleSubmit}>
         <label className="block text-gray-700 mt-5">Codeforces Handle  (YOU CANNOT CHANGE THIS IN THE FUTURE)</label>
         <input

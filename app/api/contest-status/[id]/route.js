@@ -30,8 +30,9 @@ export const GET = async (request, { params }) => {
         }
     })
 
+    const data = await fetch(`https://codeforces.com/api/user.status?handle=peace03&from=1&count=100000`).then(async(data) => await data.json())
 
-    return new Response(JSON.stringify({ message : 'Questions fetched' , ok : true , solved }), { status : 200 })
+    return new Response(JSON.stringify({ message : 'Question status fetched' , ok : true , solved }), { status : 200 })
         
     } catch (error) {
         console.log(error)

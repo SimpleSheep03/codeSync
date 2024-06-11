@@ -4,7 +4,7 @@ import NavItems from './NavItems'
 
 const Navbar = () => {
   return (
-    <nav className='bg-gray-300 p-6 border-b border-blue-300'>
+    <nav className='bg-gray-300 p-6 border-b border-pink-100'>
         <div className='flex justify-around'>
             <div className=''>
                 <Logo/>
