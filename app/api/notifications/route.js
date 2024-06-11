@@ -17,8 +17,10 @@ export const POST = async (request) => {
         if(!user){
             return new Response(JSON.stringify({ message : 'Unauthorized' , ok : false}), { status : 401 })
         }
-
-        const notifications = await Notification.find({ receiver : id }).sort({ createdAt : -1 })
+        
+        const notifications = await Notification.find({ receiver : id , 
+            toAdmin : false
+         }).sort({ createdAt : -1 })
 
         return new Response(JSON.stringify({ message : 'Notifications fetched' , ok : true , notifications}) , { status : 200 })
 

@@ -134,9 +134,8 @@ export const POST = async (request) => {
           { status: 408 }
         );
       }
-
-      const index = Math.floor(
-        Math.random() * total_questions.result.problems.length
+      let index = Math.floor(
+        Math.random() * (5500) + 1500
       );
       const problem = total_questions.result.problems[index];
 
@@ -147,7 +146,7 @@ export const POST = async (request) => {
         problem.tags.some((tag) => tags.includes(tag)) &&
         !newList.includes(problem)
       ) {
-        newList.push(problem);
+        newList.push(problem)
       }
     }
 

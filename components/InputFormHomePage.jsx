@@ -20,8 +20,8 @@ const InputFormHomePage = () => {
     codeforcesId2: "",
     codeforcesId3: "",
     numQuestions: "6",
-    lowerDifficulty: "800",
-    upperDifficulty: "2000",
+    lowerDifficulty: "1000",
+    upperDifficulty: "1800",
     timeLimit: "120",
     tags: [],
     shuffleOrder: true,
@@ -157,7 +157,7 @@ const InputFormHomePage = () => {
       console.log(error);
       toast.error(result.message);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 

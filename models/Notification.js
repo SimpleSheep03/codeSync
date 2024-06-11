@@ -16,6 +16,10 @@ const NotificationSchema = new Schema({
     rating : {
         type : Number,
     },
+    toAdmin : {
+        type : Boolean,
+        default : true,
+    },
     read : {
         type : Boolean,
         default : false,

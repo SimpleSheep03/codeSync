@@ -18,7 +18,7 @@ export const POST = async (request) => {
         }
 
         const notifications = await Notification.find({ receiver : id ,
-            read : false
+            read : false , toAdmin : false
         })
 
         const count = notifications.length
