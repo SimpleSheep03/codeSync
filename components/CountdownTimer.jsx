@@ -46,10 +46,17 @@ const CountdownTimer = ({ targetDate }) => {
 
   return (
     <div className='text-2xl mt-10'>
-      {
-        timerComponents.length ? <><p>Time remaining : </p>
-        <span className='mt-3'>{timerComponents}</span></> : <span>Contest over</span>
-      }
+      {timerComponents.length ? (
+        <>
+          <p className='mb-2'>Time remaining:</p>
+          <span>{timerComponents}</span>
+        </>
+      ) : (
+        <>
+          <span className='text-gray-900'>Contest over</span>
+          {targetDate && <p className='text-gray-900 mt-2'>Ended at : {new Date(targetDate).toLocaleString()}</p>}
+        </>
+      )}
     </div>
   );
 };

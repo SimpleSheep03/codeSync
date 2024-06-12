@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { FaBell, FaHome } from 'react-icons/fa'; // Importing the notification icon
+import { FaBell, FaGoogle, FaHome } from 'react-icons/fa'; // Importing the notification icon
 import { useGlobalContext } from '@/context/GlobalContext';
 
 const NavItems = () => {
@@ -106,10 +106,11 @@ const NavItems = () => {
           {providers &&
             Object.values(providers).map((provider, index) => (
               <button
-                className='bg-gray-100 px-3 text-blue-700 rounded-xl py-1 border-[3px] hover:border-pink-300 hover:text-blue-900'
+                className='bg-gray-100 px-3 text-blue-700 rounded-xl py-1 border-[3px] hover:border-pink-400 hover:text-blue-900 flex items-center'
                 key={index}
-                onClick={() => {signIn(provider.id)}}
+                onClick={() => { signIn(provider.id) }}
               >
+                <FaGoogle className='mr-2' />  {/* Add the Google icon with some margin */}
                 Sign In
               </button>
             ))}

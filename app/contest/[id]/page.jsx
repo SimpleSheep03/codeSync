@@ -81,7 +81,7 @@ const page = () => {
   return loading ? (
     <Spinner loading={loading} />
   ) : (
-    <div className="container mx-auto px-4 py-10 mt-10 bg-gray-50 border border-pink-100 shadow-md rounded-md">
+    <div className="container mx-auto px-4 py-10 mt-10 bg-gray-50 border border-pink-100 shadow-md rounded-md mb-7">
       <h1 className='text-4xl text-pink-700 font-bold text-center'>Contest Page</h1>
       <div className='mt-5 mx-auto text-center'>
         <CountdownTimer targetDate={new Date(contestData.timeEnding)} />
