@@ -289,7 +289,7 @@ const InputFormHomePage = () => {
           <div className="flex flex-wrap md:px-3">
             <label
               htmlFor="teamSelect"
-              className="w-full text-sm font-medium mb-2 self-center"
+              className="w-full text-sm font-medium mb-2 self-center mt-6"
             >
               Choose a Team : (to auto-fill IDs)
             </label>
@@ -314,7 +314,7 @@ const InputFormHomePage = () => {
           </div>
         )}
         {(contestantType === "Team" || !session) && (
-          <div className={`flex flex-wrap md:px-3 ${contestantType === "Team" ? 'md:mb-0' : 'md:mb-6'}`}>
+          <div className={`flex flex-wrap md:px-3 mt-6 ${contestantType === "Team" ? 'md:mb-0' : 'md:mb-6'}`}>
             <label
               htmlFor="codeforcesId1"
               className={`w-full ${session || contestantType == 'Individual' ? 'mb-2' : 'max-sm:mb-2 self-center'} text-sm font-medium`}

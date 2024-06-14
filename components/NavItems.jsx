@@ -83,11 +83,12 @@ const NavItems = () => {
     <div className="flex items-center space-x-4">
       {pathname !== '/' && (
         <Link href='/'>
-          <button className='focus:outline-none'>
             <FaHome className="text-2xl mr-2 text-gray-700" />
-          </button>
         </Link>
       )}
+      {/* <Link href='/'>
+            <FaHome className={`text-2xl mr-2 text-gray-700 ${pathname != '/' ? '' : 'hidden'}`} />
+        </Link> */}
 
       {/* Notification Icon */}
       {session && <Link href="/notifications"> {/* Add proper href for notifications */}
