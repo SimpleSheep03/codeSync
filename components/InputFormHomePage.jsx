@@ -534,9 +534,8 @@ const InputFormHomePage = () => {
           <option value="Immediately">Immediately</option>
           <option value={1}>1 minute from now</option>
           <option value={2}>2 minutes from now</option>
-          <option value={3}>3 minutes from now</option>
-          <option value={4}>4 minutes from now</option>
           <option value={5}>5 minutes from now</option>
+          <option value={10}>10 minutes from now</option>
         </select>
       </div>
 
