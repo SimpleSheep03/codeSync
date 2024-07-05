@@ -1,84 +1,130 @@
 'use client'
 import CountdownTimer from '@/components/CountdownTimer'
 import Spinner from '@/components/Spinner'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { FaCheckCircle, FaCopy, FaCheck, FaExternalLinkAlt } from 'react-icons/fa'
+import { toast } from 'react-toastify'
 
 const Page = () => {
-  const { id } = useParams()
-  const [contestData, setContestData] = useState({})
-  const [loading, setLoading] = useState(true)
-  const [solved, setSolved] = useState([])
-  const [copyButtonText, setCopyButtonText] = useState('Copy link to share')
-  const [isCopied, setIsCopied] = useState(false)
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const { id } = useParams();
+  const [contestData, setContestData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [solved, setSolved] = useState([]);
+  const [copyButtonText, setCopyButtonText] = useState('Copy link to share');
+  const [isCopied, setIsCopied] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [showEndButtons, setShowEndButtons] = useState(false);
+  const { data: session } = useSession(); // Ensure you are correctly destructuring session from useSession()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/contest/${id}`)
-        const data = await res.json()
+        const res = await fetch(`/api/contest/${id}`);
+        const data = await res.json();
         if (!data.ok) {
-          return
+          return;
         }
-        setContestData(data.contest)
+        setContestData(data.contest);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
     const fetchSolved = async () => {
       try {
-        const res = await fetch(`/api/contest-status/${id}`)
-        const data = await res.json()
+        const res = await fetch(`/api/contest-status/${id}`);
+        const data = await res.json();
         if (data.ok) {
-          setSolved(data.solved)
+          setSolved(data.solved);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    };
 
-    fetchData()
-    fetchSolved()
-  }, [id])
+    fetchData();
+    fetchSolved();
+  }, [id]);
 
   useEffect(() => {
     const timer = setInterval(async () => {
       try {
-        const res = await fetch(`/api/contest-status/${id}`)
-        const data = await res.json()
+        const res = await fetch(`/api/contest-status/${id}`);
+        const data = await res.json();
         if (data.ok) {
-          setSolved(data.solved)
+          setSolved(data.solved);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }, 30000)
+    }, 30000);
 
-    return () => clearInterval(timer)
-  }, [id])
+    return () => clearInterval(timer);
+  }, [id]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCopyLink = () => {
-    const contestUrl = window.location.href
-    navigator.clipboard.writeText(contestUrl)
+    const contestUrl = window.location.href;
+    navigator.clipboard
+      .writeText(contestUrl)
       .then(() => {
-        setIsCopied(true)
-        setCopyButtonText('Copied!')
+        setIsCopied(true);
+        setCopyButtonText('Copied!');
         setTimeout(() => {
-          setIsCopied(false)
-          setCopyButtonText('Copy link to share')
-        }, 2000)
+          setIsCopied(false);
+          setCopyButtonText('Copy link to share');
+        }, 2000);
       })
       .catch((error) => {
-        console.error('Failed to copy text: ', error)
-      })
-  }
-  
+        console.error('Failed to copy text: ', error);
+      });
+  };
+
+  const handleEndContest = async () => {
+    // Check if session.codeforcesId is in data.contest.contestants array
+    if (session && session.codeforcesId && contestData.contestants.includes(session.codeforcesId)) {
+      setShowEndButtons(true);
+    } else {
+      // Handle case where the user is not authorized to end the contest
+      console.log('User not authorized to end the contest');
+    }
+  };
+
+  const handleConfirmEnd = async () => {
+    try {
+      const res = await fetch(`/api/contest/${id}/end`);
+      const data = await res.json();
+      if (data.ok) {
+        setContestData(data.contest);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error('Failed to end the contest: ', error);
+      toast.error('An error occurred while trying to end the contest.');
+    } finally {
+      setShowEndButtons(false);
+    }
+  };
+
+  const handleCancelEnd = () => {
+    setShowEndButtons(false);
+  };
+
+  const contestEnded = new Date(contestData.timeEnding) <= currentTime;
+
   return loading ? (
     <Spinner loading={loading} />
   ) : (
@@ -113,16 +159,33 @@ const Page = () => {
                   </Link>
                   {solved.some(solvedProblem =>
                     solvedProblem.contestId === problem.contestId && solvedProblem.index === problem.index
-                  ) && <FaCheckCircle className='text-green-500 ms-2' style={{ width: '24px', height: '24px' }} />
-                  }
+                  ) && <FaCheckCircle className='text-green-500 ms-2' style={{ width: '24px', height: '24px' }} />}
                 </div>
               ))}
             </div>
+            {!contestEnded && session && session.codeforcesId && contestData.contestants.includes(session.codeforcesId) && (
+              <div className='mt-10 flex justify-center'>
+                {showEndButtons ? (
+                  <>
+                    <button onClick={handleConfirmEnd} className='inline-flex items-center px-4 py-3 bg-red-400 hover:bg-red-500 text-white font-bold rounded-md mr-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400'>
+                      End
+                    </button>
+                    <button onClick={handleCancelEnd} className='inline-flex items-center px-4 py-3 bg-gray-400  text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400'>
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button onClick={handleEndContest} className='inline-flex items-center px-4 py-3 bg-red-400 hover:bg-red-500 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400'>
+                    End Contest
+                  </button>
+                )}
+              </div>
+            )}
           </>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

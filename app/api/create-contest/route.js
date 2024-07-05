@@ -51,6 +51,36 @@ export const POST = async (request) => {
       );
     }
 
+    let contestants = [];
+    if (codeforcesId1 !== "") {
+      const user = await fetch(
+        `https://codeforces.com/api/user.info?handles=${codeforcesId1}&checkHistoricHandles=false`
+      ).then(async (data) => await data.json());
+      contestants.push(user.result[0].handle);
+    }
+    if (codeforcesId2 !== "") {
+      const user = await fetch(
+        `https://codeforces.com/api/user.info?handles=${codeforcesId2}&checkHistoricHandles=false`
+      ).then(async (data) => await data.json());
+      contestants.push(user.result[0].handle);
+    }
+    if (codeforcesId3 !== "") {
+      const user = await fetch(
+        `https://codeforces.com/api/user.info?handles=${codeforcesId3}&checkHistoricHandles=false`
+      ).then(async (data) => await data.json());
+      contestants.push(user.result[0].handle);
+    }
+
+    if (contestantType === "Team" && contestants.length < 2) {
+      return new Response(
+        JSON.stringify({
+          message: "In team mode, provide at least 2 participants",
+          ok: false,
+        }),
+        { status: 400 }
+      );
+    }
+
     const total_questions = await fetch(
       `https://codeforces.com/api/problemset.problems`
     ).then(async (data) => await data.json());
@@ -154,36 +184,6 @@ export const POST = async (request) => {
 
     if (!shuffleOrder) {
       newList.sort((a, b) => a.rating - b.rating);
-    }
-
-    let contestants = [];
-    if (codeforcesId1 !== "") {
-      const user = await fetch(
-        `https://codeforces.com/api/user.info?handles=${codeforcesId1}&checkHistoricHandles=false`
-      ).then(async (data) => await data.json());
-      contestants.push(user.result[0].handle);
-    }
-    if (codeforcesId2 !== "") {
-      const user = await fetch(
-        `https://codeforces.com/api/user.info?handles=${codeforcesId2}&checkHistoricHandles=false`
-      ).then(async (data) => await data.json());
-      contestants.push(user.result[0].handle);
-    }
-    if (codeforcesId3 !== "") {
-      const user = await fetch(
-        `https://codeforces.com/api/user.info?handles=${codeforcesId3}&checkHistoricHandles=false`
-      ).then(async (data) => await data.json());
-      contestants.push(user.result[0].handle);
-    }
-
-    if (contestantType === "Team" && contestants.length < 2) {
-      return new Response(
-        JSON.stringify({
-          message: "In team mode, provide at least 2 participants",
-          ok: false,
-        }),
-        { status: 400 }
-      );
     }
 
     let users = [];

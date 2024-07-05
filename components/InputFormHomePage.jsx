@@ -160,7 +160,7 @@ const InputFormHomePage = () => {
       console.log(error);
       toast.error(result.message);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
