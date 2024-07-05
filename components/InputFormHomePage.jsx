@@ -25,6 +25,7 @@ const InputFormHomePage = () => {
     timeLimit: "120",
     tags: [],
     shuffleOrder: true,
+    startsIn : "Immediately"
   });
 
   useEffect(() => {
@@ -122,6 +123,7 @@ const InputFormHomePage = () => {
       upperDifficulty,
       timeLimit,
       shuffleOrder,
+      startsIn
     } = data;
     const temp = data.tags.length == 0 ? tags : data.tags;
     try {
@@ -142,6 +144,7 @@ const InputFormHomePage = () => {
           tags: temp,
           contestantType,
           selectedTeam,
+          startsIn
         }),
       });
 
@@ -449,7 +452,7 @@ const InputFormHomePage = () => {
           htmlFor="lowerDifficulty"
           className="w-full mb-2 text-sm font-medium"
         >
-          Select the lower limit for questions rating:
+          Minimum question rating:
         </label>
         <select
           id="lowerDifficulty"
@@ -471,7 +474,7 @@ const InputFormHomePage = () => {
           htmlFor="upperDifficulty"
           className="w-full mb-2 text-sm font-medium"
         >
-          Select the upper limit for questions rating:
+          Maximum question rating:
         </label>
         <select
           id="upperDifficulty"
@@ -497,7 +500,7 @@ const InputFormHomePage = () => {
           htmlFor="timeLimit"
           className="w-full mb-2 text-sm font-medium"
         >
-          Time Limit (Minutes):
+          Contest Duration (Minutes):
         </label>
         <select
           id="timeLimit"
@@ -511,6 +514,29 @@ const InputFormHomePage = () => {
               {t}
             </option>
           ))}
+        </select>
+      </div>
+
+      <div className="flex flex-wrap mb-6">
+        <label
+          htmlFor="startsIn"
+          className="w-full mb-2 text-sm font-medium"
+        >
+          Start Time :
+        </label>
+        <select
+          id="startsIn"
+          name="timeLimit"
+          className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          onChange={handleChange}
+          value={data.startsIn}
+        >
+          <option value="Immediately">Immediately</option>
+          <option value={1}>1 minute from now</option>
+          <option value={2}>2 minutes from now</option>
+          <option value={3}>3 minutes from now</option>
+          <option value={4}>4 minutes from now</option>
+          <option value={5}>5 minutes from now</option>
         </select>
       </div>
 

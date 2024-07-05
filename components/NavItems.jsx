@@ -81,7 +81,7 @@ const NavItems = () => {
 
   return (
     <div className="flex items-center space-x-4">
-      {pathname !== '/' && (
+      {session && (
         <Link href='/'>
             <FaHome className="text-2xl mr-2 text-gray-700" />
         </Link>

@@ -21,6 +21,7 @@ export const POST = async (request) => {
       tags,
       contestantType,
       selectedTeam,
+      startsIn
     } = data;
 
     if (
@@ -31,7 +32,8 @@ export const POST = async (request) => {
       !timeLimit ||
       shuffleOrder == undefined ||
       !tags ||
-      !contestantType
+      !contestantType ||
+      !startsIn
     ) {
       return new Response(
         JSON.stringify({ message: "Fill all the fields", ok: false }),
@@ -193,7 +195,10 @@ export const POST = async (request) => {
       }
     }
 
-    const now = new Date();
+    let now = new Date();
+    if(startsIn != 'Immediately'){
+      now = new Date(now.getTime() + startsIn * 60000)
+    }
     const newDate = new Date(now.getTime() + timeLimit * 60000);
 
     let teamId = selectedTeam;
@@ -209,8 +214,8 @@ export const POST = async (request) => {
       lowerLimit: lowerDifficulty,
       upperLimit: upperDifficulty,
       timeLimit,
-      timeStart: now.toISOString(), // Store start time in UTC
-      timeEnding: newDate.toISOString(), // Store end time in UTC
+      timeStart: now.toISOString(), 
+      timeEnding: newDate.toISOString(), 
       contestantType,
       team: teamId ? teamId : undefined,
     });
