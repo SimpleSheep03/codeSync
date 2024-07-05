@@ -13,7 +13,7 @@ const Page = () => {
   const [solved, setSolved] = useState([])
   const [copyButtonText, setCopyButtonText] = useState('Copy link to share')
   const [isCopied, setIsCopied] = useState(false)
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const currentTime = new Date()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,13 +62,6 @@ const Page = () => {
 
     return () => clearInterval(timer)
   }, [id])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
 
   const handleCopyLink = () => {
     const contestUrl = window.location.href
