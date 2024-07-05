@@ -1,12 +1,10 @@
 'use client'
-// components/CountdownTimer.js
+import { useState, useEffect } from 'react'
 
-import { useState, useEffect } from 'react';
-
-const CountdownTimer = ({ targetDate, early = false }) => {
+const CountdownTimer = ({ targetDate, early = false, setCurrentTime }) => {
   const calculateTimeLeft = () => {
-    const difference = new Date(targetDate) - new Date();
-    let timeLeft = {};
+    const difference = new Date(targetDate) - new Date()
+    let timeLeft = {}
 
     if (difference > 0) {
       timeLeft = {
@@ -14,35 +12,40 @@ const CountdownTimer = ({ targetDate, early = false }) => {
         hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
         minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
         seconds: Math.floor((difference % (1000 * 60)) / 1000),
-      };
+      }
     }
 
-    return timeLeft;
-  };
+    return timeLeft
+  }
 
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
+    const timer = setInterval(() => {
+      const updatedTimeLeft = calculateTimeLeft()
+      setTimeLeft(updatedTimeLeft)
+      if (early && new Date() >= new Date(targetDate)) {
+        setCurrentTime(new Date())
+        clearInterval(timer)
+      }
+    }, 1000)
 
-    return () => clearTimeout(timer);
-  });
+    return () => clearInterval(timer)
+  }, [targetDate, early, setCurrentTime])
 
-  const timerComponents = [];
+  const timerComponents = []
 
   Object.keys(timeLeft).forEach(interval => {
     if (!timeLeft[interval]) {
-      return;
+      return
     }
 
     timerComponents.push(
       <span key={interval}>
-        {timeLeft[interval]} <span>{interval}{' '}</span>
+        {timeLeft[interval]} <span>{interval} </span>
       </span>
-    );
-  });
+    )
+  })
 
   return (
     <div className='text-2xl mt-10'>
@@ -71,7 +74,7 @@ const CountdownTimer = ({ targetDate, early = false }) => {
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default CountdownTimer;
+export default CountdownTimer

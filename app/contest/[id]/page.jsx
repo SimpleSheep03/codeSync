@@ -13,7 +13,7 @@ const Page = () => {
   const [solved, setSolved] = useState([])
   const [copyButtonText, setCopyButtonText] = useState('Copy link to share')
   const [isCopied, setIsCopied] = useState(false)
-  const currentTime = new Date()
+  const [currentTime, setCurrentTime] = useState(new Date())
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,7 +86,7 @@ const Page = () => {
       <h1 className='text-4xl text-pink-700 font-bold text-center'>Contest Page</h1>
       <div className='mt-5 mx-auto text-center'>
         {new Date(contestData.timeStart) > currentTime ? (
-          <CountdownTimer early={true} targetDate={new Date(contestData.timeStart)} />
+          <CountdownTimer early={true} targetDate={new Date(contestData.timeStart)} setCurrentTime={setCurrentTime} />
         ) : (
           <>
             <CountdownTimer targetDate={new Date(contestData.timeEnding)} />
