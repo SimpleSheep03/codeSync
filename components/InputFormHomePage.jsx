@@ -308,7 +308,7 @@ const InputFormHomePage = () => {
           <div className="flex flex-wrap md:px-3">
             <label
               htmlFor="teamSelect"
-              className="w-full text-sm font-medium mb-2 self-center mt-6"
+              className="w-full text-sm font-medium mb-2 self-center md:mt-6"
             >
               Choose a Team : (to auto-fill IDs)
             </label>
