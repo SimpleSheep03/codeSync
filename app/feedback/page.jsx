@@ -92,7 +92,7 @@ const FeedbackPage = () => {
             htmlFor="rating"
             className="w-full mb-1 text-sm font-medium text-center"
           >
-            Rate our website (optional):
+            Rate Our Website (optional):
           </label>
           <StarRating rating={rating} setRating={setRating} />
 

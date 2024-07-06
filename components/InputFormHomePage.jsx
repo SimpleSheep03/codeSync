@@ -25,7 +25,8 @@ const InputFormHomePage = () => {
     timeLimit: "120",
     tags: [],
     shuffleOrder: true,
-    startsIn : "Immediately"
+    startsIn : "Immediately",
+    startYear : '2019'
   });
 
   useEffect(() => {
@@ -123,7 +124,8 @@ const InputFormHomePage = () => {
       upperDifficulty,
       timeLimit,
       shuffleOrder,
-      startsIn
+      startsIn,
+      startYear
     } = data;
     const temp = data.tags.length == 0 ? tags : data.tags;
     try {
@@ -144,7 +146,8 @@ const InputFormHomePage = () => {
           tags: temp,
           contestantType,
           selectedTeam,
-          startsIn
+          startsIn,
+          startYear
         }),
       });
 
@@ -317,10 +320,10 @@ const InputFormHomePage = () => {
           </div>
         )}
         {(contestantType === "Team" || !session) && (
-          <div className={`flex flex-wrap md:px-3 mt-6 ${contestantType === "Team" ? 'md:mb-0' : 'md:mb-6'}`}>
+          <div className={`flex flex-wrap md:px-3 mt-6 ${contestantType === "Team" ? 'md:mb-0' : 'md:mb-0'}`}>
             <label
               htmlFor="codeforcesId1"
-              className={`w-full ${session || contestantType == 'Individual' ? 'mb-2' : 'max-sm:mb-2 self-center'} text-sm font-medium`}
+              className={`w-full ${session || contestantType == 'Individual' ? 'mb-2' : 'mb-2 self-center'} text-sm font-medium`}
             >
               Your Codeforces ID:
             </label>
@@ -452,7 +455,7 @@ const InputFormHomePage = () => {
           htmlFor="lowerDifficulty"
           className="w-full mb-2 text-sm font-medium"
         >
-          Minimum question rating:
+          Minimum Question Rating:
         </label>
         <select
           id="lowerDifficulty"
@@ -474,7 +477,7 @@ const InputFormHomePage = () => {
           htmlFor="upperDifficulty"
           className="w-full mb-2 text-sm font-medium"
         >
-          Maximum question rating:
+          Maximum Question Rating:
         </label>
         <select
           id="upperDifficulty"
@@ -536,6 +539,27 @@ const InputFormHomePage = () => {
           <option value={2}>2 minutes from now</option>
           <option value={5}>5 minutes from now</option>
           <option value={10}>10 minutes from now</option>
+        </select>
+      </div>
+
+      <div className="flex flex-wrap mb-6">
+        <label
+          htmlFor="startYear"
+          className="w-full mb-2 text-sm font-medium"
+        >
+          Year to Fetch Questions After :
+        </label>
+        <select
+          id="startYear"
+          name="timeLimit"
+          className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          onChange={handleChange}
+          value={data.startYear}
+        >
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
         </select>
       </div>
 

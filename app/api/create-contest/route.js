@@ -1,4 +1,5 @@
 import connectDB from "@/config/database";
+import { unwantedContests } from "@/constants/questions";
 import Contest from "@/models/Contest";
 import Team from "@/models/Team";
 import User from "@/models/User";
@@ -21,7 +22,8 @@ export const POST = async (request) => {
       tags,
       contestantType,
       selectedTeam,
-      startsIn
+      startsIn,
+      startYear
     } = data;
 
     if (
@@ -33,7 +35,8 @@ export const POST = async (request) => {
       shuffleOrder == undefined ||
       !tags ||
       !contestantType ||
-      !startsIn
+      !startsIn ||
+      !startYear
     ) {
       return new Response(
         JSON.stringify({ message: "Fill all the fields", ok: false }),
@@ -41,6 +44,12 @@ export const POST = async (request) => {
           status: 400,
         }
       );
+    }
+
+    console.log(startYear)
+
+    if(!(['2021' , '2020' , '2019' , '2018'].includes(startYear))){
+      return new Response(JSON.stringify({ message : 'Requested an invalid year' , ok : false}) , { status : 400 })
     }
 
     const uniqueHandles = new Set([codeforcesId1, codeforcesId2, codeforcesId3].filter(Boolean));
@@ -167,7 +176,7 @@ export const POST = async (request) => {
         );
       }
       let index = Math.floor(
-        Math.random() * (5500) + 1500
+        Math.random() * (7000) + 500
       );
       const problem = total_questions.result.problems[index];
 
@@ -176,9 +185,21 @@ export const POST = async (request) => {
         problem.rating <= upperDifficulty &&
         problem.rating >= lowerDifficulty &&
         problem.tags.some((tag) => tags.includes(tag)) &&
-        !newList.includes(problem)
+        !newList.includes(problem) &&
+        !unwantedContests.includes(problem.contestId)
       ) {
-        newList.push(problem)
+        if(startYear == '2021' && problem.contestId >= 1472){
+          newList.push(problem)
+        }
+        else if(startYear == '2020' && problem.contestId >= 1284){
+          newList.push(problem)
+        }
+        else if(startYear == '2019' && problem.contestId >= 1097){
+          newList.push(problem)
+        }
+        else if(startYear == '2018' && problem.contestId >= 912){
+          newList.push(problem)
+        }
       }
     }
 

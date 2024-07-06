@@ -1,4 +1,5 @@
 'use client'
+import CopyUrl from '@/components/CopyUrl'
 import CountdownTimer from '@/components/CountdownTimer'
 import Spinner from '@/components/Spinner'
 import { useSession } from 'next-auth/react'
@@ -13,11 +14,10 @@ const Page = () => {
   const [contestData, setContestData] = useState({});
   const [loading, setLoading] = useState(true);
   const [solved, setSolved] = useState([]);
-  const [copyButtonText, setCopyButtonText] = useState('Copy link to share');
-  const [isCopied, setIsCopied] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showEndButtons, setShowEndButtons] = useState(false);
-  const { data: session } = useSession(); // Ensure you are correctly destructuring session from useSession()
+  const { data: session } = useSession(); 
+  const [endLoading , setEndLoading] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,23 +74,6 @@ const Page = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleCopyLink = () => {
-    const contestUrl = window.location.href;
-    navigator.clipboard
-      .writeText(contestUrl)
-      .then(() => {
-        setIsCopied(true);
-        setCopyButtonText('Copied!');
-        setTimeout(() => {
-          setIsCopied(false);
-          setCopyButtonText('Copy link to share');
-        }, 2000);
-      })
-      .catch((error) => {
-        console.error('Failed to copy text: ', error);
-      });
-  };
-
   const handleEndContest = async () => {
     // Check if session.codeforcesId is in data.contest.contestants array
     if (session && session.codeforcesId && contestData.contestants.includes(session.codeforcesId)) {
@@ -102,6 +85,7 @@ const Page = () => {
   };
 
   const handleConfirmEnd = async () => {
+    setEndLoading(true)
     try {
       const res = await fetch(`/api/contest/${id}/end`);
       const data = await res.json();
@@ -116,6 +100,7 @@ const Page = () => {
       toast.error('An error occurred while trying to end the contest.');
     } finally {
       setShowEndButtons(false);
+      setEndLoading(false)
     }
   };
 
@@ -132,20 +117,16 @@ const Page = () => {
       <h1 className='text-4xl text-pink-700 font-bold text-center'>Contest Page</h1>
       <div className='mt-5 mx-auto text-center'>
         {new Date(contestData.timeStart) > currentTime ? (
+          <>
           <CountdownTimer early={true} targetDate={new Date(contestData.timeStart)} setCurrentTime={setCurrentTime} />
+          <div className='mb-5'>
+          <CopyUrl/>
+          </div>
+          </>
         ) : (
           <>
             <CountdownTimer targetDate={new Date(contestData.timeEnding)} />
-            <div className='mt-10 flex justify-center'>
-              <button onClick={handleCopyLink} className='flex items-center text-blue-500 hover:text-blue-700'>
-                {isCopied ? (
-                  <FaCheck className='mr-2' style={{ width: '24px', height: '24px' }} />
-                ) : (
-                  <FaCopy className='mr-2' style={{ width: '24px', height: '24px' }} />
-                )}
-                {copyButtonText}
-              </button>
-            </div>
+            <CopyUrl/>
             <div className='pt-5'>
               {contestData.problemList.map((problem, index) => (
                 <div className='flex flex-wrap mt-10 justify-center items-center' key={index}>
@@ -167,10 +148,12 @@ const Page = () => {
               <div className='mt-10 flex justify-center'>
                 {showEndButtons ? (
                   <>
-                    <button onClick={handleConfirmEnd} className='inline-flex items-center px-4 py-3 bg-red-400 hover:bg-red-500 text-white font-bold rounded-md mr-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400'>
-                      End
+                    <button onClick={handleConfirmEnd} className='inline-flex items-center px-4 py-3 bg-red-400 hover:bg-red-500 text-white font-bold rounded-md mr-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400'
+                    disabled={endLoading}>
+                      {endLoading ? 'Wait...' : 'End'}
                     </button>
-                    <button onClick={handleCancelEnd} className='inline-flex items-center px-4 py-3 bg-gray-400  text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400'>
+                    <button onClick={handleCancelEnd} className='inline-flex items-center px-4 py-3 bg-gray-400  text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400'
+                    disabled={endLoading}>
                       Cancel
                     </button>
                   </>
