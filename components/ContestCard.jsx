@@ -3,6 +3,20 @@ import React from "react";
 import { FaExternalLinkAlt } from 'react-icons/fa';
 
 const ContestCard = ({ contest }) => {
+
+  const timeDisplay = {
+    30: "30 min",
+    60 : "1 hr",
+    90: "1 hr 30 min",
+    120: "2 hrs",
+    150 : "2 hrs 30 min",
+    180: "3 hrs",
+    210 : "3 hrs 30 min",
+    240: "4 hrs",
+    270 : "4 hrs 30 min",
+    300 : "5 hrs"
+  };
+
   return (
     <div key={contest._id} className="p-10 bg-gray-50 shadow-md rounded-md border border-pink-100">
       <div className="mb-4">
@@ -39,7 +53,7 @@ const ContestCard = ({ contest }) => {
         Rating Range: {contest.lowerLimit} - {contest.upperLimit}
       </h3>
       <h3 className="text-xl mb-2 text-gray-700">
-        Time Limit: {contest.timeLimit} minutes
+        Contest Duration: {timeDisplay[contest.timeLimit]} 
       </h3>
       <h3 className="text-xl mb-2 text-gray-700">
         Start Time: {new Date(contest.timeStart).toLocaleString()}
