@@ -29,6 +29,19 @@ const InputFormHomePage = () => {
     startYear : '2019'
   });
 
+  const timeDisplay = {
+    30: "30 min",
+    60 : "1 hr",
+    90: "1 hr 30 min",
+    120: "2 hrs",
+    150 : "2 hrs 30 min",
+    180: "3 hrs",
+    210 : "3 hrs 30 min",
+    240: "4 hrs",
+    270 : "4 hrs 30 min",
+    300 : "5 hrs"
+  };
+
   useEffect(() => {
     const fetchTeams = async () => {
       if (!session || !session.user) {
@@ -503,7 +516,7 @@ const InputFormHomePage = () => {
           htmlFor="timeLimit"
           className="w-full mb-2 text-sm font-medium"
         >
-          Contest Duration (Minutes):
+          Contest Duration :
         </label>
         <select
           id="timeLimit"
@@ -514,7 +527,7 @@ const InputFormHomePage = () => {
         >
           {time.map((t) => (
             <option value={t} key={t}>
-              {t}
+              {timeDisplay[t]}
             </option>
           ))}
         </select>
