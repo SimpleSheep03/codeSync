@@ -11,6 +11,7 @@ const ProvideCodeforcesHandle = () => {
   const [codeforcesHandle, setCodeforcesHandle] = useState('');
   const router = useRouter();
   const [loading , setLoading] = useState(true)
+  const [submitLoading , setSubmitLoading] = useState(false)
 
   useEffect(() => {
     if(session && session.user && session.codeforcesId != ''){
@@ -21,6 +22,7 @@ const ProvideCodeforcesHandle = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitLoading(true)
     try{
         const res = await fetch('/api/provide-codeforces-handle', {
         method: 'POST',
@@ -44,6 +46,9 @@ const ProvideCodeforcesHandle = () => {
         console.log(error)
         toast.error('Failed to upload ID')
     }
+    finally{
+      setSubmitLoading(false)
+    }
   };
 
   return loading ? <Spinner loading={loading}/> : !session ? <div className="flex mt-10 justify-center h-screen">
@@ -60,8 +65,8 @@ const ProvideCodeforcesHandle = () => {
           className="border rounded w-full py-2 px-3"
           required
         />
-        <button type="submit" className="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-700">
-          Submit
+        <button type="submit" className="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-700" disabled={submitLoading}>
+          {submitLoading ? 'Loading...' : 'Submit'}
         </button>
       </form>
     </div>
