@@ -163,7 +163,7 @@ const NavItems = () => {
                 >
                   Your Profile
                 </Link>
-                <Link
+                {session.codeforcesId && <Link
                   href={`/contest/with/${session?.codeforcesId}`}
                   className='block px-4 py-2 text-sm text-gray-700'
                   role='menuitem'
@@ -174,8 +174,8 @@ const NavItems = () => {
                   }}
                 >
                   Contests
-                </Link>
-                <Link
+                </Link>}
+                {session.codeforcesId && <Link
                   href={`/add-team`}
                   className='block px-4 py-2 text-sm text-gray-700'
                   role='menuitem'
@@ -186,7 +186,7 @@ const NavItems = () => {
                   }}
                 >
                   Add Team
-                </Link>
+                </Link>}
                 <Link
                   href={`/feedback`}
                   className='block px-4 py-2 text-sm text-gray-700'
