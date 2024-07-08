@@ -15,7 +15,7 @@ export const GET = async (request, { params }) => {
     const common_questions = new Set([])
 
     for(const contestant of contest.contestants){
-        const submissions = await fetch(`https://codeforces.com/api/user.status?handle=${contestant}&from=1&count=10000`).then(async(data) => await data.json())
+        const submissions = await fetch(`https://codeforces.com/api/user.status?handle=${contestant}&from=1&count=5000`).then(async(data) => await data.json())
         for(const submission of submissions.result){
             if(submission.verdict == 'OK'){
                 common_questions.add(`${submission.problem.contestId}${submission.problem.index}`)
@@ -29,8 +29,6 @@ export const GET = async (request, { params }) => {
             solved.push(problem)
         }
     })
-
-    const data = await fetch(`https://codeforces.com/api/user.status?handle=peace03&from=1&count=100000`).then(async(data) => await data.json())
 
     return new Response(JSON.stringify({ message : 'Question status fetched' , ok : true , solved }), { status : 200 })
         
