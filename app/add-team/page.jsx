@@ -75,7 +75,8 @@ const CodeforcesForm = () => {
     </div>
   ) : (
     <div className="max-w-md mx-auto mt-10 p-5 bg-gray-50 shadow-md rounded-md border border-pink-100">
-      <h2 className="text-2xl font-bold mb-4 text-pink-700">Enter Team Details</h2>
+      <h2 className="text-2xl font-bold mb-4 text-pink-700 text-center" >Create Your Team !</h2>
+      <p className="mb-6 text-gray-600 text-center">Creating a team allows you to collaborate and participate in team contests and to auto-fill IDs</p>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700">Team Name</label>
@@ -84,7 +85,7 @@ const CodeforcesForm = () => {
             value={teamName}
             onChange={handleTeamNameChange}
             placeholder="Team Name"
-            className="w-full border border-gray-300 p-2 rounded-md"
+            className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
             required
           />
         </div>
@@ -96,7 +97,7 @@ const CodeforcesForm = () => {
               disabled={index === 0}
               onChange={(e) => handleChange(index, e)}
               placeholder={`Codeforces ID ${index + 1}`}
-              className="flex-1 border border-gray-300 p-2 rounded-md"
+              className="flex-1 px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
               required
             />
             {ids.length > 1 && index !== 0 && (
@@ -123,11 +124,12 @@ const CodeforcesForm = () => {
           type="submit"
           className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700" disabled={loading}
         >
-          {loading ? 'Loading...' : 'Submit'}
+          {loading ? 'Adding...' : 'Add Team'}
         </button>
       </form>
     </div>
   );
+  
 };
 
 export default CodeforcesForm;

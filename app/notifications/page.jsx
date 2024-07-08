@@ -72,15 +72,19 @@ const NotificationsPage = () => {
   ) : (
     <div className="container mx-auto px-4 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md">
       <h1 className="text-3xl font-bold mb-6 text-center text-pink-700">Notifications</h1>
+      <p className="text-center text-gray-600 mb-6">Here, you will receive updates and responses to any issues you raise or feedback you provide. We aim to address your concerns as quickly as possible!</p>
+      <div className='mt-10'>
       {notifications.length === 0 ? (
         <p className="text-center text-gray-500">No notifications available.</p>
       ) : (
         notifications.map(notification => (
-          <NotificationCard key={notification._id} notification={notification} markAsRead={markAsRead} readClick = {readClick} />
+          <NotificationCard key={notification._id} notification={notification} markAsRead={markAsRead} readClick={readClick} />
         ))
       )}
+      </div>
     </div>
   );
+  
 };
 
 export default NotificationsPage;
