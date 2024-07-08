@@ -130,12 +130,12 @@ const Page = () => {
             <div className='pt-5'>
               {contestData.problemList.map((problem, index) => (
                 <div className='flex flex-wrap mt-10 justify-center items-center' key={index}>
-                  <span className='text-blue-900 font-semibold'>{index + 1}. {problem.name}</span>
                   <Link
                     href={`https://codeforces.com/contest/${problem.contestId}/problem/${problem.index}`}
-                    className='text-blue-900 bg-gray-100 p-1 rounded-xl ms-3 border hover:border-blue-200 inline-flex items-center'
+                    className='text-blue-800  p-1 rounded-xl ms-3 underline inline-flex items-center'
                     target='_blank'
                   >
+                  <span className='font-semibold mr-3'>{index + 1}. {problem.name}</span>
                     <FaExternalLinkAlt/>
                   </Link>
                   {solved.some(solvedProblem =>
