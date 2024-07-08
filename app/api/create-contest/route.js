@@ -101,8 +101,10 @@ export const POST = async (request) => {
       );
     }
 
+    let num = Math.floor(Math.random() * 1000) + 10000
+
     const user1_from_cf_submissions = await fetch(
-      `https://codeforces.com/api/user.status?handle=${codeforcesId1}&from=1&count=100000`
+      `https://codeforces.com/api/user.status?handle=${codeforcesId1}&count=${num}`
     ).then(async (data) => await data.json());
 
     if (user1_from_cf_submissions.status === "FAILED") {
@@ -122,8 +124,9 @@ export const POST = async (request) => {
     });
 
     if (codeforcesId2 !== "") {
+      num = Math.floor(Math.random() * 1000) + 10000
       const user2_from_cf_submissions = await fetch(
-        `https://codeforces.com/api/user.status?handle=${codeforcesId2}&from=1&count=100000`
+        `https://codeforces.com/api/user.status?handle=${codeforcesId2}&count=${num}`
       ).then(async (data) => await data.json());
 
       if (user2_from_cf_submissions.status === "FAILED") {
@@ -142,8 +145,9 @@ export const POST = async (request) => {
     }
 
     if (codeforcesId3 !== "") {
+      num = Math.floor(Math.random() * 1000) + 10000
       const user3_from_cf_submissions = await fetch(
-        `https://codeforces.com/api/user.status?handle=${codeforcesId3}&from=1&count=100000`
+        `https://codeforces.com/api/user.status?handle=${codeforcesId3}&count=${num}`
       ).then(async (data) => await data.json());
 
       if (user3_from_cf_submissions.status === "FAILED") {
