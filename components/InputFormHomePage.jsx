@@ -560,7 +560,7 @@ const InputFormHomePage = () => {
           htmlFor="startYear"
           className="w-full mb-2 text-sm font-medium"
         >
-          Year to Fetch Questions After :
+          Question Recency :
         </label>
         <select
           id="startYear"
@@ -569,10 +569,10 @@ const InputFormHomePage = () => {
           onChange={handleChange}
           value={data.startYear}
         >
-          <option value="2021">2021</option>
-          <option value="2020">2020</option>
-          <option value="2019">2019</option>
-          <option value="2018">2018</option>
+          <option value="2021">2021 onward</option>
+          <option value="2020">2020 onward</option>
+          <option value="2019">2019 onward</option>
+          <option value="2018">2018 onward</option>
         </select>
       </div>
 

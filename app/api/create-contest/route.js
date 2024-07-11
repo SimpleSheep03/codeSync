@@ -168,8 +168,9 @@ export const POST = async (request) => {
     let newList = [];
     const startTime = Date.now();
     const timeLimitMillis = 10000;
+    let count = 0;
 
-    while (newList.length < numQuestions) {
+    while (newList.length < numQuestions && count < 100000) {
       if (Date.now() - startTime > timeLimitMillis) {
         return new Response(
           JSON.stringify({
@@ -205,6 +206,13 @@ export const POST = async (request) => {
           newList.push(problem)
         }
       }
+      count ++;
+    }
+
+    if(count >= 100000){
+      return new Response(JSON.stringify({ message : "Majority of the matching questions solved. Please adjust criteria for new questions" , ok : false}) , {
+        status : 200
+      })
     }
 
     if (!shuffleOrder) {
