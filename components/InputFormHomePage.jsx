@@ -24,7 +24,7 @@ const InputFormHomePage = () => {
     upperDifficulty: "1800",
     timeLimit: "120",
     tags: [],
-    shuffleOrder: true,
+    shuffleOrder: false,
     startsIn : "Immediately",
     startYear : '2019'
   });
