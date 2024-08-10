@@ -20,10 +20,52 @@ export const GET = async (request , { params }) => {
 
         const teams = await Team.find({ codeforcesHandles : { $in : [codeforcesId] }})
 
-        return new Response(JSON.stringify({ message : 'User found' , ok : true , codeforcesId , teams }) , { status : 200 })
+        //to avoid CF API bug , use a random number in count parameter
+        const rnd = Math.floor(Math.random() * 10)
+
+        const submissions = await fetch(`https://codeforces.com/api/user.status?handle=${codeforcesId}&count=${10000 + rnd}`).then(async (res) => await res.json())
+
+        let submission_arr = []
+        for(const sub of submissions.result){
+            if(sub.verdict == 'OK'){
+                submission_arr.push(sub)
+            }
+        }
+
+        //to sort in ascending order
+        submission_arr.reverse()
+
+
+        //fetch user contests list
+        const user_contests = await fetch(`https://codeforces.com/api/user.rating?handle=${codeforcesId}`).then(async(res) => await res.json())
+
+        let user_contests_arr = []
+        for(const con of user_contests.result){
+            user_contests_arr.push(con)
+        }
+
+        //for graph creation , collect the x and y coordinates
+        let xPoints = [] , yPoints = []
+        for(let i = 0 ; i < submission_arr.length ; i ++){
+            const question_submission_time = submission_arr[i].creationTimeSeconds
+            let most_recent_rating = 0
+            for(let k = 0 ; k < user_contests_arr.length ; k ++){
+                if(user_contests_arr[k].ratingUpdateTimeSeconds <= question_submission_time){
+                    most_recent_rating = user_contests_arr[k].newRating
+                }
+                else{
+                    break;
+                }
+            }
+            xPoints.push(i + 1)
+            yPoints.push(most_recent_rating)
+        }
+
+        return new Response(JSON.stringify({ message : 'User details found' , ok : true , codeforcesId , teams , xPoints , yPoints }) , { status : 200 })
 
     } catch (error) {
         console.log(error)
+        return new Response(JSON.stringify({ message : 'Unable to fetch profile' , ok : false }) , { status : 500 })
     }
 }
 

@@ -6,6 +6,7 @@ import profileDefault from '@/assets/images/profile.png';
 import Spinner from '@/components/Spinner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import RatingGraph from '@/components/RatingGraph'
 
 const ProfilePage = () => {
   const { data: session } = useSession();
@@ -16,6 +17,8 @@ const ProfilePage = () => {
   const [codeforcesId, setCodeforcesId] = useState('Not provided yet');
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [xPoints , setXPoints] = useState([])
+  const [yPoints , setYPoints] = useState([])
   const router = useRouter();
 
   useEffect(() => {
@@ -37,6 +40,8 @@ const ProfilePage = () => {
           if (data.codeforcesId) {
             setCodeforcesId(data.codeforcesId);
             setTeams(data.teams);
+            setXPoints(data.xPoints)
+            setYPoints(data.yPoints)
           }
         }
       } catch (error) {
@@ -118,6 +123,9 @@ const ProfilePage = () => {
                 )}
               </div>
             </div>
+          </div>
+          <div className='mt-5'>
+            {xPoints.length > 0 && <RatingGraph xPoints = {xPoints} yPoints = {yPoints}/>}
           </div>
         </div>
       </div>

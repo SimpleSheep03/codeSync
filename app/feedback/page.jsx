@@ -26,7 +26,8 @@ const FeedbackPage = () => {
     const id = session?.user?.id;
 
     if (!body) {
-      toast.error("Fill the required fields");
+      toast.error("Fill the required fields")
+      setClick(false)
       return;
     }
 
@@ -101,7 +102,7 @@ const FeedbackPage = () => {
             className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 mt-5"
             disabled={click}
           >
-            {click ? 'Loading...' : 'Submit'}
+            {click ? 'Submitting...' : 'Submit'}
           </button>
         </div>
       </form>
