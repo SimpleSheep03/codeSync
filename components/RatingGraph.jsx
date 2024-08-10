@@ -226,7 +226,7 @@ const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
     Plotly.newPlot('myDiv', [traceGlow , trace1], layout, config); // Pass config as the third argument
   }, [xPoints, yPoints]);
 
-  return <div id="myDiv" className='max-sm:h-80'></div>;
+  return <div id="myDiv"></div>;
 };
 
 export default ColoredYAxisPlot;
