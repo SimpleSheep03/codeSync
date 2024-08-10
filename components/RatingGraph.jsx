@@ -51,7 +51,8 @@ const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
         zeroline: false,   // Hide the x = 0 line
         showline: false,   // Hide the axis border
         showgrid : false,
-        title: 'Number of Problems Solved' // Add x-axis label
+        title: 'Number of Problems Solved', // Add x-axis label,
+        fixedrange : true
       },
       yaxis: {
         range: [0, Math.max(...yPoints) + 400],
@@ -60,7 +61,8 @@ const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
         showgrid : false,
         title: 'Rating', // Add y-axis label
         tickvals: [1200, 1400, 1600 , 1900 , 2100 , 2300 , 2400 , 2600 , 3000], // Custom tick values
-        ticktext: ['1200', '1400', '1600' , '1900' , '2100' , '2300' , '2400' , '2600' , '3000'] // Custom tick labels
+        ticktext: ['1200', '1400', '1600' , '1900' , '2100' , '2300' , '2400' , '2600' , '3000'], // Custom tick labels
+        fixedrange : true,
       },
       shapes: [
         {
@@ -224,7 +226,7 @@ const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
     Plotly.newPlot('myDiv', [traceGlow , trace1], layout, config); // Pass config as the third argument
   }, [xPoints, yPoints]);
 
-  return <div id="myDiv"></div>;
+  return <div id="myDiv" className='max-sm:h-80'></div>;
 };
 
 export default ColoredYAxisPlot;
