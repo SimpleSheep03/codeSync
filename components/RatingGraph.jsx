@@ -4,7 +4,7 @@ import Plotly from 'plotly.js-dist';
 
 const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
   const opacity = 1;
-  const color = 'rgba(232,194,79,255)'
+  const color = 'rgba(61, 2, 2, 1)'
   const baseColor = 'rgba(244, 225, 100, 1)'
 
   useEffect(() => {
