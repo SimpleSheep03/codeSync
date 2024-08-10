@@ -6,7 +6,10 @@ import profileDefault from '@/assets/images/profile.png';
 import Spinner from '@/components/Spinner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import RatingGraph from '@/components/RatingGraph'
+import dynamic from 'next/dynamic'
+
+// Dynamically import RatingGraph with SSR disabled
+const RatingGraph = dynamic(() => import('@/components/RatingGraph'), { ssr: false });
 
 const ProfilePage = () => {
   const { data: session } = useSession();
