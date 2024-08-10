@@ -5,6 +5,19 @@ import Team from "@/models/Team";
 import User from "@/models/User";
 
 export const POST = async (request) => {
+
+  //just to check whether the codeforces API is working fine
+  try{
+    
+    const data = await fetch('https://codeforces.com/api/user.info?handles=simplesheep03').then(async (res) => await res.json())
+
+  }
+  catch(error){
+    console.log(error);
+    return new Response(JSON.stringify({ message : 'Codeforces API is currently down... Please try again later' , ok : false }) , { status : 503 })
+  }
+
+  //actual logic for contest creation
   try {
     const data = await request.json();
 
@@ -46,7 +59,7 @@ export const POST = async (request) => {
       );
     }
 
-    console.log(startYear)
+    // console.log(startYear)
 
     if(!(['2021' , '2020' , '2019' , '2018'].includes(startYear))){
       return new Response(JSON.stringify({ message : 'Requested an invalid year' , ok : false}) , { status : 400 })

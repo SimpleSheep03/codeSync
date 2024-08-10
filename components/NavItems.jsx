@@ -104,19 +104,29 @@ const NavItems = () => {
 
       {!session && (
         <>
-          {providers &&
+          {Object.keys(providers || {}).length > 0 ? (
             Object.values(providers).map((provider, index) => (
               <button
-                className='bg-gray-100 px-3 text-blue-700 rounded-xl py-1 border-[3px] hover:border-pink-400 hover:text-blue-900 flex items-center'
+                className='bg-gray-100 px-3 text-blue-700 rounded-xl py-1 border-[3px] hover:border-blue-500 hover:text-blue-900 flex items-center'
                 key={index}
                 onClick={() => { signIn(provider.id) }}
               >
-                <FaGoogle className='mr-2' />  {/* Add the Google icon with some margin */}
+                <FaGoogle className='mr-2' />
                 Sign In
               </button>
-            ))}
+            ))
+          ) : (
+            <button
+              className='bg-gray-100 px-3 text-gray-500 rounded-xl py-1 border-[3px] border-gray-300 flex items-center cursor-not-allowed'
+              disabled
+            >
+              <FaGoogle className='mr-2' />
+              Sign In
+            </button>
+          )}
         </>
       )}
+
 
       {session && (
         <div>

@@ -617,7 +617,7 @@ const InputFormHomePage = () => {
         onClick={handleSubmit}
         disabled={loading}
       >
-        {!loading ? <>Create Contest</> : <>Loading...</>}
+        {!loading ? <>Create Contest</> : <>Creating ...</>}
       </button>
     </form>
   </div>
