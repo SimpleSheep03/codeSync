@@ -7,6 +7,7 @@ import Spinner from '@/components/Spinner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
+import { toast } from 'react-toastify';
 
 // Dynamically import RatingGraph with SSR disabled
 const RatingGraph = dynamic(() => import('@/components/RatingGraph'), { ssr: false });
@@ -38,14 +39,15 @@ const ProfilePage = () => {
       try {
         const res = await fetch(`/api/profile/${userId}`);
 
-        if (res.status === 200) {
-          const data = await res.json();
-          if (data.codeforcesId) {
-            setCodeforcesId(data.codeforcesId);
-            setTeams(data.teams);
-            setXPoints(data.xPoints)
-            setYPoints(data.yPoints)
-          }
+        const data = await res.json()
+        if(data.ok || data.APIDown){
+          setCodeforcesId(data.codeforcesId)
+          setTeams(data.teams)
+          setXPoints(data.xPoints)
+          setYPoints(data.yPoints)
+        }
+        if(data.APIDown){
+          toast.error('Codeforces API is currently down... Unable to load the graph')
         }
       } catch (error) {
         console.log(error);
