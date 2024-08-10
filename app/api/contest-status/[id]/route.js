@@ -1,7 +1,5 @@
 import connectDB from "@/config/database";
 import Contest from "@/models/Contest";
-import User from "@/models/User";
-import { getSessionUser } from "@/utils/getSessionUser";
 
 
 export const GET = async (request, { params }) => {

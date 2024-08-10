@@ -6,7 +6,7 @@ export const POST = async (request) => {
     try {
         await connectDB();
 
-        const session = getSessionUser();
+        const session = await getSessionUser();
 
         if (!session) {
             return new Response(JSON.stringify({
