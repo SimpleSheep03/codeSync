@@ -61,6 +61,8 @@ export const GET = async (request , { params }) => {
                 xPoints.push(i + 1)
                 yPoints.push(most_recent_rating)
             }
+            xPoints.push(submission_arr.length)
+            yPoints.push(user_contests_arr[user_contests_arr.length - 1])
         }
         catch(error){
             console.log(error)
