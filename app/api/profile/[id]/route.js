@@ -5,6 +5,9 @@ import User from "@/models/User"
 
 export const GET = async (request , { params }) => {
 
+    const url = new URL(request.url);
+    const graph = url.searchParams.get('graph');
+
     const getContestType = (contestName) => {
         if (contestName.includes("Educational")) {
           return "Educational";
@@ -46,6 +49,10 @@ export const GET = async (request , { params }) => {
         const { codeforcesId } = user
 
         const teams = await Team.find({ codeforcesHandles : { $in : [codeforcesId] }})
+
+        if(!graph){
+            return new Response(JSON.stringify({ message : 'Fetched user profile without graphs' , ok : true , codeforcesId , teams }) , { status : 200 })
+        }
 
         //for rating vs problem count graph creation , collect the x and y coordinates
         let xPoints = [] , yPoints = []
@@ -180,7 +187,7 @@ export const GET = async (request , { params }) => {
             return new Response(JSON.stringify({ message : 'Codeforces API is currently down... Please again try later' , ok : false , codeforcesId , APIDown : true ,  teams , xPoints , yPoints }) , { status : 503 })
         }
 
-        return new Response(JSON.stringify({ message : 'User details found' , ok : true , codeforcesId , teams , xPoints , yPoints , division , ratingChange , questionIndex , timeTaken }) , { status : 200 })
+        return new Response(JSON.stringify({ message : 'User details found along with graphs' , ok : true , codeforcesId , teams , xPoints , yPoints , division , ratingChange , questionIndex , timeTaken }) , { status : 200 })
 
     } catch (error) {
         console.log(error)

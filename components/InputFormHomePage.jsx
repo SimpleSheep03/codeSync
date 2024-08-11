@@ -52,7 +52,7 @@ const InputFormHomePage = () => {
         return;
       }
       try {
-        const res = await fetch(`/api/profile/${session.user.id}`);
+        const res = await fetch(`/api/profile/${session.user.id}?graph=false`);
         const result = await res.json();
         setTeams(result.teams);
         setData((prevData) => ({

@@ -8,14 +8,15 @@ export const POST = async (request) => {
 
     try {
       await connectDB();
-      const check_user = await User.find({ codeforcesId : codeforcesHandle })
-      if(check_user.length > 0){
-        return new Response(JSON.stringify({ message : 'This ID has already been taken up by some other user' , ok : false}), { status : 400 })
-      }
       const check_user_2 = await fetch(`https://codeforces.com/api/user.info?handles=${codeforcesHandle.toLowerCase()}&checkHistoricHandles=false`).then(async(data) => await data.json())
 
       if(check_user_2.status == 'FAILED'){
         return new Response(JSON.stringify({ message : `Codeforces handle ${codeforcesHandle} is incorrect` , ok : false }) , { status : 400 })
+      }
+      
+      const check_user = await User.find({ codeforcesId : check_user_2.result[0].handle })
+      if(check_user.length > 0){
+        return new Response(JSON.stringify({ message : 'This ID has already been taken up by some other user' , ok : false}), { status : 400 })
       }
 
       const user = await User.findOne({ email })
