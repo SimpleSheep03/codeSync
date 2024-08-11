@@ -9,6 +9,20 @@ const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
 
   useEffect(() => {
 
+    // Find the index of the maximum yPoint
+    let maxY = Math.max(...yPoints);
+    let maxIndices = [];
+    
+    // Collect all indices with the maximum yPoint value
+    yPoints.forEach((y, i) => {
+      if (y === maxY) {
+        maxIndices.push(i);
+      }
+    });
+
+    // Select the index with the largest xPoint value
+    let maxIndex = maxIndices.reduce((a, b) => (xPoints[a] > xPoints[b] ? a : b));
+
     const traceGlow = {
         x: xPoints,
         y: yPoints,
@@ -215,7 +229,30 @@ const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
           },
           layer : 'below'
         }
+      ],
+      annotations: [
+        {
+          x: xPoints[maxIndex],
+          y: yPoints[maxIndex],
+          xref: 'x',
+          yref: 'y',
+          text: `Max Rating: ${yPoints[maxIndex]}<br>Problems Solved: ${xPoints[maxIndex]}`,
+          showarrow: true,
+          arrowhead: 7,
+          ax: -30,  // Offset the arrow along the x-axis for a diagonal effect
+          ay: -50,  // Offset the arrow along the y-axis for a diagonal effect
+          font: {
+            color: baseColor,
+            size: 12,
+          },
+          bgcolor: 'rgba(0,0,0,0.6)',  // More opaque background (60% opacity)
+          bordercolor: 'rgba(244, 225, 100, 0.8)',  // More opaque border (80% opacity)
+          borderwidth: 1,
+        }
       ]
+      
+      
+      
     };
 
     const config = {
