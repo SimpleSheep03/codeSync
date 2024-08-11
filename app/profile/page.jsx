@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 const RatingGraph = dynamic(() => import('@/components/RatingGraph'), { ssr: false });
 const BarChart = dynamic(() => import('@/components/BarChart'), { ssr: false });
 const QuestionTimeGraph = dynamic(() => import('@/components/QuestionTimeGraph'), { ssr: false });
+const AverageRankGraph = dynamic(() => import('@/components/AverageRank'), { ssr: false });
 
 const ProfilePage = () => {
   const { data: session } = useSession();
@@ -29,6 +30,8 @@ const ProfilePage = () => {
   const [ratingChange, setRatingChange] = useState([]);
   const [questionIndex, setQuestionIndex] = useState([]);
   const [timeTaken, setTimeTaken] = useState([]);
+  const [division2, setDivision2] = useState([]);
+  const [avgRank, setAvgRank] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -54,6 +57,8 @@ const ProfilePage = () => {
           setRatingChange(data.ratingChange);
           setQuestionIndex(data.questionIndex)
           setTimeTaken(data.timeTaken)
+          setDivision2(data.division2)
+          setAvgRank(data.avgRank)
         }
         if (data.APIDown) {
           toast.error('Codeforces API is currently down... Unable to load graphs');
@@ -144,6 +149,9 @@ const ProfilePage = () => {
           <div className='mt-10 pt-7'>
             {division.length > 0 && ratingChange.length > 0 && <BarChart divisions={division} ratingChange={ratingChange} />}
           </div>
+          <div className='mt-10 pt-7'>
+            {division2.length > 0 && avgRank.length > 0 && <AverageRankGraph divisions={division2} avgRank={avgRank} />}
+          </div> 
           <div className='mt-10 pt-7'>
             {questionIndex.length > 0 && timeTaken.length > 0 && <QuestionTimeGraph questionIndex={questionIndex} timeTaken={timeTaken} />}
           </div>

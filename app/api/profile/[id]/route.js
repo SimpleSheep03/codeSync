@@ -62,6 +62,9 @@ export const GET = async (request , { params }) => {
 
         //for question index vs time graph
         let questionIndex = [] , timeTaken = []
+
+        //for division vs average rank
+        let division2 = [] , avgRank = []
         
         try{
             //to avoid CF API bug , use a random number in count parameter
@@ -176,18 +179,31 @@ export const GET = async (request , { params }) => {
             questionIndex = data.map(item => item.questionIndex);
             timeTaken = data.map(item => item.timeTaken);
             
-            // for(let i = 0 ; i < timeTaken.length ; i ++){
-            //     console.log(questionIndex[i] , timeTaken[i])
-            // }
+            //map for storing the avg rating change against each division
+            const map5 = new Map()
+            const map6 = new Map()
+            for(let i = user_contests_arr.length - 1 ; i >= Math.max(0 , user_contests_arr.length - 30) ; i --){
+                const con = user_contests_arr[i]
+                const contestType = getContestType(con.contestName)
+                map5.set(contestType , (map5.get(contestType) || 0) + con.rank)
+                map6.set(contestType , (map6.get(contestType) || 0) + 1)
+            }
+
+            map5.forEach((value , key) => {
+                division2.push(key)
+                avgRank.push(Math.floor(value / map6.get(key)))
+            })
+
+            
             
         }
         catch(error){
             console.log(error)
             console.log('Codeforces API is currently down... Please again try later')
-            return new Response(JSON.stringify({ message : 'Codeforces API is currently down... Please again try later' , ok : false , codeforcesId , APIDown : true ,  teams , xPoints , yPoints }) , { status : 503 })
+            return new Response(JSON.stringify({ message : 'Codeforces API is currently down... Please again try later' , ok : false , codeforcesId , APIDown : true ,  teams , xPoints , yPoints , division , ratingChange , questionIndex , timeTaken , division2 , avgRank }) , { status : 503 })
         }
 
-        return new Response(JSON.stringify({ message : 'User details found along with graphs' , ok : true , codeforcesId , teams , xPoints , yPoints , division , ratingChange , questionIndex , timeTaken }) , { status : 200 })
+        return new Response(JSON.stringify({ message : 'User details found along with graphs' , ok : true , codeforcesId , teams , xPoints , yPoints , division , ratingChange , questionIndex , timeTaken , division2 , avgRank }) , { status : 200 })
 
     } catch (error) {
         console.log(error)
