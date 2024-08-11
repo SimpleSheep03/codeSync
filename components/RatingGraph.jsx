@@ -236,7 +236,7 @@ const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
           y: yPoints[maxIndex],
           xref: 'x',
           yref: 'y',
-          text: `Max Rating: ${yPoints[maxIndex]}<br>Problems Solved: ${xPoints[maxIndex]}`,
+          text: `Max Rating: ${yPoints[maxIndex]}`,
           showarrow: true,
           arrowhead: 7,
           ax: -30,  // Offset the arrow along the x-axis for a diagonal effect
