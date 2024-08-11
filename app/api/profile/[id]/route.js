@@ -50,8 +50,11 @@ export const GET = async (request , { params }) => {
         //for rating vs problem count graph creation , collect the x and y coordinates
         let xPoints = [] , yPoints = []
 
-        //for division vs rating change graph creation
+        //for division vs rating change graph
         let division = [] , ratingChange = []
+
+        //for question index vs time graph
+        let questionIndex = [] , timeTaken = []
         
         try{
             //to avoid CF API bug , use a random number in count parameter
@@ -105,14 +108,71 @@ export const GET = async (request , { params }) => {
                 avg_rating_change.set(contestType , (map.get(contestType) || 0) + (contest.newRating - contest.oldRating))
             }
 
-            map.forEach((count , contestType) => {
-                console.log(contestType , count)
-            })
-
             avg_rating_change.forEach((change , contestType) => {
                 division.push(contestType)
                 ratingChange.push(Math.ceil(change / map.get(contestType)))
             });
+
+            //map for storing the problems solved in a particular contest
+            const map2 = {}
+
+            //variable to store the contest id of the 20th user contest id from last
+            const mn_contest_id = user_contests_arr[Math.max(0 , user_contests_arr.length - 20)].contestId
+
+            for(const sub of submission_arr){
+                //filter only the first accepted submissions of a user on any problem of a contest which is not older than the 20th contest from last for the user
+                if(sub.author.participantType == 'CONTESTANT' &&
+                    sub.verdict == 'OK' && sub.problem.contestId >= mn_contest_id
+                ){
+                    if(!map2[sub.contestId]){
+                        map2[sub.contestId] = []
+                    }
+                    if(!(map2[sub.contestId]).includes(sub)){
+                        map2[sub.contestId].push(sub)
+                    }
+                }
+            }
+
+            //map for storing the data corresponding to a particular questionIndex
+            const map3 = new Map()
+            const map4 = new Map()
+
+            Object.entries(map2).forEach(([contestId, submissions]) => {
+                if (submissions[0].problem.rating) {
+                  let prevTime = submissions[0].author.startTimeSeconds;
+              
+                  for (const sub of submissions) {
+                    map3.set(sub.problem.rating, (map3.get(sub.problem.rating) || 0) + sub.creationTimeSeconds - prevTime);
+                    prevTime = sub.creationTimeSeconds;
+                    map4.set(sub.problem.rating, (map4.get(sub.problem.rating) || 0) + 1);
+                  }
+
+                }
+              });
+              
+            
+            map3.forEach((value , key) => {
+                questionIndex.push(key)
+                timeTaken.push(Math.floor(value / (map4.get(key) * 60)))
+            })
+            
+            //to sort the questionIndex
+            const data = [];
+            map3.forEach((value, key) => {
+            data.push({
+                questionIndex: key,
+                timeTaken: Math.floor(value / (map4.get(key) * 60))
+            });
+            });
+
+            data.sort((a, b) => a.questionIndex - b.questionIndex);
+            questionIndex = data.map(item => item.questionIndex);
+            timeTaken = data.map(item => item.timeTaken);
+            
+            // for(let i = 0 ; i < timeTaken.length ; i ++){
+            //     console.log(questionIndex[i] , timeTaken[i])
+            // }
+            
         }
         catch(error){
             console.log(error)
@@ -120,7 +180,7 @@ export const GET = async (request , { params }) => {
             return new Response(JSON.stringify({ message : 'Codeforces API is currently down... Please again try later' , ok : false , codeforcesId , APIDown : true ,  teams , xPoints , yPoints }) , { status : 503 })
         }
 
-        return new Response(JSON.stringify({ message : 'User details found' , ok : true , codeforcesId , teams , xPoints , yPoints , division , ratingChange }) , { status : 200 })
+        return new Response(JSON.stringify({ message : 'User details found' , ok : true , codeforcesId , teams , xPoints , yPoints , division , ratingChange , questionIndex , timeTaken }) , { status : 200 })
 
     } catch (error) {
         console.log(error)

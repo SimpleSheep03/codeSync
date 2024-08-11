@@ -9,9 +9,10 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 
-// Dynamically import RatingGraph and BarChart with SSR disabled
+// Dynamically import with SSR disabled
 const RatingGraph = dynamic(() => import('@/components/RatingGraph'), { ssr: false });
 const BarChart = dynamic(() => import('@/components/BarChart'), { ssr: false });
+const QuestionTimeGraph = dynamic(() => import('@/components/QuestionTimeGraph'), { ssr: false });
 
 const ProfilePage = () => {
   const { data: session } = useSession();
@@ -26,6 +27,8 @@ const ProfilePage = () => {
   const [yPoints, setYPoints] = useState([]);
   const [division, setDivision] = useState([]);
   const [ratingChange, setRatingChange] = useState([]);
+  const [questionIndex, setQuestionIndex] = useState([]);
+  const [timeTaken, setTimeTaken] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -49,6 +52,8 @@ const ProfilePage = () => {
           setYPoints(data.yPoints);
           setDivision(data.division);
           setRatingChange(data.ratingChange);
+          setQuestionIndex(data.questionIndex)
+          setTimeTaken(data.timeTaken)
         }
         if (data.APIDown) {
           toast.error('Codeforces API is currently down... Unable to load graphs');
@@ -136,8 +141,11 @@ const ProfilePage = () => {
           <div className='mt-10'>
             {xPoints.length > 0 && yPoints.length > 0 && <RatingGraph xPoints={xPoints} yPoints={yPoints} />}
           </div>
-          <div className='mt-10'>
+          <div className='mt-10 pt-5'>
             {division.length > 0 && ratingChange.length > 0 && <BarChart divisions={division} ratingChange={ratingChange} />}
+          </div>
+          <div className='mt-10 pt-5'>
+            {questionIndex.length > 0 && timeTaken.length > 0 && <QuestionTimeGraph questionIndex={questionIndex} timeTaken={timeTaken} />}
           </div>
         </div>
       </div>
