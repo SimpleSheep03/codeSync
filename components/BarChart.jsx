@@ -66,6 +66,8 @@ const BarChart = ({ divisions, ratingChange }) => {
   return (
     <div>
       <div id="myDiv2"></div>
+      <p className='px-5 text-center'>This bar chart visualizes the average rating change across different contest divisions excluding the first few contests.</p>
+
     </div>
   );
 };

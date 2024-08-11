@@ -141,10 +141,10 @@ const ProfilePage = () => {
           <div className='mt-10'>
             {xPoints.length > 0 && yPoints.length > 0 && <RatingGraph xPoints={xPoints} yPoints={yPoints} />}
           </div>
-          <div className='mt-10 pt-5'>
+          <div className='mt-10 pt-7'>
             {division.length > 0 && ratingChange.length > 0 && <BarChart divisions={division} ratingChange={ratingChange} />}
           </div>
-          <div className='mt-10 pt-5'>
+          <div className='mt-10 pt-7'>
             {questionIndex.length > 0 && timeTaken.length > 0 && <QuestionTimeGraph questionIndex={questionIndex} timeTaken={timeTaken} />}
           </div>
         </div>

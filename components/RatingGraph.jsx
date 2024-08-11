@@ -263,7 +263,12 @@ const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
     Plotly.newPlot('myDiv1', [traceGlow , trace1], layout, config); // Pass config as the third argument
   }, [xPoints, yPoints]);
 
-  return <div id="myDiv1"></div>;
+  return (
+    <div>
+      <div id="myDiv1"></div>
+      <p className='px-5 text-center'>This graph shows the relationship between the number of problems solved and the rating achieved</p>
+    </div>
+  );
 };
 
 export default ColoredYAxisPlot;
