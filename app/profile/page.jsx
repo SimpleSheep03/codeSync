@@ -6,11 +6,12 @@ import profileDefault from '@/assets/images/profile.png';
 import Spinner from '@/components/Spinner';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import dynamic from 'next/dynamic'
+import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 
-// Dynamically import RatingGraph with SSR disabled
+// Dynamically import RatingGraph and BarChart with SSR disabled
 const RatingGraph = dynamic(() => import('@/components/RatingGraph'), { ssr: false });
+const BarChart = dynamic(() => import('@/components/BarChart'), { ssr: false });
 
 const ProfilePage = () => {
   const { data: session } = useSession();
@@ -21,8 +22,10 @@ const ProfilePage = () => {
   const [codeforcesId, setCodeforcesId] = useState('Not provided yet');
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [xPoints , setXPoints] = useState([])
-  const [yPoints , setYPoints] = useState([])
+  const [xPoints, setXPoints] = useState([]);
+  const [yPoints, setYPoints] = useState([]);
+  const [division, setDivision] = useState([]);
+  const [ratingChange, setRatingChange] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,26 +34,27 @@ const ProfilePage = () => {
         setLoading(false);
         return;
       }
-      if (session.codeforcesId == '') {
+      if (session.codeforcesId === '') {
         router.push('/provide-codeforces-handle');
         return;
       }
 
       try {
         const res = await fetch(`/api/profile/${userId}`);
-
-        const data = await res.json()
-        if(data.ok || data.APIDown){
-          setCodeforcesId(data.codeforcesId)
-          setTeams(data.teams)
-          setXPoints(data.xPoints)
-          setYPoints(data.yPoints)
+        const data = await res.json();
+        if (data.ok || data.APIDown) {
+          setCodeforcesId(data.codeforcesId);
+          setTeams(data.teams);
+          setXPoints(data.xPoints);
+          setYPoints(data.yPoints);
+          setDivision(data.division);
+          setRatingChange(data.ratingChange);
         }
-        if(data.APIDown){
-          toast.error('Codeforces API is currently down... Unable to load the graph')
+        if (data.APIDown) {
+          toast.error('Codeforces API is currently down... Unable to load graphs');
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -100,7 +104,7 @@ const ProfilePage = () => {
                 <Link
                   href={`https://codeforces.com/profile/${codeforcesId}`}
                   className="px-5 py-2 text-blue-900 underline"
-                  target='_blank'
+                  target="_blank"
                 >
                   {codeforcesId}
                 </Link>
@@ -117,9 +121,9 @@ const ProfilePage = () => {
                       <ul className="list-disc list-inside">
                         {team.codeforcesHandles.map((handle, index) => (
                           <li key={index}>
-                          <Link href={`https://codeforces.com/profile/${handle}`} target='_blank' className="text-pink-900 underline">
-                            {handle}
-                          </Link>
+                            <Link href={`https://codeforces.com/profile/${handle}`} target="_blank" className="text-pink-900 underline">
+                              {handle}
+                            </Link>
                           </li>
                         ))}
                       </ul>
@@ -129,8 +133,11 @@ const ProfilePage = () => {
               </div>
             </div>
           </div>
-          <div className='mt-5'>
-            {xPoints.length > 0 && <RatingGraph xPoints = {xPoints} yPoints = {yPoints}/>}
+          <div className='mt-10'>
+            {xPoints.length > 0 && yPoints.length > 0 && <RatingGraph xPoints={xPoints} yPoints={yPoints} />}
+          </div>
+          <div className='mt-10'>
+            {division.length > 0 && ratingChange.length > 0 && <BarChart divisions={division} ratingChange={ratingChange} />}
           </div>
         </div>
       </div>

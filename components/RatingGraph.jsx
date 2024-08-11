@@ -260,10 +260,10 @@ const ColoredYAxisPlot = ({ xPoints, yPoints }) => {
       displayModeBar: false  // Hide the mode bar
     };
 
-    Plotly.newPlot('myDiv', [traceGlow , trace1], layout, config); // Pass config as the third argument
+    Plotly.newPlot('myDiv1', [traceGlow , trace1], layout, config); // Pass config as the third argument
   }, [xPoints, yPoints]);
 
-  return <div id="myDiv"></div>;
+  return <div id="myDiv1"></div>;
 };
 
 export default ColoredYAxisPlot;
