@@ -24,7 +24,7 @@ export const GET = async (request , { params }) => {
         let xPoints = [] , yPoints = []
         try{
             //to avoid CF API bug , use a random number in count parameter
-            const rnd = Math.floor(Math.random() * 10)
+            const rnd = Math.floor(Math.random() * 100)
 
             const submissions = await fetch(`https://codeforces.com/api/user.status?handle=${codeforcesId}&count=${10000 + rnd}`).then(async (res) => await res.json())
 
@@ -39,8 +39,8 @@ export const GET = async (request , { params }) => {
             submission_arr.reverse()
 
 
-            //fetch user contests list
-            const user_contests = await fetch(`https://codeforces.com/api/user.rating?handle=${codeforcesId}`).then(async(res) => await res.json())
+            //fetch user contests list and add a random number to avoid CF API bug
+            const user_contests = await fetch(`https://codeforces.com/api/user.rating?handle=${codeforcesId}&count=${1000 + rnd}`).then(async(res) => await res.json())
 
             let user_contests_arr = []
             for(const con of user_contests.result){
@@ -62,7 +62,8 @@ export const GET = async (request , { params }) => {
                 yPoints.push(most_recent_rating)
             }
             xPoints.push(submission_arr.length)
-            yPoints.push(user_contests_arr[user_contests_arr.length - 1])
+            yPoints.push(user_contests_arr[user_contests_arr.length - 1].newRating)
+            console.log(submission_arr.length , user_contests_arr[user_contests_arr.length - 1].newRating)
         }
         catch(error){
             console.log(error)
