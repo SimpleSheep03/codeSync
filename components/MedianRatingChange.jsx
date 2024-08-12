@@ -19,14 +19,14 @@ const BarChart = ({ divisions, ratingChange }) => {
     const maxIndex = ratingChange.indexOf(maxRatingChange);
 
     var layout = {
-      title: 'Contest Division vs Avg. Rating Change',
+      title: 'Contest Division vs Median Rating Change',
       xaxis: {
         title: 'Contest Division',
         type: 'category', // Set x-axis type to category
         fixedrange: true,  // Disable zooming on x-axis
       },
       yaxis: {
-        title: 'Average Rating Change',
+        title: 'Median Rating Change',
         fixedrange: true,  // Disable zooming on y-axis
       },
       annotations: [
@@ -66,7 +66,7 @@ const BarChart = ({ divisions, ratingChange }) => {
   return (
     <div>
       <div id="myDiv2"></div>
-      <p className='px-5 text-center mt-5'>This bar chart visualizes the average rating change across different contest divisions excluding the first few contests.</p>
+      <p className='px-5 text-center mt-5'>This bar chart visualizes the median rating change across different contest divisions excluding the first few contests.</p>
 
     </div>
   );

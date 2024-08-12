@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 
 // Dynamically import with SSR disabled
 const RatingGraph = dynamic(() => import('@/components/RatingGraph'), { ssr: false });
-const BarChart = dynamic(() => import('@/components/BarChart'), { ssr: false });
+const BarChart = dynamic(() => import('@/components/MedianRatingChange'), { ssr: false });
 const QuestionTimeGraph = dynamic(() => import('@/components/QuestionTimeGraph'), { ssr: false });
 const AverageRankGraph = dynamic(() => import('@/components/AverageRank'), { ssr: false });
 
