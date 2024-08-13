@@ -130,21 +130,25 @@ export const GET = async (request, { params }) => {
         xPoints.push(i + 1);
         yPoints.push(most_recent_rating);
       }
-      xPoints.push(submission_arr.length);
-      yPoints.push(user_contests_arr[user_contests_arr.length - 1].newRating);
+      if(user_contests_arr.length > 0){
+        xPoints.push(submission_arr.length);
+        yPoints.push(user_contests_arr[user_contests_arr.length - 1].newRating);
+      }
 
       //map for storing division vs median rating change
       const median_rating_change = {};
 
-      for (let i = Math.min(5 , user_contests_arr.length - 1); i < user_contests_arr.length; i++) {
-        const contest = user_contests_arr[i];
-        const contestType = getContestType(contest.contestName);
-        if (!median_rating_change[contestType]) {
-          median_rating_change[contestType] = [];
+      if(user_contests_arr.length > 0){
+        for (let i = Math.min(5 , user_contests_arr.length - 1); i < user_contests_arr.length; i++) {
+          const contest = user_contests_arr[i];
+          const contestType = getContestType(contest.contestName);
+          if (!median_rating_change[contestType]) {
+            median_rating_change[contestType] = [];
+          }
+          median_rating_change[contestType].push(
+            contest.newRating - contest.oldRating
+          );
         }
-        median_rating_change[contestType].push(
-          contest.newRating - contest.oldRating
-        );
       }
 
       Object.entries(median_rating_change).forEach(
@@ -159,8 +163,11 @@ export const GET = async (request, { params }) => {
       const map2 = {};
 
       //variable to store the contest id of the 20th user contest id from last
-      const mn_contest_id =
-        user_contests_arr[Math.max(0, user_contests_arr.length - 20)].contestId;
+      let mn_contest_id = 0
+
+      if(user_contests_arr.length > 0){
+        mn_contest_id = user_contests_arr[Math.max(0, user_contests_arr.length - 20)].contestId;
+      }
 
       for (const sub of submission_arr) {
         //filter only the first accepted submissions of a user on any problem of a contest which is not older than the 20th contest from last for the user
@@ -223,15 +230,17 @@ export const GET = async (request, { params }) => {
       //maps for storing the avg rank against each division
       const map5 = new Map();
       const map6 = new Map();
-      for (
-        let i = user_contests_arr.length - 1;
-        i >= Math.max(0, user_contests_arr.length - 20);
-        i--
-      ) {
-        const con = user_contests_arr[i];
-        const contestType = getContestType(con.contestName);
-        map5.set(contestType, (map5.get(contestType) || 0) + con.rank);
-        map6.set(contestType, (map6.get(contestType) || 0) + 1);
+      if(user_contests_arr.length > 0){
+        for (
+          let i = user_contests_arr.length - 1;
+          i >= Math.max(0, user_contests_arr.length - 20);
+          i--
+        ) {
+          const con = user_contests_arr[i];
+          const contestType = getContestType(con.contestName);
+          map5.set(contestType, (map5.get(contestType) || 0) + con.rank);
+          map6.set(contestType, (map6.get(contestType) || 0) + 1);
+        }
       }
 
       map5.forEach((value, key) => {
