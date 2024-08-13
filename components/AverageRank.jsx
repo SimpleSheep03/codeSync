@@ -67,7 +67,7 @@ const BarChart = ({ divisions, avgRank }) => {
     <div>
       <div id="myDiv4"></div>
       <p className='px-5 text-center mt-5'>
-        This bar chart visualizes the average rank (in rated contests) achieved across different divisions averaged over the last 30 contests.
+        This bar chart visualizes the average rank (in rated contests) achieved across different divisions averaged over the last 20 contests.
       </p>
 
     </div>

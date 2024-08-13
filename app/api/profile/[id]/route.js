@@ -136,7 +136,7 @@ export const GET = async (request, { params }) => {
       //map for storing division vs median rating change
       const median_rating_change = {};
 
-      for (let i = 5; i < user_contests_arr.length; i++) {
+      for (let i = Math.min(5 , user_contests_arr.length - 1); i < user_contests_arr.length; i++) {
         const contest = user_contests_arr[i];
         const contestType = getContestType(contest.contestName);
         if (!median_rating_change[contestType]) {
@@ -220,12 +220,12 @@ export const GET = async (request, { params }) => {
       questionIndex = data.map((item) => item.questionIndex);
       timeTaken = data.map((item) => item.timeTaken);
 
-      //map for storing the avg rating change against each division
+      //maps for storing the avg rank against each division
       const map5 = new Map();
       const map6 = new Map();
       for (
         let i = user_contests_arr.length - 1;
-        i >= Math.max(0, user_contests_arr.length - 30);
+        i >= Math.max(0, user_contests_arr.length - 20);
         i--
       ) {
         const con = user_contests_arr[i];
