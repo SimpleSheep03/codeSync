@@ -61,7 +61,7 @@ const ProfilePage = () => {
           setAvgRank(data.avgRank)
         }
         if (data.APIDown) {
-          toast.error('Codeforces API is currently down... Unable to load graphs');
+          toast.warn('Codeforces API is currently down... Unable to load graphs');
         }
       } catch (error) {
         console.error(error);
