@@ -139,7 +139,7 @@ export const GET = async (request, { params }) => {
       const median_rating_change = {};
 
       if(user_contests_arr.length > 0){
-        for (let i = Math.min(5 , user_contests_arr.length - 1); i < user_contests_arr.length; i++) {
+        for (let i = user_contests_arr.length - 1; i >= Math.max(5 , user_contests_arr.length - 30); i--) {
           const contest = user_contests_arr[i];
           const contestType = getContestType(contest.contestName);
           if (!median_rating_change[contestType]) {
@@ -155,6 +155,7 @@ export const GET = async (request, { params }) => {
         ([contestType, ratingArr]) => {
           division.push(contestType);
           ratingArr.sort((a, b) => a - b); // Sort numerically
+          // console.log(contestType , ratingArr)
           ratingChange.push(ratingArr[Math.floor([ratingArr.length / 2])]);
         }
       );
