@@ -138,7 +138,7 @@ export const GET = async (request, { params }) => {
       //map for storing division vs median rating change
       const median_rating_change = {};
 
-      if(user_contests_arr.length > 0){
+      if(user_contests_arr.length > 5){
         for (let i = user_contests_arr.length - 1; i >= Math.max(5 , user_contests_arr.length - 30); i--) {
           const contest = user_contests_arr[i];
           const contestType = getContestType(contest.contestName);
@@ -160,7 +160,7 @@ export const GET = async (request, { params }) => {
         }
       );
 
-      //map for storing the problems solved in a particular contest
+      //map for storing the problems solved in a particular contest to be used for generating the average time taken graph
       const map2 = {};
 
       //variable to store the contest id of the 20th user contest id from last
@@ -180,8 +180,15 @@ export const GET = async (request, { params }) => {
           if (!map2[sub.contestId]) {
             map2[sub.contestId] = [];
           }
-          if (!map2[sub.contestId].includes(sub)) {
-            map2[sub.contestId].push(sub);
+          //to ensure that there may not be multiple correct submissions against the same problem during the contest
+          let flag = 1
+          for(const temp_sub of map2[sub.contestId]){
+            if(temp_sub.problem.index == sub.problem.index){
+              flag = 0
+            }
+          }
+          if(flag){
+            map2[sub.contestId].push(sub)
           }
         }
       }
