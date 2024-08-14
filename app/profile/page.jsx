@@ -147,14 +147,14 @@ const ProfilePage = () => {
             {xPoints.length > 0 && yPoints.length > 0 && <RatingGraph xPoints={xPoints} yPoints={yPoints} />}
           </div>
           <div className='mt-10 pt-7'>
+            {questionIndex.length > 0 && timeTaken.length > 0 && <QuestionTimeGraph questionIndex={questionIndex} timeTaken={timeTaken} />}
+          </div>
+          <div className='mt-10 pt-7'>
             {division.length > 0 && ratingChange.length > 0 && <BarChart divisions={division} ratingChange={ratingChange} />}
           </div>
           <div className='mt-10 pt-7'>
             {division2.length > 0 && avgRank.length > 0 && <AverageRankGraph divisions={division2} avgRank={avgRank} />}
           </div> 
-          <div className='mt-10 pt-7'>
-            {questionIndex.length > 0 && timeTaken.length > 0 && <QuestionTimeGraph questionIndex={questionIndex} timeTaken={timeTaken} />}
-          </div>
         </div>
       </div>
     </section>
