@@ -1,10 +1,7 @@
-import connectDB from "@/config/database";
-import Team from "@/models/Team";
-import User from "@/models/User";
+export const POST = async (request) => {
 
-export const GET = async (request, { params }) => {
-  const url = new URL(request.url);
-  const graph = url.searchParams.get("graph");
+    const data = await request.json()
+    const { codeforcesId } = data
 
   const getContestType = (contestName) => {
     if (contestName.includes("Educational")) {
@@ -31,38 +28,11 @@ export const GET = async (request, { params }) => {
   };
 
   try {
-    await connectDB();
-    const { id } = params;
-    if (!id) {
-      return new Response(
-        JSON.stringify({ message: "Unauthorized", ok: false }),
-        { status: 401 }
-      );
-    }
-    const user = await User.findById(id);
 
-    if (!user) {
+    if (!codeforcesId) {
       return new Response(
-        JSON.stringify({ message: "No such user exists", ok: false }),
+        JSON.stringify({ message: "Fill all the fields", ok: false }),
         { status: 400 }
-      );
-    }
-
-    const { codeforcesId } = user;
-
-    const teams = await Team.find({
-      codeforcesHandles: { $in: [codeforcesId] },
-    });
-
-    if (!graph) {
-      return new Response(
-        JSON.stringify({
-          message: "Fetched user profile without graphs",
-          ok: true,
-          codeforcesId,
-          teams,
-        }),
-        { status: 200 }
       );
     }
 
@@ -91,6 +61,24 @@ export const GET = async (request, { params }) => {
           10000 + rnd
         }`
       ).then(async (res) => await res.json());
+
+      if(submissions.status == 'FAILED'){
+        return new Response(
+            JSON.stringify({
+              message: `Codeforces handle ${codeforcesId} is invalid`,
+              ok: false,
+              xPoints,
+              yPoints,
+              division,
+              ratingChange,
+              questionIndex,
+              timeTaken,
+              division2,
+              avgRank,
+            }),
+            { status: 400 }
+          );
+      }
 
       let submission_arr = [];
       for (const sub of submissions.result) {
@@ -260,11 +248,9 @@ export const GET = async (request, { params }) => {
       console.log("Codeforces API is currently down... Please try again later");
       return new Response(
         JSON.stringify({
-          message: "Codeforces API is currently down... Please try again later",
+          message: "Codeforces API is currently down... Pleasetry again  later",
           ok: false,
-          codeforcesId,
-          APIDown: true,
-          teams,
+          APIDown : true,
           xPoints,
           yPoints,
           division,
@@ -280,10 +266,8 @@ export const GET = async (request, { params }) => {
 
     return new Response(
       JSON.stringify({
-        message: "User details found along with graphs",
+        message: "Graph points found successfully",
         ok: true,
-        codeforcesId,
-        teams,
         xPoints,
         yPoints,
         division,
@@ -298,45 +282,9 @@ export const GET = async (request, { params }) => {
   } catch (error) {
     console.log(error);
     return new Response(
-      JSON.stringify({ message: "Unable to fetch profile", ok: false }),
+      JSON.stringify({ message: "Unable to fetch user stats", ok: false }),
       { status: 500 }
     );
   }
 };
 
-export const PUT = async (request, { params }) => {
-  try {
-    await connectDB();
-    const { id } = params;
-    if (!id) {
-      return new Response(
-        JSON.stringify({ message: "Unauthorized", ok: false }),
-        { status: 401 }
-      );
-    }
-    const user = await User.findById(id);
-
-    if (!user) {
-      return new Response(
-        JSON.stringify({ message: "No such user exists", ok: false }),
-        { status: 400 }
-      );
-    }
-
-    const data = await request.json();
-    user.codeforcesId = data.codeforcesId;
-
-    await user.save();
-
-    return new Response(
-      JSON.stringify({ message: "ID updated successfully", ok: true }),
-      { status: 200 }
-    );
-  } catch (error) {
-    console.log(error);
-    return new Response(
-      JSON.stringify({ message: "Could not update ID", ok: false }),
-      { status: 500 }
-    );
-  }
-};
