@@ -79,13 +79,13 @@ const NavItems = () => {
 
   return (
     <div className="flex items-center space-x-4">
-      <Link href="/">
+      <Link href="/" title="Home">
         <FaHome className="text-2xl mr-2 text-gray-700" />
       </Link>
 
       {/* Notification Icon */}
       {session && (
-        <Link href="/notifications">
+        <Link href="/notifications" title="Notifications">
           {" "}
           {/* Add proper href for notifications */}
           <div className="relative">
