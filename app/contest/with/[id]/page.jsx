@@ -57,6 +57,9 @@ const Page = () => {
       <p className='text-lg text-center text-gray-700'>
         There are currently no past contests associated with this ID.
       </p>
+      <p className="my-6 text-gray-700 text-center">
+        This page allows you to review your past contests, analyze your performance, and track your progress over time. Please note: The contests displayed on this page are created specifically on Code Sync, not on Codeforces. 
+      </p>
     </div>
   ) : !session ? (
     <div className="container mx-auto px-4 py-8 bg-gray-50 border border-pink-50 mt-7 rounded-md shadow-md flex justify-center">
@@ -66,6 +69,9 @@ const Page = () => {
       <h1 className='text-4xl font-bold mb-6 text-center text-pink-700'>
         Past Contests of {handle}
       </h1>
+      <p className="my-6 text-gray-700 text-center mx-8">
+        This page allows you to review your past contests, analyze your performance, and track your progress over time. Please note: The contests displayed on this page are created specifically on Code Sync, not on Codeforces. 
+      </p>
       <div className='space-y-4'>
         {contests.map((contest, index) => (
           <ContestCard contest={contest} key={index} />

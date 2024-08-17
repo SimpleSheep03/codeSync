@@ -84,7 +84,7 @@ export const GET = async (request, { params }) => {
 
     try {
       //to avoid CF API bug , use a random number in count parameter
-      const rnd = Math.floor(Math.random() * 100);
+      const rnd = Math.floor(Math.random() * 100) + 100;
 
       const submissions = await fetch(
         `https://codeforces.com/api/user.status?handle=${codeforcesId}&count=${

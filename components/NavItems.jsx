@@ -78,7 +78,7 @@ const NavItems = () => {
   }, [isProfileMenuOpen]);
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-4 md:space-x-7">
       <Link href="/" title="Home">
         <FaHome className="text-2xl  text-gray-700" />
       </Link>

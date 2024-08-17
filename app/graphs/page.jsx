@@ -104,7 +104,7 @@ const page = () => {
           setDivision2(data.division2);
           setAvgRank(data.avgRank);
           if(!data.APIDown){
-            toast.success('Graph plotted successfully...')
+            toast.success('Graph fetched successfully')
           }
           else{
             toast.error(
@@ -136,11 +136,11 @@ const page = () => {
             Codeforces Performance Analysis
         </h1>
         <p className="mb-6 text-gray-600 text-center">
-  <span className="sm:hidden">
-    For better graph visibility, open this page on a desktop site, in <span className="font-semibold text-black">landscape mode</span>, or on a larger screen. 
-  </span>{' '}
-  This page offers key insights into your performance, including rating trends and contest stats.
-</p>
+          This page offers key insights into your performance, including rating trends and contest stats.{' '}
+          <span className="sm:hidden">
+            For better graph visibility, open this page on a desktop site, in <span className="font-semibold text-black">landscape mode</span>, or on a larger screen. 
+          </span>
+        </p>
         <div className="flex flex-col items-center">
             <div className="flex flex-wrap my-8 md:px-3">
               <label
