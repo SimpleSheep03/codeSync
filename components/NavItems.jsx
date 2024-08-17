@@ -78,7 +78,7 @@ const NavItems = () => {
   }, [isProfileMenuOpen]);
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center space-x-4 max-sm:space-x-3">
       <Link href="/" title="Home">
         <FaHome className="text-2xl mr-2 text-gray-700" />
       </Link>
@@ -134,7 +134,7 @@ const NavItems = () => {
 
       {session && (
         <div>
-          <div className="relative ml-3">
+          <div className="relative">
             <button
               type="button"
               className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
