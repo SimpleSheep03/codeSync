@@ -19,15 +19,16 @@ const BarChart = ({ divisions, avgRank }) => {
     const maxIndex = avgRank.indexOf(maxavgRank);
 
     var layout = {
+      dragmode : 'pan',
       title: 'Contest Division vs Avg. Rank',
       xaxis: {
         title: 'Contest Division',
         type: 'category', // Set x-axis type to category
-        fixedrange: true,  // Disable zooming on x-axis
+        // fixedrange: true,  // Disable zooming on x-axis
       },
       yaxis: {
         title: 'Average Rank',
-        fixedrange: true,  // Disable zooming on y-axis
+        // fixedrange: true,  // Disable zooming on y-axis
       },
       annotations: [
         {
@@ -57,7 +58,7 @@ const BarChart = ({ divisions, avgRank }) => {
 
     const config = {
       responsive: true,  // Make the plot responsive
-      displayModeBar: false,  // Hide the mode bar
+      displayModeBar: false,  // Hide the mode bar,
     };
 
     Plotly.newPlot('myDiv4', data, layout, config);
