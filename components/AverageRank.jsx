@@ -8,23 +8,11 @@ const BarChart = ({ divisions, avgRank }) => {
       y: avgRank,
       name: 'Division vs Rating Change',
       type: 'bar',
-      showlegend : false,
-      hovertemplate: '(%{x}, %{y}<extra></extra>)'
     };
 
-    // Invisible scatter plot for zooming
-    var trace2 = {
-      x: divisions,
-      y: avgRank,
-      type: 'scatter',
-      mode: 'lines',
-      line: { width: 0 }, // Make the line invisible
-      hoverinfo: 'skip', // Disable hover info
-      showlegend: false,
-    };
+    var data = [trace1];
 
-    var data = [trace1, trace2];
-
+    // Find the min and max avgRank values
     const minavgRank = Math.min(...avgRank);
     const maxavgRank = Math.max(...avgRank);
     const minIndex = avgRank.indexOf(minavgRank);
@@ -34,12 +22,12 @@ const BarChart = ({ divisions, avgRank }) => {
       title: 'Contest Division vs Avg. Rank',
       xaxis: {
         title: 'Contest Division',
-        type: 'category',
-        fixedrange: true, // Disable zooming on x-axis
+        type: 'category', // Set x-axis type to category
+        fixedrange: true,  // Disable zooming on x-axis
       },
       yaxis: {
         title: 'Average Rank',
-        fixedrange: true, // Disable zooming on y-axis
+        fixedrange: true,  // Disable zooming on y-axis
       },
       annotations: [
         {
@@ -50,8 +38,8 @@ const BarChart = ({ divisions, avgRank }) => {
           text: `Best: ${minavgRank}`,
           showarrow: true,
           arrowhead: 7,
-          ax: -50,
-          ay: -50,
+          ax: -50, // Adjusted to tilt the line
+          ay: -50, // Adjusted to tilt the line
         },
         {
           x: divisions[maxIndex],
@@ -61,19 +49,19 @@ const BarChart = ({ divisions, avgRank }) => {
           text: `Worst: ${maxavgRank}`,
           showarrow: true,
           arrowhead: 7,
-          ax: -50,
-          ay: -50,
+          ax: -50, // Adjusted to tilt the line
+          ay: -50, // Adjusted to tilt the line
         },
       ],
     };
 
     const config = {
-      responsive: true,
-      displayModeBar: true, // Show the mode bar to allow zooming
+      responsive: true,  // Make the plot responsive
+      displayModeBar: false,  // Hide the mode bar
     };
 
     Plotly.newPlot('myDiv4', data, layout, config);
-  }, [divisions, avgRank]);
+  }, [divisions, avgRank]);  // Added dependencies for useEffect
 
   return (
     <div>
@@ -81,6 +69,7 @@ const BarChart = ({ divisions, avgRank }) => {
       <p className='px-5 text-center mt-5'>
         This bar chart visualizes the average rank (in rated contests) achieved across different divisions averaged over the last 20 contests.
       </p>
+
     </div>
   );
 };
