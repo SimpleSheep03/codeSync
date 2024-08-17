@@ -3,8 +3,7 @@ import Link from 'next/link';
 import React, { useEffect, useState, useRef } from 'react';
 import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
-import { FaBell, FaGoogle, FaHome } from 'react-icons/fa'; // Importing the notification icon
+import { FaBell , FaChartLine, FaGoogle, FaHome } from 'react-icons/fa'; // Importing the notification icon
 import { useGlobalContext } from '@/context/GlobalContext';
 
 const NavItems = () => {
@@ -12,8 +11,6 @@ const NavItems = () => {
   const [providers, setProviders] = useState();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileImage = session?.user?.image;
-  const pathname = usePathname();
-  const router = useRouter();
   const menuButtonRef = useRef(null);
   const menuRef = useRef(null);
   const {notificationCount , setNotificationCount} = useGlobalContext()
@@ -86,9 +83,6 @@ const NavItems = () => {
             <FaHome className="text-2xl mr-2 text-gray-700" />
         </Link>
       )}
-      {/* <Link href='/'>
-            <FaHome className={`text-2xl mr-2 text-gray-700 ${pathname != '/' ? '' : 'hidden'}`} />
-        </Link> */}
 
       {/* Notification Icon */}
       {session && <Link href="/notifications"> {/* Add proper href for notifications */}
@@ -101,6 +95,12 @@ const NavItems = () => {
           )}
         </div>
       </Link>}
+
+      <Link href='/graphs' title="View Performance Graphs">
+          <div className='relative'>
+          <FaChartLine className="text-2xl mr-2 text-gray-700" />
+          </div>
+      </Link>
 
       {!session && (
         <>

@@ -33,16 +33,6 @@ const ProfilePage = () => {
   const [codeforcesId, setCodeforcesId] = useState("Not provided yet");
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [xPoints, setXPoints] = useState([]);
-  const [yPoints, setYPoints] = useState([]);
-  const [division, setDivision] = useState([]);
-  const [ratingChange, setRatingChange] = useState([]);
-  const [questionIndex, setQuestionIndex] = useState([]);
-  const [timeTaken, setTimeTaken] = useState([]);
-  const [division2, setDivision2] = useState([]);
-  const [avgRank, setAvgRank] = useState([]);
-  const [graphCFHandle, setGraphCFHandle] = useState("");
-  const [changeGraphCFHandle , setChangeGraphCFHandle] = useState(false)
   const router = useRouter();
 
   useEffect(() => {
@@ -62,15 +52,6 @@ const ProfilePage = () => {
         if (data.ok || data.APIDown) {
           setCodeforcesId(data.codeforcesId);
           setTeams(data.teams);
-          setXPoints(data.xPoints);
-          setYPoints(data.yPoints);
-          setDivision(data.division);
-          setRatingChange(data.ratingChange);
-          setQuestionIndex(data.questionIndex);
-          setTimeTaken(data.timeTaken);
-          setDivision2(data.division2);
-          setAvgRank(data.avgRank);
-          setGraphCFHandle(data.codeforcesId);
         }
         if (data.APIDown) {
           toast.warn(
@@ -90,45 +71,6 @@ const ProfilePage = () => {
       setLoading(false);
     }
   }, [session]);
-
-  const changeGraph = async (e) => {
-    e.preventDefault()
-    setChangeGraphCFHandle(true)
-    try {
-      const res = await fetch('/api/change-graphs' , {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ codeforcesId : graphCFHandle }),
-      })
-      const data = await res.json()
-      if(data.ok || data.APIDown){
-          setXPoints(data.xPoints);
-          setYPoints(data.yPoints);
-          setDivision(data.division);
-          setRatingChange(data.ratingChange);
-          setQuestionIndex(data.questionIndex);
-          setTimeTaken(data.timeTaken);
-          setDivision2(data.division2);
-          setAvgRank(data.avgRank);
-          if(!data.APIDown){
-            toast.success('Graph plotted successfully')
-          }
-      }
-      else{
-        toast.error(data.message)
-      }
-
-    } catch (error) {
-      console.log(error)
-      toast.error('Could not plot graphs')
-      setGraphCFHandle('')
-    }
-    finally{
-      setChangeGraphCFHandle(false)
-    }
-  }
 
   return loading ? (
     <Spinner loading={loading} />
@@ -208,55 +150,6 @@ const ProfilePage = () => {
                 )}
               </div>
             </div>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="flex flex-wrap my-8 md:px-3">
-              <label
-                htmlFor="graphCFHandle"
-                className="w-full mb-2 text-sm text-center font-semibold"
-              >
-                Enter Codeforces Handle to Plot Graph
-              </label>
-              <input
-                type="text"
-                id="graphCFHandle"
-                name="codeforcesId3"
-                className="w-[350px] mx-auto px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-center mt-3"
-                onChange={(e) => setGraphCFHandle(e.target.value)}
-                value={graphCFHandle}
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-[200px] bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700"
-              disabled = {changeGraphCFHandle}
-              onClick={changeGraph}
-            >
-              {changeGraphCFHandle ? 'Plotting...' : 'Enter'}
-            </button>
-          </div>
-          <div className="mt-10">
-            {xPoints.length > 0 && yPoints.length > 0 && (
-              <RatingGraph xPoints={xPoints} yPoints={yPoints} />
-            )}
-          </div>
-          <div className="mt-10 pt-7">
-            {questionIndex.length > 0 && timeTaken.length > 0 && (
-              <QuestionTimeGraph
-                questionIndex={questionIndex}
-                timeTaken={timeTaken}
-              />
-            )}
-          </div>
-          <div className="mt-10 pt-7">
-            {division.length > 0 && ratingChange.length > 0 && (
-              <BarChart divisions={division} ratingChange={ratingChange} />
-            )}
-          </div>
-          <div className="my-10 pt-7">
-            {division2.length > 0 && avgRank.length > 0 && (
-              <AverageRankGraph divisions={division2} avgRank={avgRank} />
-            )}
           </div>
         </div>
       </div>
