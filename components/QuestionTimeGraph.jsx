@@ -1,27 +1,28 @@
-import React, { useEffect } from 'react';
-import Plotly from 'plotly.js-dist';
+import React, { useEffect } from "react";
+import Plotly from "plotly.js-dist";
 
 const BarChart = ({ questionIndex, timeTaken }) => {
   useEffect(() => {
     var trace1 = {
       x: questionIndex,
       y: timeTaken,
-      name: 'Question Rating vs Time Taken',
-      type: 'bar'
+      name: "Question Rating vs Time Taken",
+      type: "bar",
     };
 
     var data = [trace1];
 
     var layout = {
-      title: 'Question Rating vs Avg. Time Taken',
+      dragmode: "pan",
+      title: "Question Rating vs Avg. Time Taken",
       xaxis: {
-        title: 'Question Rating',
-        type: 'category', // Set x-axis type to category
-        fixedrange: true,  // Disable zooming on x-axis
+        title: "Question Rating",
+        type: "category", // Set x-axis type to category
+        //fixedrange: true,  // Disable zooming on x-axis
       },
       yaxis: {
-        title: 'Average Time Taken (Minutes)',
-        fixedrange: true, // Disable zooming on y-axis
+        title: "Average Time Taken (Minutes)",
+        //fixedrange: true, // Disable zooming on y-axis
       },
     };
 
@@ -30,13 +31,16 @@ const BarChart = ({ questionIndex, timeTaken }) => {
       displayModeBar: false, // Hide the mode bar
     };
 
-    Plotly.newPlot('myDiv3', data, layout, config);
+    Plotly.newPlot("myDiv3", data, layout, config);
   }, [questionIndex, timeTaken]);
 
   return (
     <div>
       <div id="myDiv3"></div>
-      <p className='p-5 text-center'>This bar chart displays the average time taken to solve problems based on their rating averaged over the last 20 contests.</p>
+      <p className="p-5 text-center">
+        This bar chart displays the average time taken to solve problems based
+        on their rating averaged over the last 20 contests.
+      </p>
     </div>
   );
 };

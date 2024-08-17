@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
-import Plotly from 'plotly.js-dist';
+import React, { useEffect } from "react";
+import Plotly from "plotly.js-dist";
 
 const BarChart = ({ divisions, avgRank }) => {
   useEffect(() => {
     var trace1 = {
       x: divisions,
       y: avgRank,
-      name: 'Division vs Rating Change',
-      type: 'bar',
+      name: "Division vs Rating Change",
+      type: "bar",
     };
 
     var data = [trace1];
@@ -19,23 +19,23 @@ const BarChart = ({ divisions, avgRank }) => {
     const maxIndex = avgRank.indexOf(maxavgRank);
 
     var layout = {
-      dragmode : 'pan',
-      title: 'Contest Division vs Avg. Rank',
+      dragmode: "pan",
+      title: "Contest Division vs Avg. Rank",
       xaxis: {
-        title: 'Contest Division',
-        type: 'category', // Set x-axis type to category
-        // fixedrange: true,  // Disable zooming on x-axis
+        title: "Contest Division",
+        type: "category", // Set x-axis type to category
+        // //fixedrange: true,  // Disable zooming on x-axis
       },
       yaxis: {
-        title: 'Average Rank',
-        // fixedrange: true,  // Disable zooming on y-axis
+        title: "Average Rank",
+        // //fixedrange: true,  // Disable zooming on y-axis
       },
       annotations: [
         {
           x: divisions[minIndex],
           y: minavgRank,
-          xref: 'x',
-          yref: 'y',
+          xref: "x",
+          yref: "y",
           text: `Best: ${minavgRank}`,
           showarrow: true,
           arrowhead: 7,
@@ -45,8 +45,8 @@ const BarChart = ({ divisions, avgRank }) => {
         {
           x: divisions[maxIndex],
           y: maxavgRank,
-          xref: 'x',
-          yref: 'y',
+          xref: "x",
+          yref: "y",
           text: `Worst: ${maxavgRank}`,
           showarrow: true,
           arrowhead: 7,
@@ -57,20 +57,20 @@ const BarChart = ({ divisions, avgRank }) => {
     };
 
     const config = {
-      responsive: true,  // Make the plot responsive
-      displayModeBar: false,  // Hide the mode bar,
+      responsive: true, // Make the plot responsive
+      displayModeBar: false, // Hide the mode bar,
     };
 
-    Plotly.newPlot('myDiv4', data, layout, config);
-  }, [divisions, avgRank]);  // Added dependencies for useEffect
+    Plotly.newPlot("myDiv4", data, layout, config);
+  }, [divisions, avgRank]); // Added dependencies for useEffect
 
   return (
     <div>
       <div id="myDiv4"></div>
-      <p className='px-5 text-center mt-5'>
-        This bar chart visualizes the average rank (in rated contests) achieved across different divisions averaged over the last 20 contests.
+      <p className="px-5 text-center mt-5">
+        This bar chart visualizes the average rank (in rated contests) achieved
+        across different divisions averaged over the last 20 contests.
       </p>
-
     </div>
   );
 };

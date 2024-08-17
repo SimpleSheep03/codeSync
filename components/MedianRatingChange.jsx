@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
-import Plotly from 'plotly.js-dist';
+import React, { useEffect } from "react";
+import Plotly from "plotly.js-dist";
 
 const BarChart = ({ divisions, ratingChange }) => {
   useEffect(() => {
     var trace1 = {
       x: divisions,
       y: ratingChange,
-      name: 'Division vs Rating Change',
-      type: 'bar',
+      name: "Division vs Rating Change",
+      type: "bar",
     };
 
     var data = [trace1];
@@ -19,22 +19,23 @@ const BarChart = ({ divisions, ratingChange }) => {
     const maxIndex = ratingChange.indexOf(maxRatingChange);
 
     var layout = {
-      title: 'Contest Division vs Median Rating Change',
+      dragmode: "pan",
+      title: "Contest Division vs Median Rating Change",
       xaxis: {
-        title: 'Contest Division',
-        type: 'category', // Set x-axis type to category
-        fixedrange: true,  // Disable zooming on x-axis
+        title: "Contest Division",
+        type: "category", // Set x-axis type to category
+        //fixedrange: true,  // Disable zooming on x-axis
       },
       yaxis: {
-        title: 'Median Rating Change',
-        fixedrange: true,  // Disable zooming on y-axis
+        title: "Median Rating Change",
+        //fixedrange: true,  // Disable zooming on y-axis
       },
       annotations: [
         {
           x: divisions[minIndex],
           y: minRatingChange,
-          xref: 'x',
-          yref: 'y',
+          xref: "x",
+          yref: "y",
           text: `Min: ${minRatingChange}`,
           showarrow: true,
           arrowhead: 7,
@@ -44,8 +45,8 @@ const BarChart = ({ divisions, ratingChange }) => {
         {
           x: divisions[maxIndex],
           y: maxRatingChange,
-          xref: 'x',
-          yref: 'y',
+          xref: "x",
+          yref: "y",
           text: `Max: ${maxRatingChange}`,
           showarrow: true,
           arrowhead: 7,
@@ -56,18 +57,20 @@ const BarChart = ({ divisions, ratingChange }) => {
     };
 
     const config = {
-      responsive: true,  // Make the plot responsive
-      displayModeBar: false,  // Hide the mode bar
+      responsive: true, // Make the plot responsive
+      displayModeBar: false, // Hide the mode bar
     };
 
-    Plotly.newPlot('myDiv2', data, layout, config);
-  }, [divisions, ratingChange]);  // Added dependencies for useEffect
+    Plotly.newPlot("myDiv2", data, layout, config);
+  }, [divisions, ratingChange]); // Added dependencies for useEffect
 
   return (
     <div>
       <div id="myDiv2"></div>
-      <p className='px-5 text-center mt-5'>This bar chart visualizes the median rating change across different contest divisions, considering the last 20 contests.</p>
-
+      <p className="px-5 text-center mt-5">
+        This bar chart visualizes the median rating change across different
+        contest divisions, considering the last 20 contests.
+      </p>
     </div>
   );
 };
