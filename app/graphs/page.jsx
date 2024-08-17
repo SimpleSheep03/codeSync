@@ -104,7 +104,7 @@ const page = () => {
           setDivision2(data.division2);
           setAvgRank(data.avgRank);
           if(!data.APIDown){
-            toast.success('Graph plotted successfully')
+            toast.success('Graph is being plotted...')
           }
       }
       else{
@@ -142,7 +142,7 @@ const page = () => {
                 type="text"
                 id="graphCFHandle"
                 name="codeforcesId3"
-                className="w-[350px] mx-auto px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-center mt-3"
+                className="w-[350px] max-sm:w-[300px] mx-auto px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-center mt-3"
                 onChange={(e) => setGraphCFHandle(e.target.value)}
                 value={graphCFHandle}
               />
