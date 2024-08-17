@@ -131,10 +131,16 @@ const page = () => {
   ) : (
     <section className="bg-blue-50">
       <div className="container m-auto py-10">
+        <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
         <h1 className='text-3xl font-bold mb-6 text-center text-pink-700'>
             Codeforces Performance Analysis
         </h1>
-        <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
+        <p className="mb-6 text-gray-600 text-center">
+  <span className="sm:hidden">
+    For better graph visibility, open this page on a desktop site, in <span className="font-semibold text-black">landscape mode</span>, or on a larger screen. 
+  </span>{' '}
+  This page offers key insights into your performance, including rating trends and contest stats.
+</p>
         <div className="flex flex-col items-center">
             <div className="flex flex-wrap my-8 md:px-3">
               <label
