@@ -3,7 +3,7 @@ import '@/assets/styles/globals.css'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthProvider from "@/components/AuthProvider";
-import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/react"
 import { GlobalProvider } from "@/context/GlobalContext";
 
 export const metadata = {
@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
         <body>
           <Navbar/>
           {children}
-          {/* <Footer/> */}
+          <Analytics/>
           <ToastContainer/>
           </body>
       </html>
