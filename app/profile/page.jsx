@@ -47,7 +47,7 @@ const ProfilePage = () => {
       }
 
       try {
-        const res = await fetch(`/api/profile/${userId}?graph=true`);
+        const res = await fetch(`/api/profile/${userId}`);
         const data = await res.json();
         if (data.ok || data.APIDown) {
           setCodeforcesId(data.codeforcesId);
