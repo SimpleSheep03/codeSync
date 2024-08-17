@@ -104,7 +104,12 @@ const page = () => {
           setDivision2(data.division2);
           setAvgRank(data.avgRank);
           if(!data.APIDown){
-            toast.success('Graph is being plotted...')
+            toast.success('Graph plotted successfully...')
+          }
+          else{
+            toast.error(
+              "Codeforces API is currently down... Unable to load graphs"
+            );
           }
       }
       else{

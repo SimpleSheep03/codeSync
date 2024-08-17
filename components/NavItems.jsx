@@ -171,7 +171,7 @@ const NavItems = () => {
                     setIsProfileMenuOpen(false)
                   }}
                 >
-                  Profile with Stats
+                  Your Profile
                 </Link>
                 {session.codeforcesId && <Link
                   href={`/contest/with/${session?.codeforcesId}`}
