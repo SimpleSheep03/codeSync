@@ -69,7 +69,7 @@ const BarChart = ({ divisions, avgRank }) => {
 
     const config = {
       responsive: true,
-      displayModeBar: false, // Show the mode bar to allow zooming
+      displayModeBar: true, // Show the mode bar to allow zooming
     };
 
     Plotly.newPlot('myDiv4', data, layout, config);
