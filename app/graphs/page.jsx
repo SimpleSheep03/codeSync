@@ -138,7 +138,7 @@ const page = () => {
         <p className="mb-6 text-gray-600 text-center">
           This page offers key insights into your performance, including rating trends and contest stats.{' '}
           <span className="sm:hidden">
-            For better graph visibility, open this page on a desktop site, in <span className="font-semibold text-black">landscape mode</span>, or on a larger screen. 
+            For better graph <span className="font-semibold text-black">visibility</span>, open this page on a desktop site, in landscape mode, or on a larger screen. 
           </span>
         </p>
         <div className="flex flex-col items-center">
