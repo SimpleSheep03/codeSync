@@ -1,7 +1,8 @@
-export const POST = async (request) => {
+import { unwantedContests } from "@/constants/questions";
 
-    const data = await request.json()
-    const { codeforcesId } = data
+export const POST = async (request) => {
+  const data = await request.json();
+  const { codeforcesId } = data;
 
   const getContestType = (contestName) => {
     if (contestName.includes("Educational")) {
@@ -28,7 +29,6 @@ export const POST = async (request) => {
   };
 
   try {
-
     if (!codeforcesId) {
       return new Response(
         JSON.stringify({ message: "Fill all the fields", ok: false }),
@@ -62,22 +62,22 @@ export const POST = async (request) => {
         }`
       ).then(async (res) => await res.json());
 
-      if(submissions.status == 'FAILED'){
+      if (submissions.status == "FAILED") {
         return new Response(
-            JSON.stringify({
-              message: `Codeforces handle ${codeforcesId} is invalid`,
-              ok: false,
-              xPoints,
-              yPoints,
-              division,
-              ratingChange,
-              questionIndex,
-              timeTaken,
-              division2,
-              avgRank,
-            }),
-            { status: 400 }
-          );
+          JSON.stringify({
+            message: `Codeforces handle ${codeforcesId} is invalid`,
+            ok: false,
+            xPoints,
+            yPoints,
+            division,
+            ratingChange,
+            questionIndex,
+            timeTaken,
+            division2,
+            avgRank,
+          }),
+          { status: 400 }
+        );
       }
 
       let submission_arr = [];
@@ -118,7 +118,7 @@ export const POST = async (request) => {
         xPoints.push(i + 1);
         yPoints.push(most_recent_rating);
       }
-      if(user_contests_arr.length > 0){
+      if (user_contests_arr.length > 0) {
         xPoints.push(submission_arr.length);
         yPoints.push(user_contests_arr[user_contests_arr.length - 1].newRating);
       }
@@ -126,8 +126,12 @@ export const POST = async (request) => {
       //map for storing division vs median rating change
       const median_rating_change = {};
 
-      if(user_contests_arr.length > 5){
-        for (let i = user_contests_arr.length - 1; i >= Math.max(5 , user_contests_arr.length - 20); i--) {
+      if (user_contests_arr.length > 5) {
+        for (
+          let i = user_contests_arr.length - 1;
+          i >= Math.max(5, user_contests_arr.length - 20);
+          i--
+        ) {
           const contest = user_contests_arr[i];
           const contestType = getContestType(contest.contestName);
           if (!median_rating_change[contestType]) {
@@ -152,10 +156,12 @@ export const POST = async (request) => {
       const map2 = {};
 
       //variable to store the contest id of the 20th user contest id from last
-      let mn_contest_id = 0
+      let mn_contest_id = 0;
 
-      if(user_contests_arr.length > 0){
-        mn_contest_id = user_contests_arr[Math.max(0, user_contests_arr.length - 20)].contestId;
+      if (user_contests_arr.length > 0) {
+        mn_contest_id =
+          user_contests_arr[Math.max(0, user_contests_arr.length - 20)]
+            .contestId;
       }
 
       for (const sub of submission_arr) {
@@ -163,20 +169,21 @@ export const POST = async (request) => {
         if (
           sub.author.participantType == "CONTESTANT" &&
           sub.verdict == "OK" &&
-          sub.problem.contestId >= mn_contest_id
+          sub.problem.contestId >= mn_contest_id &&
+          !unwantedContests.includes(sub.contestId)
         ) {
           if (!map2[sub.contestId]) {
             map2[sub.contestId] = [];
           }
           //to ensure that there may not be multiple correct submissions against the same problem during the contest
-          let flag = 1
-          for(const temp_sub of map2[sub.contestId]){
-            if(temp_sub.problem.index == sub.problem.index){
-              flag = 0
+          let flag = 1;
+          for (const temp_sub of map2[sub.contestId]) {
+            if (temp_sub.problem.index == sub.problem.index) {
+              flag = 0;
             }
           }
-          if(flag){
-            map2[sub.contestId].push(sub)
+          if (flag) {
+            map2[sub.contestId].push(sub);
           }
         }
       }
@@ -189,12 +196,23 @@ export const POST = async (request) => {
         if (submissions[0].problem.rating) {
           let prevTime = submissions[0].author.startTimeSeconds;
 
-          for (const sub of submissions) {
+          //to handle the case when the contest contains easy and hard version of the same question , the time for the hard version should be the sum of time for easy version and hard version.
+          let time_for_easy_version = -1;
+
+          for (let k = 0; k < submissions.length; k++) {
+            const sub = submissions[k];
+            if (sub.problem.index.length == 2 && sub.problem.index[1] == "1") {
+              time_for_easy_version = prevTime;
+            }
             map3.set(
               sub.problem.rating,
               (map3.get(sub.problem.rating) || 0) +
                 sub.creationTimeSeconds -
-                prevTime
+                (sub.problem.index.length == 2 &&
+                sub.problem.index[1] == "2" &&
+                time_for_easy_version != -1
+                  ? time_for_easy_version
+                  : prevTime)
             );
             prevTime = sub.creationTimeSeconds;
             map4.set(
@@ -226,7 +244,7 @@ export const POST = async (request) => {
       //maps for storing the avg rank against each division
       const map5 = new Map();
       const map6 = new Map();
-      if(user_contests_arr.length > 0){
+      if (user_contests_arr.length > 0) {
         for (
           let i = user_contests_arr.length - 1;
           i >= Math.max(0, user_contests_arr.length - 20);
@@ -250,7 +268,7 @@ export const POST = async (request) => {
         JSON.stringify({
           message: "Codeforces API is currently down... Pleasetry again  later",
           ok: false,
-          APIDown : true,
+          APIDown: true,
           xPoints,
           yPoints,
           division,
@@ -287,4 +305,3 @@ export const POST = async (request) => {
     );
   }
 };
-
