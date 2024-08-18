@@ -275,10 +275,6 @@ export const POST = async (request) => {
               sub.problem.rating,
               (map4.get(sub.problem.rating) || 0) + 1
             );
-            if(sub.problem.rating == 1000){
-              console.log(sub)
-              console.log(map3.get(1000) , map4.get(1000))
-            }
           }
         }
       })
