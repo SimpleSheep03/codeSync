@@ -69,7 +69,7 @@ const BarChart = ({ divisions, ratingChange }) => {
       <div id="myDiv2"></div>
       <p className="px-5 text-center mt-5">
         This bar chart visualizes the median rating change across different
-        contest divisions, considering the last 20 contests.
+        contest divisions, considering the last 20 contests (excluding the first few).
       </p>
     </div>
   );

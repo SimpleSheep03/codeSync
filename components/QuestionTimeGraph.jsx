@@ -39,7 +39,7 @@ const BarChart = ({ questionIndex, timeTaken }) => {
       <div id="myDiv3"></div>
       <p className="p-5 text-center">
         This bar chart displays the average time taken to solve problems based
-        on their rating averaged over the last 20 contests.
+        on their rating (based on the last 20 contests; extended to the last 40 contests if sample size is small).
       </p>
     </div>
   );

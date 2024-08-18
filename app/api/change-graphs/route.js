@@ -126,6 +126,20 @@ export const POST = async (request) => {
       //map for storing division vs median rating change
       const median_rating_change = {};
 
+      //variable to store the contest id of the 20th user contest from last
+      let mn_contest_id = 0;
+      //variable to store the contest id of the 40th user contest from last
+      let mn_contest_id2 = 0
+
+      if (user_contests_arr.length > 0) {
+        mn_contest_id =
+          user_contests_arr[Math.max(0, user_contests_arr.length - 20)]
+            .contestId;
+        mn_contest_id2 =
+        user_contests_arr[Math.max(0, user_contests_arr.length - 40)]
+          .contestId;
+      }
+
       if (user_contests_arr.length > 5) {
         for (
           let i = user_contests_arr.length - 1;
@@ -155,21 +169,12 @@ export const POST = async (request) => {
       //map for storing the problems solved in a particular contest to be used for generating the average time taken graph
       const map2 = {};
 
-      //variable to store the contest id of the 20th user contest id from last
-      let mn_contest_id = 0;
-
-      if (user_contests_arr.length > 0) {
-        mn_contest_id =
-          user_contests_arr[Math.max(0, user_contests_arr.length - 20)]
-            .contestId;
-      }
-
       for (const sub of submission_arr) {
-        //filter only the first accepted submissions of a user on any problem of a contest which is not older than the 20th contest from last for the user
+        //filter only the first accepted submissions of a user on any problem of a contest which is not older than the 40th contest from last for the user
         if (
           sub.author.participantType == "CONTESTANT" &&
           sub.verdict == "OK" &&
-          sub.problem.contestId >= mn_contest_id &&
+          sub.problem.contestId >= mn_contest_id2 &&
           !unwantedContests.includes(sub.contestId)
         ) {
           if (!map2[sub.contestId]) {
@@ -193,7 +198,8 @@ export const POST = async (request) => {
       const map4 = new Map();
 
       Object.entries(map2).forEach(([contestId, submissions]) => {
-        if (submissions[0].problem.rating) {
+        //for now , just consider contests upto the 20th contest from last.. if later , we find that the sample size of data for any particular question rating is less , then we will fetch upto the 40th contest from last
+        if (submissions[0].problem.rating && contestId >= mn_contest_id) {
           let prevTime = submissions[0].author.startTimeSeconds;
 
           //to handle the case when the contest contains easy and hard version of the same question , the time for the hard version should be the sum of time for easy version and hard version.
@@ -223,12 +229,62 @@ export const POST = async (request) => {
         }
       });
 
-      map3.forEach((value, key) => {
-        questionIndex.push(key);
-        timeTaken.push(Math.floor(value / (map4.get(key) * 60)));
-      });
+      //list to store the frequency of the questions as per their ratings so that we can find the median frequency and TRY to have all questions frequency above the median frequency even if we have to cross the bar of the "20th contest from last" , we can go upto 40
+      let freq = []
+      map4.forEach((value , key) => {
+        freq.push(value)
+      })
 
-      //to sort the questionIndex
+      freq.sort((a , b) => a - b)
+
+      let median_freq = freq[Math.floor(freq.length / 2)]
+      Object.entries(map2).forEach(([contestId , submissions]) => {
+
+        //to ensure that we are not double counting
+        if(submissions[0].problem.rating && contestId < mn_contest_id && contestId >= mn_contest_id2){
+          let prevTime = submissions[0].author.startTimeSeconds;
+
+          //to handle the case when the contest contains easy and hard version of the same question , the time for the hard version should be the sum of time for easy version and hard version.
+          let time_for_easy_version = -1;
+
+          for (let k = 0; k < submissions.length; k++) {
+            const sub = submissions[k];
+            if(!map4.get(sub.problem.rating)){
+              map4.set(sub.problem.rating , 0)
+            }
+
+            //if we have sufficient data then we won't consider the data from past as it will most probably increase the avg time taken of question which may not represent properly the current capability of the user
+            if(map4.get(sub.problem.rating) > median_freq){
+              continue
+            }
+            if (sub.problem.index.length == 2 && sub.problem.index[1] == "1") {
+              time_for_easy_version = prevTime;
+            }
+            map3.set(
+              sub.problem.rating,
+              (map3.get(sub.problem.rating) || 0) +
+                sub.creationTimeSeconds -
+                (sub.problem.index.length == 2 &&
+                sub.problem.index[1] == "2" &&
+                time_for_easy_version != -1
+                  ? time_for_easy_version
+                  : prevTime)
+            );
+            prevTime = sub.creationTimeSeconds;
+            map4.set(
+              sub.problem.rating,
+              (map4.get(sub.problem.rating) || 0) + 1
+            );
+          }
+        }
+      })
+
+      // map3.forEach((value, key) => {
+      //   questionIndex.push(key);
+      //   timeTaken.push(Math.floor(value / (map4.get(key) * 60)));
+      // });
+
+      //to insert sorted questionIndex
       const data = [];
       map3.forEach((value, key) => {
         data.push({

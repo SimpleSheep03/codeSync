@@ -36,7 +36,7 @@ const BarChart = ({ divisions, avgRank }) => {
           y: minavgRank,
           xref: "x",
           yref: "y",
-          text: `Best: ${minavgRank}`,
+          text: `Avg. Best: ${minavgRank}`,
           showarrow: true,
           arrowhead: 7,
           ax: -50, // Adjusted to tilt the line
@@ -47,7 +47,7 @@ const BarChart = ({ divisions, avgRank }) => {
           y: maxavgRank,
           xref: "x",
           yref: "y",
-          text: `Worst: ${maxavgRank}`,
+          text: `Avg. Worst: ${maxavgRank}`,
           showarrow: true,
           arrowhead: 7,
           ax: -50, // Adjusted to tilt the line
