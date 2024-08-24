@@ -1,4 +1,5 @@
 import connectDB from "@/config/database";
+import { ratings } from "@/constants/formData";
 import { unwantedContests } from "@/constants/questions";
 import Contest from "@/models/Contest";
 import Team from "@/models/Team";
@@ -14,6 +15,14 @@ export const POST = async (request) => {
       return num - remainder;
     }
   };
+
+  //to shuffle the final problem list
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (array.length - 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
 
   //just to check whether the codeforces API is working fine
   try {
@@ -51,13 +60,13 @@ export const POST = async (request) => {
       selectedTeam,
       startsIn,
       startYear,
+      chooseDifficulty,
+      diffArr,
     } = data;
 
     if (
       !codeforcesId1 ||
       !numQuestions ||
-      !lowerDifficulty ||
-      !upperDifficulty ||
       !timeLimit ||
       shuffleOrder == undefined ||
       !tags ||
@@ -71,6 +80,36 @@ export const POST = async (request) => {
           status: 400,
         }
       );
+    }
+
+    if (chooseDifficulty == "false") {
+      if (!lowerDifficulty || !upperDifficulty) {
+        return new Response(
+          JSON.stringify({ message: "Fill all the fields", ok: false }),
+          {
+            status: 400,
+          }
+        );
+      }
+    } else {
+      if (diffArr.length != numQuestions) {
+        return new Response(
+          JSON.stringify({ message: "Fill all the fields", ok: false }),
+          {
+            status: 400,
+          }
+        );
+      } else {
+        if (diffArr.some((diff) => !ratings.includes(diff))) {
+          console.log(diffArr);
+          return new Response(
+            JSON.stringify({ message: "Fill in correct format", ok: false }),
+            {
+              status: 400,
+            }
+          );
+        }
+      }
     }
 
     // console.log(startYear)
@@ -217,73 +256,124 @@ export const POST = async (request) => {
     let newList = [];
     const startTime = Date.now();
     const timeLimitMillis = 10000;
-
-    //signifies the range of the lower limit of the question rating, since we are considering only the range [rating_start , rating_start + delta(discussed below)], also rating_start will be incremented by delta in every iteration of the outer while loop
-    let rating_start = lowerDifficulty;
-
-    //to store the value by which the range of the question rating would increment
-    let delta = (upperDifficulty - lowerDifficulty) / numQuestions;
     let count = 0;
 
-    //the outer while loop
-    while (newList.length < numQuestions) {
+    if (chooseDifficulty == "false") {
+      //signifies the range of the lower limit of the question rating, since we are considering only the range [rating_start , rating_start + delta(discussed below)], also rating_start will be incremented by delta in every iteration of the outer while loop
+      let rating_start = lowerDifficulty;
 
-      //calculate the upper limit of question rating to be found in this iteration of the outer while loop
-      const rating_end = Math.min(
-        upperDifficulty,
-        100 * Math.ceil((rating_start + delta) / 100)
-      );
+      //to store the value by which the range of the question rating would increment
+      let delta = (upperDifficulty - lowerDifficulty) / numQuestions;
 
-      //to terminate when it is taking too much time
-      if (Date.now() - startTime > timeLimitMillis) {
-        return new Response(
-          JSON.stringify({
-            message: "Time limit exceeded while fetching questions",
-            ok: false,
-          }),
-          { status: 408 }
-        );
-      }
-
-      //to store the problem list and take the question having median rating to be added in the final list(namely -> newList)
-      let problem_list_for_this_range = [];
-
-      //we will select random questions in the range [rating_start , rating_end] for (temp_size) number of times.. this means higher the temp_size, higher will be the probability to converge towards the mean of the rating range, which will benefit us to avoid abrupt changes in the problem ratings in the final list (newList)
-      let temp_size = Math.floor(Math.random() * 3) + 1;
-
-      while (problem_list_for_this_range.length < temp_size) {
-
-        //to randomly select the question rating in the range [rating_start , rating_end]
-        const rating_of_question = Math.min(upperDifficulty , roundOff(Math.floor(Math.random() * delta)) + 100 * Math.floor(rating_start / 100) )
-
-        //randomly select an index for the rating
-        let index = Math.floor(
-          Math.random() * classified_questions[rating_of_question].length
+      //the outer while loop
+      while (newList.length < numQuestions) {
+        //calculate the upper limit of question rating to be found in this iteration of the outer while loop
+        const rating_end = Math.min(
+          upperDifficulty,
+          100 * Math.ceil((rating_start + delta) / 100)
         );
 
-        let problem = classified_questions[rating_of_question][index];
+        //to terminate when it is taking too much time
+        if (Date.now() - startTime > timeLimitMillis) {
+          return new Response(
+            JSON.stringify({
+              message: "Time limit exceeded while fetching questions",
+              ok: false,
+            }),
+            { status: 408 }
+          );
+        }
 
-        while (
-          !(
-            !st.has(`${problem.contestId}${problem.index}`) &&
-            problem.rating <= upperDifficulty &&
-            problem.rating >= lowerDifficulty &&
-            problem.tags.some((tag) => tags.includes(tag)) &&
-            !newList.includes(problem) &&
-            !unwantedContests.includes(problem.contestId) &&
-            !problem_list_for_this_range.includes(problem)
-          ) &&
-          count < 100000
-        ) {
-          //keep updating the index
-          index = Math.floor(
+        //to store the problem list and take the question having median rating to be added in the final list(namely -> newList)
+        let problem_list_for_this_range = [];
+
+        //we will select random questions in the range [rating_start , rating_end] for (temp_size) number of times.. this means higher the temp_size, higher will be the probability to converge towards the mean of the rating range, which will benefit us to avoid abrupt changes in the problem ratings in the final list (newList)
+        let temp_size = Math.floor(Math.random() * 3) + 1;
+
+        while (problem_list_for_this_range.length < temp_size) {
+          //to randomly select the question rating in the range [rating_start , rating_end]
+          const rating_of_question = Math.min(
+            upperDifficulty,
+            roundOff(Math.floor(Math.random() * delta)) +
+              100 * Math.floor(rating_start / 100)
+          );
+
+          //randomly select an index for the rating
+          let index = Math.floor(
             Math.random() * classified_questions[rating_of_question].length
           );
 
-          problem = classified_questions[rating_of_question][index];
+          let problem = classified_questions[rating_of_question][index];
 
-          //to keep a track of the number of iterations
-          count++;
+          while (
+            !(
+              !st.has(`${problem.contestId}${problem.index}`) &&
+              problem.rating <= upperDifficulty &&
+              problem.rating >= lowerDifficulty &&
+              problem.tags.some((tag) => tags.includes(tag)) &&
+              !newList.includes(problem) &&
+              !unwantedContests.includes(problem.contestId) &&
+              !problem_list_for_this_range.includes(problem)
+            ) &&
+            count < 100000
+          ) {
+            //keep updating the index
+            index = Math.floor(
+              Math.random() * classified_questions[rating_of_question].length
+            );
+
+            problem = classified_questions[rating_of_question][index];
+
+            //to keep a track of the number of iterations
+            count++;
+          }
+
+          //to handle the case when the user has solved most of the questions and we are unable to fetch questions for the chosen criteria
+          if (count >= 100000) {
+            return new Response(
+              JSON.stringify({
+                message:
+                  "Majority of the matching questions solved. Please adjust criteria for new questions",
+                ok: false,
+              }),
+              {
+                status: 200,
+              }
+            );
+          }
+
+          if (startYear == "2021" && problem.contestId >= 1472) {
+            problem_list_for_this_range.push(problem);
+          } else if (startYear == "2020" && problem.contestId >= 1284) {
+            problem_list_for_this_range.push(problem);
+          } else if (startYear == "2019" && problem.contestId >= 1097) {
+            problem_list_for_this_range.push(problem);
+          } else if (startYear == "2018" && problem.contestId >= 912) {
+            problem_list_for_this_range.push(problem);
+          }
+        }
+
+        //insert the median element of the given rating range in the final list to have a better probability of converging to the average
+        problem_list_for_this_range.sort((a, b) => a.rating - b.rating);
+        newList.push(
+          problem_list_for_this_range[
+            Math.floor(problem_list_for_this_range.length / 2)
+          ]
+        );
+
+        rating_start = Number(rating_start) + Number(delta);
+      }
+    } else {
+      while (newList.length < numQuestions) {
+        //to terminate when it is taking too much time
+        if (Date.now() - startTime > timeLimitMillis) {
+          return new Response(
+            JSON.stringify({
+              message: "Time limit exceeded while fetching questions",
+              ok: false,
+            }),
+            { status: 408 }
+          );
         }
 
         //to handle the case when the user has solved most of the questions and we are unable to fetch questions for the chosen criteria
@@ -300,26 +390,53 @@ export const POST = async (request) => {
           );
         }
 
+        const rating_of_question = diffArr[newList.length];
+
+        //randomly select an index for the rating
+        let index = Math.floor(
+          Math.random() * classified_questions[rating_of_question].length
+        );
+
+        let problem = classified_questions[rating_of_question][index];
+
+        while (
+          !(
+            !st.has(`${problem.contestId}${problem.index}`) &&
+            problem.tags.some((tag) => tags.includes(tag)) &&
+            !newList.includes(problem) &&
+            !unwantedContests.includes(problem.contestId)
+          ) &&
+          count < 100000
+        ) {
+          //keep updating the index
+          index = Math.floor(
+            Math.random() * classified_questions[rating_of_question].length
+          );
+
+          problem = classified_questions[rating_of_question][index];
+
+          //to keep a track of the number of iterations
+          count++;
+        }
+
         if (startYear == "2021" && problem.contestId >= 1472) {
-          problem_list_for_this_range.push(problem);
+          newList.push(problem);
         } else if (startYear == "2020" && problem.contestId >= 1284) {
-          problem_list_for_this_range.push(problem);
+          newList.push(problem);
         } else if (startYear == "2019" && problem.contestId >= 1097) {
-          problem_list_for_this_range.push(problem);
+          newList.push(problem);
         } else if (startYear == "2018" && problem.contestId >= 912) {
-          problem_list_for_this_range.push(problem);
+          newList.push(problem);
         }
       }
-
-      //insert the median element of the given rating range in the final list to have a better probability of converging to the average
-      problem_list_for_this_range.sort((a, b) => a.rating - b.rating);
-      newList.push(problem_list_for_this_range[Math.floor(problem_list_for_this_range.length / 2)])
-
-      rating_start = Number(rating_start) + Number(delta);
     }
 
-    if (!shuffleOrder) {
+    if (!shuffleOrder && chooseDifficulty == "false") {
       newList.sort((a, b) => a.rating - b.rating);
+    } else if (shuffleOrder) {
+      shuffle(newList);
+    } else {
+      console.log(shuffleOrder, chooseDifficulty);
     }
 
     let users = [];
@@ -347,13 +464,16 @@ export const POST = async (request) => {
       problemList: newList,
       contestants,
       numberOfQuestions: numQuestions,
-      lowerLimit: lowerDifficulty,
-      upperLimit: upperDifficulty,
+      lowerLimit: data.lowerDifficulty ? data.lowerDifficulty : undefined,
+      upperLimit: data.upperDifficulty ? data.upperDifficulty : undefined,
       timeLimit,
       timeStart: now.toISOString(),
       timeEnding: newDate.toISOString(),
       contestantType,
       team: teamId ? teamId : undefined,
+      chooseDifficulty: data.chooseDifficulty == "false" ? false : true,
+      diffArr: data.chooseDifficulty != "false" ? diffArr : undefined,
+      startYear,
     });
 
     await contest.save();

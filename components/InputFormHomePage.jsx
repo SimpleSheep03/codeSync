@@ -25,21 +25,22 @@ const InputFormHomePage = () => {
     timeLimit: "120",
     tags: [],
     shuffleOrder: false,
-    startsIn : "Immediately",
-    startYear : '2019'
+    startsIn: "Immediately",
+    startYear: "2019",
+    chooseDifficulty: "false",
   });
 
   const timeDisplay = {
     30: "30 min",
-    60 : "1 hr",
+    60: "1 hr",
     90: "1 hr 30 min",
     120: "2 hrs",
-    150 : "2 hrs 30 min",
+    150: "2 hrs 30 min",
     180: "3 hrs",
-    210 : "3 hrs 30 min",
+    210: "3 hrs 30 min",
     240: "4 hrs",
-    270 : "4 hrs 30 min",
-    300 : "5 hrs"
+    270: "4 hrs 30 min",
+    300: "5 hrs",
   };
 
   useEffect(() => {
@@ -79,9 +80,16 @@ const InputFormHomePage = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e, index = null) => {
     const { id, value } = e.target;
-    if (id === "tags") {
+
+    if (index !== null) {
+      // Handling the case when chooseDifficulty is not false
+      setData((prevData) => ({
+        ...prevData,
+        [`questionDifficulty_${index}`]: parseInt(value),
+      }));
+    } else if (id === "tags") {
       const selectedTags = Array.from(
         e.target.selectedOptions,
         (option) => option.value
@@ -128,7 +136,7 @@ const InputFormHomePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const {
+    let {
       codeforcesId1,
       codeforcesId2,
       codeforcesId3,
@@ -138,8 +146,18 @@ const InputFormHomePage = () => {
       timeLimit,
       shuffleOrder,
       startsIn,
-      startYear
+      startYear,
+      chooseDifficulty,
     } = data;
+    let diffArr = undefined;
+    if (chooseDifficulty != "false") {
+      diffArr = [];
+      lowerDifficulty = undefined
+      upperDifficulty = undefined
+      for (let i = 0; i < numQuestions; i++) {
+        diffArr.push(data[`questionDifficulty_${i}`] || 800);
+      }
+    }
     const temp = data.tags.length == 0 ? tags : data.tags;
     try {
       const res = await fetch("/api/create-contest", {
@@ -160,7 +178,9 @@ const InputFormHomePage = () => {
           contestantType,
           selectedTeam,
           startsIn,
-          startYear
+          startYear,
+          chooseDifficulty,
+          diffArr,
         }),
       });
 
@@ -279,350 +299,405 @@ const InputFormHomePage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 md:mt-5 max-sm:mt-3 bg-gray-50 rounded-lg shadow-lg border border-pink-100 md:mb-3">
-    <h1 className="text-3xl font-bold mb-8 text-center text-pink-700">
-      Create Custom Contest
-    </h1>
-    <p className="text-center text-gray-600 mb-6">
-      Create custom Codeforces mashup contests with unsolved problems for you and your team!
-    </p>
-    <form className="space-y-6">
-      <div className="flex flex-wrap mb-6">
-        <label
-          htmlFor="contestantType"
-          className="w-full mb-2 text-sm font-medium"
-        >
-          Participation Type
-        </label>
-        <select
-          name="contestantType"
-          id="contestantType"
-          className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={(e) => handleContestantTypeChange(e)}
-        >
-          <option value={"Team"}>Team</option>
-          <option value={"Individual"}>Individual</option>
-        </select>
-      </div>
-      <div className="md:flex md:justify-between space-y-6">
-        {contestantType === "Team" && session && (
-          <div className="flex flex-wrap md:px-3">
-            <label
-              htmlFor="teamSelect"
-              className="w-full text-sm font-medium mb-2 self-center md:mt-6"
-            >
-              Choose a Team : (to auto-fill IDs)
-            </label>
-            <select
-              id="teamSelect"
-              name="teamSelect"
-              className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              onChange={handleTeamSelect}
-              value={selectedTeam}
-            >
-              {teams?.length == 0 ? (
-                <option value="Select Team">No teams added yet</option>
-              ) : (
-                <option value="Select Team">Select Team</option>
-              )}
-              {teams.map((team) => (
-                <option key={team?._id} value={team?._id}>
-                  {team?.teamName}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        {(contestantType === "Team" || !session) && (
-          <div className={`flex flex-wrap md:px-3 mt-6 ${contestantType === "Team" ? 'md:mb-0' : 'md:mb-0'}`}>
-            <label
-              htmlFor="codeforcesId1"
-              className={`w-full ${session || contestantType == 'Individual' ? 'mb-2' : 'mb-2 self-center'} text-sm font-medium`}
-            >
-              Your Codeforces ID:
-            </label>
-            <input
-              type="text"
-              id="codeforcesId1"
-              name="codeforcesId1"
-              className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              value={data.codeforcesId1}
-              disabled={data.codeforcesId1 != "" && session}
-              onChange={handleChange}
-            />
-          </div>
-        )}
-        {contestantType === "Team" && (
-          <>
-            <div className="flex flex-wrap mb-6 md:px-3">
+      <h1 className="text-3xl font-bold mb-8 text-center text-pink-700">
+        Create Custom Contest
+      </h1>
+      <p className="text-center text-gray-600 mb-6">
+        Create custom Codeforces mashup contests with unsolved problems for you
+        and your team!
+      </p>
+      <form className="space-y-6">
+        <div className="flex flex-wrap mb-6">
+          <label
+            htmlFor="contestantType"
+            className="w-full mb-2 text-sm font-medium"
+          >
+            Participation Type
+          </label>
+          <select
+            name="contestantType"
+            id="contestantType"
+            className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            onChange={(e) => handleContestantTypeChange(e)}
+          >
+            <option value={"Team"}>Team</option>
+            <option value={"Individual"}>Individual</option>
+          </select>
+        </div>
+        <div className="md:flex md:justify-between space-y-6">
+          {contestantType === "Team" && session && (
+            <div className="flex flex-wrap md:px-3">
               <label
-                htmlFor="codeforcesId2"
-                className="w-full mb-2 text-sm font-medium"
+                htmlFor="teamSelect"
+                className="w-full text-sm font-medium mb-2 self-center md:mt-6"
               >
-                Codeforces ID 2:
+                Choose a Team : (to auto-fill IDs)
+              </label>
+              <select
+                id="teamSelect"
+                name="teamSelect"
+                className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                onChange={handleTeamSelect}
+                value={selectedTeam}
+              >
+                {teams?.length == 0 ? (
+                  <option value="Select Team">No teams added yet</option>
+                ) : (
+                  <option value="Select Team">Select Team</option>
+                )}
+                {teams.map((team) => (
+                  <option key={team?._id} value={team?._id}>
+                    {team?.teamName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {(contestantType === "Team" || !session) && (
+            <div
+              className={`flex flex-wrap md:px-3 mt-6 ${
+                contestantType === "Team" ? "md:mb-0" : "md:mb-0"
+              }`}
+            >
+              <label
+                htmlFor="codeforcesId1"
+                className={`w-full ${
+                  session || contestantType == "Individual"
+                    ? "mb-2"
+                    : "mb-2 self-center"
+                } text-sm font-medium`}
+              >
+                Your Codeforces ID:
               </label>
               <input
                 type="text"
-                id="codeforcesId2"
-                name="codeforcesId2"
+                id="codeforcesId1"
+                name="codeforcesId1"
+                className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                value={data.codeforcesId1}
+                disabled={data.codeforcesId1 != "" && session}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+          {contestantType === "Team" && (
+            <>
+              <div className="flex flex-wrap mb-6 md:px-3">
+                <label
+                  htmlFor="codeforcesId2"
+                  className="w-full mb-2 text-sm font-medium"
+                >
+                  Codeforces ID 2:
+                </label>
+                <input
+                  type="text"
+                  id="codeforcesId2"
+                  name="codeforcesId2"
+                  className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  onChange={handleChange}
+                  value={data.codeforcesId2}
+                />
+              </div>
+
+              <div className="flex flex-wrap mb-6 md:px-3">
+                <label
+                  htmlFor="codeforcesId3"
+                  className="w-full mb-2 text-sm font-medium"
+                >
+                  Codeforces ID 3:
+                </label>
+                <input
+                  type="text"
+                  id="codeforcesId3"
+                  name="codeforcesId3"
+                  className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  onChange={handleChange}
+                  value={data.codeforcesId3}
+                  placeholder="(Optional)"
+                />
+              </div>
+              {selectedTeam === "" &&
+                (data.codeforcesId2 !== "" || data.codeforcesId3 !== "") &&
+                !showAddTeam &&
+                session && (
+                  <div className="flex flex-wrap mb-6 md:px-3">
+                    <button
+                      className="inline-flex items-center px-4 py-3 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+                      onClick={handleAddTeamClick}
+                    >
+                      Add this team (optional)
+                    </button>
+                  </div>
+                )}
+            </>
+          )}
+        </div>
+
+        {showAddTeam && (
+          <div className="md:flex md:justify-start space-y-6">
+            <div className="flex flex-wrap mb-6 md:px-3">
+              <label
+                htmlFor="newTeamName"
+                className="w-full mb-2 text-sm font-medium"
+              >
+                Provide Team Name:
+              </label>
+              <input
+                type="text"
+                id="newTeamName"
+                name="newTeamName"
+                className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                value={newTeamName}
+                onChange={handleNewTeamNameChange}
+              />
+            </div>
+            <div className="flex flex-wrap mb-6 md:px-3">
+              <button
+                className="inline-flex items-center px-4 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 mt-3"
+                onClick={handleNewTeamSubmit}
+                disabled={teamLoading}
+              >
+                {!teamLoading ? <>Add this team</> : <>Loading...</>}
+              </button>
+              <button
+                className="inline-flex items-center mx-3 px-4 py-3 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 mt-3"
+                onClick={handleAddTeamClick}
+                disabled={teamLoading}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-wrap mb-6">
+          <label
+            htmlFor="numQuestions"
+            className="w-full mb-2 text-sm font-medium"
+          >
+            Number of Questions:
+          </label>
+          <select
+            id="numQuestions"
+            name="numQuestions"
+            className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            onChange={handleChange}
+            value={data.numQuestions}
+          >
+            {questions.map((question) => (
+              <option key={question} value={question}>
+                {question}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-wrap mb-6">
+          <label
+            htmlFor="chooseDifficulty"
+            className="w-full mb-2 text-sm font-medium"
+          >
+            Question Difficulty Distribution:
+          </label>
+          <select
+            id="chooseDifficulty"
+            name="chooseDifficulty"
+            className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            onChange={handleChange}
+            value={data.chooseDifficulty}
+          >
+            <option value={"false"}>Distribute evenly</option>
+            <option value={"true"}>Specify Difficulty for Each Question</option>
+          </select>
+        </div>
+
+        {data.chooseDifficulty == "false" ? (
+          <>
+            <div className="flex flex-wrap mb-6">
+              <label
+                htmlFor="lowerDifficulty"
+                className="w-full mb-2 text-sm font-medium"
+              >
+                Minimum Question Rating:
+              </label>
+              <select
+                id="lowerDifficulty"
+                name="lowerDifficulty"
                 className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 onChange={handleChange}
-                value={data.codeforcesId2}
-              />
+                value={data.lowerDifficulty}
+              >
+                {ratings.map((rating) => (
+                  <option value={rating} key={rating}>
+                    {rating}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div className="flex flex-wrap mb-6 md:px-3">
+            <div className="flex flex-wrap mb-6">
               <label
-                htmlFor="codeforcesId3"
+                htmlFor="upperDifficulty"
                 className="w-full mb-2 text-sm font-medium"
               >
-                Codeforces ID 3:
+                Maximum Question Rating:
               </label>
-              <input
-                type="text"
-                id="codeforcesId3"
-                name="codeforcesId3"
+              <select
+                id="upperDifficulty"
+                name="upperDifficulty"
                 className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 onChange={handleChange}
-                value={data.codeforcesId3}
-                placeholder="(Optional)"
-              />
+                value={data.upperDifficulty}
+                min={data.lowerDifficulty}
+              >
+                {ratings.map(
+                  (rating) =>
+                    rating >= data.lowerDifficulty && (
+                      <option value={rating} key={rating}>
+                        {rating}
+                      </option>
+                    )
+                )}
+              </select>
             </div>
-            {selectedTeam === "" &&
-              (data.codeforcesId2 !== "" || data.codeforcesId3 !== "") &&
-              !showAddTeam &&
-              session && (
-                <div className="flex flex-wrap mb-6 md:px-3">
-                  <button
-                    className="inline-flex items-center px-4 py-3 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
-                    onClick={handleAddTeamClick}
-                  >
-                    Add this team (optional)
-                  </button>
-                </div>
-              )}
+          </>
+        ) : (
+          <>
+            {Array.from({ length: data.numQuestions }).map((_, index) => (
+              <div className="flex flex-wrap mb-6" key={index}>
+                <label
+                  htmlFor={`questionDifficulty_${index}`}
+                  className="w-full mb-2 text-sm font-medium"
+                >
+                  Select Difficulty for Question {index + 1}:
+                </label>
+                <select
+                  id={`questionDifficulty_${index}`}
+                  name={`questionDifficulty_${index}`}
+                  className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  onChange={(e) => handleChange(e, index)}
+                  value={data[`questionDifficulty_${index}`] || ""}
+                >
+                  {ratings.map((rating) => (
+                    <option value={rating} key={rating}>
+                      {rating}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))}
           </>
         )}
-      </div>
 
-      {showAddTeam && (
-        <div className="md:flex md:justify-start space-y-6">
-          <div className="flex flex-wrap mb-6 md:px-3">
-            <label
-              htmlFor="newTeamName"
-              className="w-full mb-2 text-sm font-medium"
-            >
-              Provide Team Name:
-            </label>
-            <input
-              type="text"
-              id="newTeamName"
-              name="newTeamName"
-              className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              value={newTeamName}
-              onChange={handleNewTeamNameChange}
-            />
-          </div>
-          <div className="flex flex-wrap mb-6 md:px-3">
-            <button
-              className="inline-flex items-center px-4 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 mt-3"
-              onClick={handleNewTeamSubmit}
-              disabled={teamLoading}
-            >
-              {!teamLoading ? <>Add this team</> : <>Loading...</>}
-            </button>
-            <button
-              className="inline-flex items-center mx-3 px-4 py-3 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 mt-3"
-              onClick={handleAddTeamClick}
-              disabled={teamLoading}
-            >
-              Cancel
-            </button>
-          </div>
+        <div className="flex flex-wrap mb-6">
+          <label
+            htmlFor="timeLimit"
+            className="w-full mb-2 text-sm font-medium"
+          >
+            Contest Duration :
+          </label>
+          <select
+            id="timeLimit"
+            name="timeLimit"
+            className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            onChange={handleChange}
+            value={data.timeLimit}
+          >
+            {time.map((t) => (
+              <option value={t} key={t}>
+                {timeDisplay[t]}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
 
-      <div className="flex flex-wrap mb-6">
-        <label
-          htmlFor="numQuestions"
-          className="w-full mb-2 text-sm font-medium"
-        >
-          Number of Questions:
-        </label>
-        <select
-          id="numQuestions"
-          name="numQuestions"
-          className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={handleChange}
-          value={data.numQuestions}
-        >
-          {questions.map((question) => (
-            <option key={question} value={question}>
-              {question}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-wrap mb-6">
-        <label
-          htmlFor="lowerDifficulty"
-          className="w-full mb-2 text-sm font-medium"
-        >
-          Minimum Question Rating:
-        </label>
-        <select
-          id="lowerDifficulty"
-          name="lowerDifficulty"
-          className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={handleChange}
-          value={data.lowerDifficulty}
-        >
-          {ratings.map((rating) => (
-            <option value={rating} key={rating}>
-              {rating}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-wrap mb-6">
-        <label
-          htmlFor="upperDifficulty"
-          className="w-full mb-2 text-sm font-medium"
-        >
-          Maximum Question Rating:
-        </label>
-        <select
-          id="upperDifficulty"
-          name="upperDifficulty"
-          className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={handleChange}
-          value={data.upperDifficulty}
-          min={data.lowerDifficulty}
-        >
-          {ratings.map(
-            (rating) =>
-              rating >= data.lowerDifficulty && (
-                <option value={rating} key={rating}>
-                  {rating}
-                </option>
-              )
-          )}
-        </select>
-      </div>
-
-      <div className="flex flex-wrap mb-6">
-        <label
-          htmlFor="timeLimit"
-          className="w-full mb-2 text-sm font-medium"
-        >
-          Contest Duration :
-        </label>
-        <select
-          id="timeLimit"
-          name="timeLimit"
-          className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={handleChange}
-          value={data.timeLimit}
-        >
-          {time.map((t) => (
-            <option value={t} key={t}>
-              {timeDisplay[t]}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="flex flex-wrap mb-6">
-        <label
-          htmlFor="startsIn"
-          className="w-full mb-2 text-sm font-medium"
-        >
-          Start Time :
-        </label>
-        <select
-          id="startsIn"
-          name="timeLimit"
-          className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={handleChange}
-          value={data.startsIn}
-        >
-          <option value="Immediately">Immediately</option>
-          <option value={1}>1 minute from now</option>
-          <option value={2}>2 minutes from now</option>
-          <option value={5}>5 minutes from now</option>
-          <option value={10}>10 minutes from now</option>
-        </select>
-      </div>
-
-      <div className="flex flex-wrap mb-6">
-        <label
-          htmlFor="startYear"
-          className="w-full mb-2 text-sm font-medium"
-        >
-          Question Recency :
-        </label>
-        <select
-          id="startYear"
-          name="timeLimit"
-          className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={handleChange}
-          value={data.startYear}
-        >
-          <option value="2021">2021 onward</option>
-          <option value="2020">2020 onward</option>
-          <option value="2019">2019 onward</option>
-          <option value="2018">2018 onward</option>
-        </select>
-      </div>
-
-      <div className="flex flex-wrap mb-6">
-        <div className="flex items-center mb-1">
-          <input
-            type="checkbox"
-            id="shuffleOrder"
-            name="tags"
-            className="mr-2"
-            onChange={handleShuffleChange}
-            checked={data.shuffleOrder}
-          />
-          <label htmlFor="shuffleOrder">Shuffle Question Order</label>
+        <div className="flex flex-wrap mb-6">
+          <label htmlFor="startsIn" className="w-full mb-2 text-sm font-medium">
+            Start Time :
+          </label>
+          <select
+            id="startsIn"
+            name="timeLimit"
+            className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            onChange={handleChange}
+            value={data.startsIn}
+          >
+            <option value="Immediately">Immediately</option>
+            <option value={1}>1 minute from now</option>
+            <option value={2}>2 minutes from now</option>
+            <option value={5}>5 minutes from now</option>
+            <option value={10}>10 minutes from now</option>
+          </select>
         </div>
-      </div>
 
-      <div className="grid grid-cols-6 max-sm:grid-cols-3 max-sm:gap-3 max-md:grid-cols-4 max-md:gap-2 mb-6">
-        <label className="col-span-3 text-sm font-medium mb-3">
-          Filter Specific Problem Tags: (Leave unchecked if you don't want to apply filter)
-        </label>
-        {tags.map((tag) => (
-          <div key={tag} className="flex items-center mb-1">
+        <div className="flex flex-wrap mb-6">
+          <label
+            htmlFor="startYear"
+            className="w-full mb-2 text-sm font-medium"
+          >
+            Question Recency :
+          </label>
+          <select
+            id="startYear"
+            name="timeLimit"
+            className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            onChange={handleChange}
+            value={data.startYear}
+          >
+            <option value="2021">2021 onward</option>
+            <option value="2020">2020 onward</option>
+            <option value="2019">2019 onward</option>
+            <option value="2018">2018 onward</option>
+          </select>
+        </div>
+
+        <div className="flex flex-wrap mb-6">
+          <div className="flex items-center mb-1">
             <input
               type="checkbox"
-              id={tag}
+              id="shuffleOrder"
               name="tags"
-              value={tag}
               className="mr-2"
-              onChange={handleCheckboxChange}
-              checked={data.tags.includes(tag)}
+              onChange={handleShuffleChange}
+              checked={data.shuffleOrder}
             />
-            <label htmlFor={tag} className="text-sm">
-              {tag}
-            </label>
+            <label htmlFor="shuffleOrder">Shuffle Question Order</label>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <button
-        className="inline-flex items-center px-4 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
-        onClick={handleSubmit}
-        disabled={loading}
-      >
-        {!loading ? <>Create Contest</> : <>Creating ...</>}
-      </button>
-    </form>
-  </div>
-);
+        <div className="grid grid-cols-6 max-sm:grid-cols-3 max-sm:gap-3 max-md:grid-cols-4 max-md:gap-2 mb-6">
+          <label className="col-span-3 text-sm font-medium mb-3">
+            Filter Specific Problem Tags: (Leave unchecked if you don't want to
+            apply filter)
+          </label>
+          {tags.map((tag) => (
+            <div key={tag} className="flex items-center mb-1">
+              <input
+                type="checkbox"
+                id={tag}
+                name="tags"
+                value={tag}
+                className="mr-2"
+                onChange={handleCheckboxChange}
+                checked={data.tags.includes(tag)}
+              />
+              <label htmlFor={tag} className="text-sm">
+                {tag}
+              </label>
+            </div>
+          ))}
+        </div>
 
+        <button
+          className="inline-flex items-center px-4 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {!loading ? <>Create Contest</> : <>Creating ...</>}
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default InputFormHomePage;
