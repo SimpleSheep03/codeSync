@@ -53,7 +53,7 @@ const ContestSchema = new Schema(
     },
     diffArr: [
       {
-        type: String,
+        type: Number,
       },
     ],
     startYear : {

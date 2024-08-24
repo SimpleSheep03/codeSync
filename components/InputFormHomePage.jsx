@@ -152,8 +152,8 @@ const InputFormHomePage = () => {
     let diffArr = undefined;
     if (chooseDifficulty != "false") {
       diffArr = [];
-      lowerDifficulty = undefined
-      upperDifficulty = undefined
+      lowerDifficulty = undefined;
+      upperDifficulty = undefined;
       for (let i = 0; i < numQuestions; i++) {
         diffArr.push(data[`questionDifficulty_${i}`] || 800);
       }
@@ -563,6 +563,10 @@ const InputFormHomePage = () => {
           </>
         ) : (
           <>
+            <p className="mb-4 text-sm text-gray-600">
+              Please note that the order of the questions fetched will be the
+              same as you provided unless they are shuffled later.
+            </p>
             {Array.from({ length: data.numQuestions }).map((_, index) => (
               <div className="flex flex-wrap mb-6" key={index}>
                 <label
