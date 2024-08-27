@@ -131,7 +131,7 @@ export const GET = async (request, { params }) => {
         xPoints.push(i + 1);
         yPoints.push(most_recent_rating);
       }
-      if(user_contests_arr.length > 0){
+      if (user_contests_arr.length > 0) {
         xPoints.push(submission_arr.length);
         yPoints.push(user_contests_arr[user_contests_arr.length - 1].newRating);
       }
@@ -142,7 +142,7 @@ export const GET = async (request, { params }) => {
       //variable to store the contest id of the 20th user contest from last
       let mn_contest_id = 0;
       //variable to store the contest id of the 40th user contest from last
-      let mn_contest_id2 = 0
+      let mn_contest_id2 = 0;
 
       if (user_contests_arr.length > 5) {
         for (
@@ -178,8 +178,8 @@ export const GET = async (request, { params }) => {
           user_contests_arr[Math.max(0, user_contests_arr.length - 20)]
             .contestId;
         mn_contest_id2 =
-        user_contests_arr[Math.max(0, user_contests_arr.length - 40)]
-          .contestId;
+          user_contests_arr[Math.max(0, user_contests_arr.length - 40)]
+            .contestId;
       }
 
       for (const sub of submission_arr) {
@@ -243,18 +243,21 @@ export const GET = async (request, { params }) => {
       });
 
       //list to store the frequency of the questions as per their ratings so that we can find the median frequency and TRY to have all questions frequency above the median frequency even if we have to cross the bar of the "20th contest from last" , we can go upto 40
-      let freq = []
-      map4.forEach((value , key) => {
-        freq.push(value)
-      })
+      let freq = [];
+      map4.forEach((value, key) => {
+        freq.push(value);
+      });
 
-      freq.sort((a , b) => a - b)
+      freq.sort((a, b) => a - b);
 
-      let median_freq = freq[Math.floor(freq.length / 2)]
-      Object.entries(map2).forEach(([contestId , submissions]) => {
-
+      let median_freq = freq[Math.floor(freq.length / 2)];
+      Object.entries(map2).forEach(([contestId, submissions]) => {
         //to ensure that we are not double counting
-        if(submissions[0].problem.rating && contestId < mn_contest_id && contestId >= mn_contest_id2){
+        if (
+          submissions[0].problem.rating &&
+          contestId < mn_contest_id &&
+          contestId >= mn_contest_id2
+        ) {
           let prevTime = submissions[0].author.startTimeSeconds;
 
           //to handle the case when the contest contains easy and hard version of the same question , the time for the hard version should be the sum of time for easy version and hard version.
@@ -262,16 +265,22 @@ export const GET = async (request, { params }) => {
 
           for (let k = 0; k < submissions.length; k++) {
             const sub = submissions[k];
-            if(!map4.get(sub.problem.rating)){
-              map4.set(sub.problem.rating , 0)
+            if (!map4.get(sub.problem.rating)) {
+              map4.set(sub.problem.rating, 0);
             }
 
             //if we have sufficient data then we won't consider the data from past as it will most probably increase the avg time taken of question which may not represent properly the current capability of the user
-            if(map4.get(sub.problem.rating) > median_freq){
-              continue
-            }
-            if (sub.problem.index.length == 2 && sub.problem.index[1] == "1") {
-              time_for_easy_version = prevTime;
+            if (map4.get(sub.problem.rating) > median_freq) {
+              if (
+                sub.problem.index.length == 2 &&
+                sub.problem.index[1] == "1"
+              ) {
+                // console.log(sub.problem.rating)
+                time_for_easy_version = prevTime;
+                // console.log(time_for_easy_version , prevTime)
+              }
+              prevTime = sub.creationTimeSeconds;
+              continue;
             }
             map3.set(
               sub.problem.rating,
@@ -290,7 +299,7 @@ export const GET = async (request, { params }) => {
             );
           }
         }
-      })
+      });
 
       // map3.forEach((value, key) => {
       //   questionIndex.push(key);
@@ -313,7 +322,7 @@ export const GET = async (request, { params }) => {
       //maps for storing the avg rank against each division
       const map5 = new Map();
       const map6 = new Map();
-      if(user_contests_arr.length > 0){
+      if (user_contests_arr.length > 0) {
         for (
           let i = user_contests_arr.length - 1;
           i >= Math.max(0, user_contests_arr.length - 20);
