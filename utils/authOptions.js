@@ -1,5 +1,4 @@
 import connectDB from '@/config/database';
-import Contest from '@/models/Contest';
 import User from '@/models/User';
 
 import GoogleProvider from 'next-auth/providers/google';
@@ -18,6 +17,14 @@ export const authOptions = {
       },
     }),
   ],
+  session: {
+    strategy: 'jwt',  // Use JWT sessions
+    maxAge: 30 * 24 * 60 * 60, // Session duration: 30 days
+    updateAge: 24 * 60 * 60,   // Update session every 24 hours
+  },
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // JWT expiry time: 30 days
+  },
   callbacks: {
     // Invoked on successful signin
     async signIn({ profile }) {
@@ -45,6 +52,7 @@ export const authOptions = {
     },
     // Modifies the session object
     async session({ session }) {
+      await connectDB()
       // 1. Get user from database
       const user = await User.findOne({ email: session.user.email });
       // 2. Assign the user id to the session
@@ -52,6 +60,11 @@ export const authOptions = {
       session.codeforcesId = user.codeforcesId
       // 3. return session
       return session;
+    },
+  },
+  events: {
+    async error(message) {
+      console.error('NextAuth error:', message);
     },
   },
 };
