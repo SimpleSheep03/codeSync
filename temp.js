@@ -14,10 +14,7 @@ const f = async () => {
       total++;
     }
   }
-  // console.log(m)
-  Object.entries(m).forEach(([key, value]) => {
-    console.log(key, value);
-  });
+  
 };
 
 f();
@@ -170,8 +167,6 @@ export const POST = async (request) => {
       }
       classified_questions[problem.rating].push(problem);
     });
-
-    console.log(classified_questions[1500][0]);
 
     //use a random number to avoid CF API bugs
     let num = Math.floor(Math.random() * 1000) + 10000;

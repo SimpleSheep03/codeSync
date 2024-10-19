@@ -101,7 +101,6 @@ export const POST = async (request) => {
         );
       } else {
         if (diffArr.some((diff) => !ratings.includes(diff))) {
-          console.log(diffArr);
           return new Response(
             JSON.stringify({ message: "Fill in correct format", ok: false }),
             {
@@ -436,7 +435,7 @@ export const POST = async (request) => {
     } else if (shuffleOrder) {
       shuffle(newList);
     } else {
-      console.log(shuffleOrder, chooseDifficulty);
+      
     }
 
     let users = [];

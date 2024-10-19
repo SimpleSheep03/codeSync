@@ -6,14 +6,12 @@ import mongoose from 'mongoose';
 
 export const POST = async (request, response) => {
     try {
-        const session =await getSessionUser();
-        console.log(session)
+        const session = await getSessionUser();
 
         if (!session ||
             !session.user ||
             !session.user.id ||
             session.user.id !== '664da6fa0a207e01f76dfa25') {
-            console.log(session.user.id)
             return new Response(JSON.stringify({
                 message: 'Unauthorized', ok: false
             }), { status: 401 });
@@ -35,7 +33,6 @@ export const POST = async (request, response) => {
                 const user = await User.findById(id).session(mongoSession);
                 if (!user) {
                     await mongoSession.abortTransaction();
-                    mongoSession.endSession();
                     return new Response(JSON.stringify({ message: 'No such user exists', ok: false }), { status: 400 });
                 }
                 users.push(user);
@@ -43,29 +40,28 @@ export const POST = async (request, response) => {
                 users = await User.find({}).session(mongoSession);
             }
 
-            for (const user of users) {
+            // Use Promise.all to save notifications concurrently
+            const notificationPromises = users.map(user => {
                 const notification = new Notification({
                     sender: '664da6fa0a207e01f76dfa25',
                     receiver: user._id,
                     body: message,
                     toAdmin: false,
                 });
-                await notification.save({ session: mongoSession });
-            }
+                return notification.save({ session: mongoSession });
+            });
+
+            await Promise.all(notificationPromises);
 
             await mongoSession.commitTransaction();
-            mongoSession.endSession();
-
             return new Response(JSON.stringify({ message: 'Notifications sent successfully', ok: true }), { status: 200 });
 
         } catch (error) {
             await mongoSession.abortTransaction();
-            mongoSession.endSession();
             console.log(error);
             return new Response(JSON.stringify({ message: 'Could not send notification', ok: false }), { status: 500 });
-        }
-        finally{
-            mongoSession.endSession()
+        } finally {
+            mongoSession.endSession(); // Ensure session ends here
         }
 
     } catch (error) {
