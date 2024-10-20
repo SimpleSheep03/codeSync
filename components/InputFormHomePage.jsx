@@ -4,12 +4,14 @@ import { ratings, questions, time, tags } from "@/constants/formData";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Spinner from "./Spinner";
 
 const InputFormHomePage = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [mounted , setMounted] = useState(false)
   const [teamLoading, setTeamLoading] = useState(false);
   const [contestantType, setContestantType] = useState("Team");
   const [selectedTeam, setSelectedTeam] = useState("");
@@ -46,9 +48,11 @@ const InputFormHomePage = () => {
   useEffect(() => {
     const fetchTeams = async () => {
       if (!session || !session.user) {
+        setMounted(true)
         return;
       }
       if (session.user && session.codeforcesId == "") {
+        setMounted(true)
         router.push("/provide-codeforces-handle");
         return;
       }
@@ -63,6 +67,9 @@ const InputFormHomePage = () => {
       } catch (error) {
         console.log(error);
         toast.error("Could not fetch teams");
+      }
+      finally{
+        setMounted(true)
       }
     };
 
@@ -296,6 +303,10 @@ const InputFormHomePage = () => {
     teams,
     contestantType,
   ]);
+
+  if(!mounted){
+    return <Spinner/>
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 md:mt-5 max-sm:mt-3 bg-gray-50 rounded-lg shadow-lg border border-pink-100 md:mb-3">
