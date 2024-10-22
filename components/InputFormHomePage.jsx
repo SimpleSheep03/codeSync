@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Spinner from "./Spinner";
+import { setCookie , getCookie } from "cookies-next";
 
 const InputFormHomePage = () => {
   const router = useRouter();
@@ -13,23 +14,23 @@ const InputFormHomePage = () => {
   const [loading, setLoading] = useState(false);
   const [mounted , setMounted] = useState(false)
   const [teamLoading, setTeamLoading] = useState(false);
-  const [contestantType, setContestantType] = useState("Team");
+  const [contestantType, setContestantType] = useState(!getCookie("contestantType") ? "Individual" : getCookie("contestantType"));
   const [selectedTeam, setSelectedTeam] = useState("");
   const [showAddTeam, setShowAddTeam] = useState(false);
   const [newTeamName, setNewTeamName] = useState("");
   const [data, setData] = useState({
-    codeforcesId1: "",
-    codeforcesId2: "",
-    codeforcesId3: "",
-    numQuestions: "6",
-    lowerDifficulty: "1000",
-    upperDifficulty: "1800",
-    timeLimit: "120",
+    codeforcesId1: !getCookie("codeforcesId1") ? "" : getCookie("codeforcesId1"),
+    codeforcesId2: !getCookie("codeforcesId2") ? "" : getCookie("codeforcesId2"),
+    codeforcesId3: !getCookie("codeforcesId3") ? "" : getCookie("codeforcesId3"),
+    numQuestions: !getCookie("numQuestions") ? "6" : getCookie("numQuestions"),
+    lowerDifficulty: !getCookie("lowerDifficulty") ? "1000" : getCookie("lowerDifficulty"),
+    upperDifficulty: !getCookie("upperDifficulty") ? "1800" : getCookie("upperDifficulty"),
+    timeLimit: !getCookie("timeLimit") ? "120" : getCookie("timeLimit"),
     tags: [],
-    shuffleOrder: false,
-    startsIn: "Immediately",
-    startYear: "2019",
-    chooseDifficulty: "false",
+    shuffleOrder: !getCookie("shuffleOrder") ? false : getCookie("shuffleOrder") == "false" ? false : true,
+    startsIn: !getCookie("startsIn") ? "Immediately" : getCookie("startsIn"),
+    startYear: !getCookie("startYear") ? "2019" : getCookie("startYear"),
+    chooseDifficulty: !getCookie("chooseDifficulty") ? "false" : getCookie("chooseDifficulty"),
   });
 
   const timeDisplay = {
@@ -78,6 +79,7 @@ const InputFormHomePage = () => {
 
   const handleContestantTypeChange = (e) => {
     setContestantType(e.target.value);
+    setCookie("contestantType" , e.target.value)
     if (e.target.value === "Individual") {
       setData((prevData) => ({
         ...prevData,
@@ -106,6 +108,7 @@ const InputFormHomePage = () => {
         [id]: selectedTags,
       });
     } else if (id === "lowerDifficulty") {
+      setCookie("lowerDifficulty" , e.target.value)
       const newUpperDifficulty = Math.max(
         parseInt(value),
         parseInt(data.upperDifficulty)
@@ -116,6 +119,7 @@ const InputFormHomePage = () => {
         [id]: value,
       });
     } else {
+      setCookie(e.target.id , e.target.value)
       setData({
         ...data,
         [id]: value,
@@ -124,6 +128,7 @@ const InputFormHomePage = () => {
   };
 
   const handleShuffleChange = (e) => {
+    setCookie("shuffleOrder" , !shuffleOrder)
     setData((prevData) => ({
       ...prevData,
       shuffleOrder: !prevData.shuffleOrder,
@@ -330,6 +335,7 @@ const InputFormHomePage = () => {
             id="contestantType"
             className="w-full px-3 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
             onChange={(e) => handleContestantTypeChange(e)}
+            value={contestantType}
           >
             <option value={"Team"}>Team</option>
             <option value={"Individual"}>Individual</option>
