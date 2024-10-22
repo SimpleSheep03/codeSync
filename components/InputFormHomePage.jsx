@@ -79,7 +79,7 @@ const InputFormHomePage = () => {
 
   const handleContestantTypeChange = (e) => {
     setContestantType(e.target.value);
-    setCookie("contestantType" , e.target.value)
+    setCookie("contestantType" , e.target.value , { maxAge : 60 * 60 * 24 * 120})
     if (e.target.value === "Individual") {
       setData((prevData) => ({
         ...prevData,
@@ -108,7 +108,7 @@ const InputFormHomePage = () => {
         [id]: selectedTags,
       });
     } else if (id === "lowerDifficulty") {
-      setCookie("lowerDifficulty" , e.target.value)
+      setCookie("lowerDifficulty" , e.target.value , { maxAge : 60 * 60 * 24 * 120})
       const newUpperDifficulty = Math.max(
         parseInt(value),
         parseInt(data.upperDifficulty)
@@ -119,7 +119,7 @@ const InputFormHomePage = () => {
         [id]: value,
       });
     } else {
-      setCookie(e.target.id , e.target.value)
+      setCookie(e.target.id , e.target.value , { maxAge : 60 * 60 * 24 * 120})
       setData({
         ...data,
         [id]: value,
@@ -128,7 +128,7 @@ const InputFormHomePage = () => {
   };
 
   const handleShuffleChange = (e) => {
-    setCookie("shuffleOrder" , !shuffleOrder)
+    setCookie("shuffleOrder" , !shuffleOrder , { maxAge : 60 * 60 * 24 * 120})
     setData((prevData) => ({
       ...prevData,
       shuffleOrder: !prevData.shuffleOrder,
