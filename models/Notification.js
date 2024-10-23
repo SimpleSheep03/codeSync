@@ -28,6 +28,10 @@ const NotificationSchema = new Schema({
     timestamps : true
 })
 
+NotificationSchema.index({ receiver: 1 , read: 1 , toAdmin: 1 });
+NotificationSchema.index({ receiver: 1 , toAdmin: 1 });
+NotificationSchema.index({ createdAt : -1 })
+
 const Notification = models.Notification || model('Notification' , NotificationSchema)
 
 export default Notification

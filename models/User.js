@@ -20,6 +20,9 @@ const UserSchema = new Schema({
     timestamps : true
 })
 
+UserSchema.index({ email : 1 })
+UserSchema.index({ codeforcesId : 1 })
+
 const User = models.User || model('User' , UserSchema)
 
 export default User
