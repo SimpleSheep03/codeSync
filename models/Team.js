@@ -14,6 +14,9 @@ const TeamSchema  = new Schema({
     timestamps : true
 })
 
+TeamSchema.index({ teamName: 1, codeforcesHandles: 1 });
+TeamSchema.index({ codeforcesHandles: 1 });
+
 const Team = models.Team || model('Team' , TeamSchema)
 
 export default Team

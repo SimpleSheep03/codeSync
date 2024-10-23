@@ -29,7 +29,7 @@ const NotificationSchema = new Schema({
 })
 
 NotificationSchema.index({ receiver: 1 , read: 1 , toAdmin: 1 });
-NotificationSchema.index({ receiver: 1 , toAdmin: 1 });
+NotificationSchema.index({ receiver: 1 , toAdmin: 1 , createdAt : -1 });
 NotificationSchema.index({ createdAt : -1 })
 
 const Notification = models.Notification || model('Notification' , NotificationSchema)

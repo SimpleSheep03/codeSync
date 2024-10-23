@@ -66,6 +66,8 @@ const ContestSchema = new Schema(
 );
 
 ContestSchema.index({ timeStart : -1 })
+ContestSchema.index({ contestants: 1, timeStart: -1 });
+
 
 const Contest = models.Contest || model("Contest", ContestSchema);
 
