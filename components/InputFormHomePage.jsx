@@ -65,6 +65,7 @@ const InputFormHomePage = () => {
           ...prevData,
           codeforcesId1: result.codeforcesId,
         }));
+        setCookie('codeforcesId1' , result.codeforcesId , { maxAge : 60 * 60 * 24 * 120})
       } catch (error) {
         console.log(error);
         toast.error("Could not fetch teams");
