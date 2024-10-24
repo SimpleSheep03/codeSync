@@ -6,15 +6,23 @@ import Team from "@/models/Team";
 import User from "@/models/User";
 
 export const POST = async (request) => {
-  //to round a given number to the nearest multiple of 100
+
+  //to round a given number to the nearest multiple of 100 based on probability that leans towards rounding up for larger remainders and rounding down for smaller remainders
   const roundOff = (num) => {
     const remainder = num % 100;
-    if (remainder >= 50) {
-      return ((100 - num) % 100) + num;
+    // Generate a random number between 0 and 1
+    const randomValue = Math.random();
+  
+    // Calculate probability to round up based on remainder
+    const probabilityToRoundUp = remainder / 100;
+  
+    // If randomValue is less than or equal to the calculated probability, round up
+    if (randomValue <= probabilityToRoundUp) {
+      return num + (100 - remainder); // Round up
     } else {
-      return num - remainder;
+      return num - remainder; // Round down
     }
-  };
+  };  
 
   //to shuffle the final problem list
   function shuffle(array) {
@@ -110,8 +118,6 @@ export const POST = async (request) => {
         }
       }
     }
-
-    // console.log(startYear)
 
     if (!["2021", "2020", "2019", "2018"].includes(startYear)) {
       return new Response(
@@ -262,7 +268,7 @@ export const POST = async (request) => {
       let rating_start = lowerDifficulty;
 
       //to store the value by which the range of the question rating would increment
-      let delta = (upperDifficulty - lowerDifficulty) / numQuestions;
+      const delta = (upperDifficulty - lowerDifficulty) / numQuestions;
 
       //the outer while loop
       while (newList.length < numQuestions) {
@@ -283,7 +289,7 @@ export const POST = async (request) => {
           );
         }
 
-        //to store the problem list and take the question having median rating to be added in the final list(namely -> newList)
+        //we will first create a pool of question for this range of rating and then take the question having median rating to be added in the final list(namely -> newList)
         let problem_list_for_this_range = [];
 
         //we will select random questions in the range [rating_start , rating_end] for (temp_size) number of times.. this means higher the temp_size, higher will be the probability to converge towards the mean of the rating range, which will benefit us to avoid abrupt changes in the problem ratings in the final list (newList)
@@ -293,8 +299,7 @@ export const POST = async (request) => {
           //to randomly select the question rating in the range [rating_start , rating_end]
           const rating_of_question = Math.min(
             upperDifficulty,
-            roundOff(Math.floor(Math.random() * delta)) +
-              100 * Math.floor(rating_start / 100)
+            roundOff(Math.floor(Math.random() * delta) + Number(rating_start))
           );
 
           //randomly select an index for the rating
@@ -435,7 +440,6 @@ export const POST = async (request) => {
     } else if (shuffleOrder) {
       shuffle(newList);
     } else {
-      
     }
 
     let users = [];
