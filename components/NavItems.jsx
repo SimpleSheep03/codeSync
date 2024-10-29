@@ -5,15 +5,17 @@ import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import Image from "next/image";
 import { FaBell, FaChartLine, FaGoogle, FaHome } from "react-icons/fa"; // Importing the notification icon
 import { useGlobalContext } from "@/context/GlobalContext";
+import { MoonLoader } from "react-spinners";
 
 const NavItems = () => {
-  const { data: session } = useSession();
+  const { data: session , status } = useSession();
   const [providers, setProviders] = useState();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileImage = session?.user?.image;
   const menuButtonRef = useRef(null);
   const menuRef = useRef(null);
   const { notificationCount, setNotificationCount } = useGlobalContext();
+  const [fetchingProfile , setFetchingProfile] = useState(true)
 
   useEffect(() => {
     const setAuthProviders = async () => {
@@ -53,6 +55,14 @@ const NavItems = () => {
     setAuthProviders();
     fetchUnreadCount();
   }, [session]);
+
+  useEffect(() => {
+    if (status === 'loading') {
+      setFetchingProfile(true);
+    } else {
+      setFetchingProfile(false);
+    }
+  }, [status]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -105,7 +115,7 @@ const NavItems = () => {
         </div>
       </Link>
 
-      {!session && (
+      {!session && (fetchingProfile ? <MoonLoader size={24} color="#3b82f6"/> : (
         <>
           {Object.keys(providers || {}).length > 0 ? (
             Object.values(providers).map((provider, index) => (
@@ -130,7 +140,7 @@ const NavItems = () => {
             </button>
           )}
         </>
-      )}
+      ))}
 
       {session && (
         <div>
