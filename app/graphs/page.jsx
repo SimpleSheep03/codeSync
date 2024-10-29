@@ -3,7 +3,7 @@ import Spinner from '@/components/Spinner';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { toast } from "react-toastify";
 
 // Dynamically import with SSR disabled
@@ -37,10 +37,11 @@ const page = () => {
   const [graphCFHandle, setGraphCFHandle] = useState("");
   const [changeGraphCFHandle , setChangeGraphCFHandle] = useState(false)
   const router = useRouter();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     const fetchUserCfId = async (userId) => {
-      if (!userId) {
+      if (!userId || hasFetched.current) {
         setLoading(false);
         return;
       }
@@ -62,6 +63,7 @@ const page = () => {
           setDivision2(data.division2);
           setAvgRank(data.avgRank);
           setGraphCFHandle(data.codeforcesId);
+          hasFetched.current = true; // Mark as fetched
         }
         if (data.APIDown) {
           toast.warn(
