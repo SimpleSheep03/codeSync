@@ -33,7 +33,7 @@ const ProvideCodeforcesHandle = () => {
     let countdown;
     if (timerActive && timer > 0) {
       countdown = setTimeout(() => setTimer((prev) => prev - 1), 1000);
-    } else if (timer === 0) {
+    } else if (timer === 0 && timerActive) {
       verifyAuthenticity();
     }
     return () => clearTimeout(countdown);
@@ -99,6 +99,7 @@ const ProvideCodeforcesHandle = () => {
       toast.error("Error during verification. Please try again.")
     } finally {
       setVerificationLoading(false);
+      setTimerActive(false)
     }
   };
 
@@ -121,7 +122,7 @@ const ProvideCodeforcesHandle = () => {
           Verification Required
         </h1>
         <p className="mt-5 text-gray-600 text-center">
-          Please click on the link below and submit a compilation error to
+          Please click on the link below and submit and wait for a <span className="font-bold">compilation error</span>  to
           verify your Codeforces ID.
         </p>
         <div className="mt-10 text-center">
@@ -140,7 +141,7 @@ const ProvideCodeforcesHandle = () => {
         <div className="mt-[65px] text-center">
           <button
             onClick={verifyAuthenticity}
-            className="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 font-medium"
+            className="inline-flex items-center px-3 py-3 bg-blue-500 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 font-medium"
             disabled={verificationLoading}
           >
             {verificationLoading ? "Verifying..." : "I have submitted the question"}
@@ -183,7 +184,7 @@ const ProvideCodeforcesHandle = () => {
             className="mt-5 bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
             disabled={submitLoading}
           >
-            {submitLoading ? "Submitting..." : "Submit"}
+            {submitLoading ? "Verifying..." : "Submit"}
           </button>
         </div>
       </form>

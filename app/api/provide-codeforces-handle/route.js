@@ -32,7 +32,7 @@ export const POST = async (request) => {
   let problems = [];
   try {
     const data = await fetch(
-      `https://codeforces.com/api/user.status?handle=${codeforcesHandle}&from=${Math.floor(Math.random() * 10 + 10)}`
+      `https://codeforces.com/api/user.status?handle=${codeforcesHandle}&from=${Math.floor(Math.random() + 2)}`
     ).then(async (res) => await res.json());
     if (data.status != "OK") {
       return new Response(
