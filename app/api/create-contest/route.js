@@ -119,7 +119,7 @@ export const POST = async (request) => {
       }
     }
 
-    if (!["2021", "2020", "2019", "2018"].includes(startYear)) {
+    if (!["2022" , "2021", "2020", "2019", "2018"].includes(startYear)) {
       return new Response(
         JSON.stringify({ message: "Requested an invalid year", ok: false }),
         { status: 400 }
@@ -345,8 +345,9 @@ export const POST = async (request) => {
               }
             );
           }
-
-          if (startYear == "2021" && problem.contestId >= 1472) {
+          if (startYear == "2022" && problem.contestId >= 1621) {
+            problem_list_for_this_range.push(problem);
+          } else if (startYear == "2021" && problem.contestId >= 1472) {
             problem_list_for_this_range.push(problem);
           } else if (startYear == "2020" && problem.contestId >= 1284) {
             problem_list_for_this_range.push(problem);
@@ -422,8 +423,9 @@ export const POST = async (request) => {
           //to keep a track of the number of iterations
           count++;
         }
-
-        if (startYear == "2021" && problem.contestId >= 1472) {
+        if (startYear == "2022" && problem.contestId >= 1621) {
+          newList.push(problem);
+        } else if (startYear == "2021" && problem.contestId >= 1472) {
           newList.push(problem);
         } else if (startYear == "2020" && problem.contestId >= 1284) {
           newList.push(problem);

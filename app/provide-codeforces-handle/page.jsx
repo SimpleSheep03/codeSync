@@ -8,7 +8,7 @@ import Link from "next/link";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 const ProvideCodeforcesHandle = () => {
-  const timeAlloted = 60
+  const timeAlloted = 60;
   const { data: session } = useSession();
   const [codeforcesHandle, setCodeforcesHandle] = useState("");
   const [taskUrl, setTaskUrl] = useState("");
@@ -54,14 +54,14 @@ const ProvideCodeforcesHandle = () => {
       if (!data.ok && data.APIDown) {
         toast.warn("Codeforces API is currently down... Unable to load graphs");
       } else if (data.ok && data.problem) {
-        toast.success("Please verify your identity by submitting the question");
+        // toast.success("Please verify your identity by submitting the question");
         setProblem(data.problem);
         setTaskUrl(
           `https://codeforces.com/contest/${data.problem.problem.contestId}/submit/${data.problem.problem.index}`
         );
         setTimerActive(true);
-        setTimer(timeAlloted)
-        setAuthenticityChecked(false)
+        setTimer(timeAlloted);
+        setAuthenticityChecked(false);
       } else {
         toast.error(data.message);
       }
@@ -81,7 +81,11 @@ const ProvideCodeforcesHandle = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: session.user.email , codeforcesHandle , problem }),
+        body: JSON.stringify({
+          email: session.user.email,
+          codeforcesHandle,
+          problem,
+        }),
       });
       const data = await res.json();
       setAuthenticity(data.authentic);
@@ -90,16 +94,15 @@ const ProvideCodeforcesHandle = () => {
         toast.success("Your Codeforces handle has been verified successfully!");
         session.codeforcesId = codeforcesHandle;
         router.push("/");
-      }
-      else {
+      } else {
         toast.error(data.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error("Error during verification. Please try again.")
+      toast.error("Error during verification. Please try again.");
     } finally {
       setVerificationLoading(false);
-      setTimerActive(false)
+      setTimerActive(false);
     }
   };
 
@@ -122,8 +125,9 @@ const ProvideCodeforcesHandle = () => {
           Verification Required
         </h1>
         <p className="mt-5 text-gray-600 text-center">
-          Please click on the link below and submit and wait for a <span className="font-bold">compilation error</span>  to
-          verify your Codeforces ID.
+          Please click on the link below and submit and wait for a{" "}
+          <span className="font-bold">compilation error</span> to verify your
+          Codeforces ID.
         </p>
         <div className="mt-10 text-center">
           <Link
@@ -132,24 +136,31 @@ const ProvideCodeforcesHandle = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span className="font-semibold mr-3">
-              {problem.problem.name}
-            </span>
+            <span className="font-semibold mr-3">{problem.problem.name}</span>
             <FaExternalLinkAlt />
           </Link>
         </div>
         <div className="mt-[65px] text-center">
           <button
-            onClick={verifyAuthenticity}
+            onClick={() => {
+              setVerificationLoading(true);
+              setTimeout(() => {
+                verifyAuthenticity();
+              }, 1500);
+            }}
             className="inline-flex items-center px-3 py-3 bg-blue-500 hover:bg-blue-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 font-medium"
             disabled={verificationLoading}
           >
-            {verificationLoading ? "Verifying..." : "I have submitted the question"}
+            {verificationLoading
+              ? "Verifying..."
+              : "I have submitted the question"}
           </button>
         </div>
+
         {timerActive && (
           <p className="mt-8 text-gray-600 text-center">
-            Automatic verification in <span className="font-bold text-xl">{timer} seconds...</span>
+            Automatic verification in{" "}
+            <span className="font-bold text-xl">{timer} seconds...</span>
           </p>
         )}
       </div>
@@ -184,7 +195,7 @@ const ProvideCodeforcesHandle = () => {
             className="mt-5 bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
             disabled={submitLoading}
           >
-            {submitLoading ? "Verifying..." : "Submit"}
+            {submitLoading ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>

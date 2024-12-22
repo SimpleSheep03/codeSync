@@ -34,15 +34,15 @@ const InputFormHomePage = () => {
   });
 
   const timeDisplay = {
-    30: "30 min",
+    30: "30 mins",
     60: "1 hr",
-    90: "1 hr 30 min",
+    90: "1 hr 30 mins",
     120: "2 hrs",
-    150: "2 hrs 30 min",
+    150: "2 hrs 30 mins",
     180: "3 hrs",
-    210: "3 hrs 30 min",
+    210: "3 hrs 30 mins",
     240: "4 hrs",
-    270: "4 hrs 30 min",
+    270: "4 hrs 30 mins",
     300: "5 hrs",
   };
 
@@ -666,6 +666,7 @@ const InputFormHomePage = () => {
             onChange={handleChange}
             value={data.startYear}
           >
+            <option value="2022">2022 onward</option>
             <option value="2021">2021 onward</option>
             <option value="2020">2020 onward</option>
             <option value="2019">2019 onward</option>
