@@ -163,7 +163,7 @@ const InputFormHomePage = () => {
       chooseDifficulty,
     } = data;
     let diffArr = undefined;
-    if (chooseDifficulty != "false") {
+    if (chooseDifficulty == "true") {
       diffArr = [];
       lowerDifficulty = undefined;
       upperDifficulty = undefined;
@@ -171,6 +171,7 @@ const InputFormHomePage = () => {
         diffArr.push(data[`questionDifficulty_${i}`] || 800);
       }
     }
+    // console.log(chooseDifficulty)
     const temp = data.tags.length == 0 ? tags : data.tags;
     try {
       const res = await fetch("/api/create-contest", {
@@ -525,11 +526,12 @@ const InputFormHomePage = () => {
             value={data.chooseDifficulty}
           >
             <option value={"false"}>Distribute evenly</option>
+            <option value={"distributeRandomly"}>Distribute randomly</option>
             <option value={"true"}>Specify Difficulty for Each Question</option>
           </select>
         </div>
 
-        {data.chooseDifficulty == "false" ? (
+        {data.chooseDifficulty == "false" || data.chooseDifficulty == "distributeRandomly" ? (
           <>
             <div className="flex flex-wrap mb-6">
               <label

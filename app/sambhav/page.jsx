@@ -18,7 +18,6 @@ export default function page() {
         !session.user.id ||
         session.user.id !== '664da6fa0a207e01f76dfa25'
       ) {
-        console.log(session?.user?.id);
         router.replace('/');
       }
     }, 1000); 

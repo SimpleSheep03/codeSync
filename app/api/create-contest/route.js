@@ -6,23 +6,22 @@ import Team from "@/models/Team";
 import User from "@/models/User";
 
 export const POST = async (request) => {
-
   //to round a given number to the nearest multiple of 100 based on probability that leans towards rounding up for larger remainders and rounding down for smaller remainders
   const roundOff = (num) => {
     const remainder = num % 100;
     // Generate a random number between 0 and 1
     const randomValue = Math.random();
-  
+
     // Calculate probability to round up based on remainder
     const probabilityToRoundUp = remainder / 100;
-  
+
     // If randomValue is less than or equal to the calculated probability, round up
     if (randomValue <= probabilityToRoundUp) {
       return num + (100 - remainder); // Round up
     } else {
       return num - remainder; // Round down
     }
-  };  
+  };
 
   //to shuffle the final problem list
   function shuffle(array) {
@@ -90,7 +89,10 @@ export const POST = async (request) => {
       );
     }
 
-    if (chooseDifficulty == "false") {
+    if (
+      chooseDifficulty == "false" ||
+      chooseDifficulty == "distributeRandomly"
+    ) {
       if (!lowerDifficulty || !upperDifficulty) {
         return new Response(
           JSON.stringify({ message: "Fill all the fields", ok: false }),
@@ -119,7 +121,7 @@ export const POST = async (request) => {
       }
     }
 
-    if (!["2022" , "2021", "2020", "2019", "2018"].includes(startYear)) {
+    if (!["2022", "2021", "2020", "2019", "2018"].includes(startYear)) {
       return new Response(
         JSON.stringify({ message: "Requested an invalid year", ok: false }),
         { status: 400 }
@@ -368,7 +370,7 @@ export const POST = async (request) => {
 
         rating_start = Number(rating_start) + Number(delta);
       }
-    } else {
+    } else if (chooseDifficulty == "true") {
       while (newList.length < numQuestions) {
         //to terminate when it is taking too much time
         if (Date.now() - startTime > timeLimitMillis) {
@@ -435,13 +437,82 @@ export const POST = async (request) => {
           newList.push(problem);
         }
       }
+    } else if (chooseDifficulty == "distributeRandomly") {
+      //the outer while loop
+      while (newList.length < numQuestions) {
+        //to terminate when it is taking too much time
+        if (Date.now() - startTime > timeLimitMillis) {
+          return new Response(
+            JSON.stringify({
+              message: "Time limit exceeded while fetching questions",
+              ok: false,
+            }),
+            { status: 408 }
+          );
+        }
+
+        const rating_of_question = roundOff(Math.random() * 
+          (upperDifficulty - lowerDifficulty)) + parseInt(lowerDifficulty);
+        //randomly select an index for the rating
+        let index = Math.floor(
+          Math.random() * classified_questions[rating_of_question].length
+        );
+
+        let problem = classified_questions[rating_of_question][index];
+
+        while (
+          !(
+            !st.has(`${problem.contestId}${problem.index}`) &&
+            problem.rating <= upperDifficulty &&
+            problem.rating >= lowerDifficulty &&
+            problem.tags.some((tag) => tags.includes(tag)) &&
+            !newList.includes(problem) &&
+            !unwantedContests.includes(problem.contestId)
+          ) &&
+          count < 100000
+        ) {
+          //keep updating the index
+          index = Math.floor(
+            Math.random() * classified_questions[rating_of_question].length
+          );
+
+          problem = classified_questions[rating_of_question][index];
+
+          //to keep a track of the number of iterations
+          count++;
+        }
+
+        //to handle the case when the user has solved most of the questions and we are unable to fetch questions for the chosen criteria
+        if (count >= 100000) {
+          return new Response(
+            JSON.stringify({
+              message:
+                "Majority of the matching questions solved. Please adjust criteria for new questions",
+              ok: false,
+            }),
+            {
+              status: 200,
+            }
+          );
+        }
+        if (startYear == "2022" && problem.contestId >= 1621) {
+          newList.push(problem);
+        } else if (startYear == "2021" && problem.contestId >= 1472) {
+          newList.push(problem);
+        } else if (startYear == "2020" && problem.contestId >= 1284) {
+          newList.push(problem);
+        } else if (startYear == "2019" && problem.contestId >= 1097) {
+          newList.push(problem);
+        } else if (startYear == "2018" && problem.contestId >= 912) {
+          newList.push(problem);
+        }
+      }
     }
 
-    if (!shuffleOrder && chooseDifficulty == "false") {
+    if (!shuffleOrder && chooseDifficulty != "true") {
       newList.sort((a, b) => a.rating - b.rating);
     } else if (shuffleOrder) {
       shuffle(newList);
-    } else {
     }
 
     let users = [];
@@ -476,7 +547,8 @@ export const POST = async (request) => {
       timeEnding: newDate.toISOString(),
       contestantType,
       team: teamId ? teamId : undefined,
-      chooseDifficulty: data.chooseDifficulty == "false" ? false : true,
+      distributeRandomly : data.chooseDifficulty == "distributeRandomly" ? true : false,
+      chooseDifficulty: data.chooseDifficulty == "true" ? true : false,
       diffArr: data.chooseDifficulty != "false" ? diffArr : undefined,
       startYear,
     });

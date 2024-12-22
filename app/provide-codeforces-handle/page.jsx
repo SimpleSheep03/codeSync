@@ -54,7 +54,7 @@ const ProvideCodeforcesHandle = () => {
       if (!data.ok && data.APIDown) {
         toast.warn("Codeforces API is currently down... Unable to load graphs");
       } else if (data.ok && data.problem) {
-        // toast.success("Please verify your identity by submitting the question");
+        toast.success("Please verify your identity by submitting the question");
         setProblem(data.problem);
         setTaskUrl(
           `https://codeforces.com/contest/${data.problem.problem.contestId}/submit/${data.problem.problem.index}`

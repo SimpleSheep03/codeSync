@@ -48,6 +48,9 @@ const ContestSchema = new Schema(
       type: Date,
       required: true,
     },
+    distributeRandomly : {
+      type : Boolean,
+    },
     chooseDifficulty: {
       type: Boolean,
     },
