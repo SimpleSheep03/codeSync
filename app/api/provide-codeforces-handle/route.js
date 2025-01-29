@@ -21,7 +21,7 @@ export const POST = async (request) => {
   if (check_user_2.status == "FAILED") {
     return new Response(
       JSON.stringify({
-        message: `Codeforces handle ${codeforcesHandle} is incorrect`,
+        message: `${codeforcesHandle} is an invalid codeforces handle`,
         ok: false,
       }),
       { status: 400 }

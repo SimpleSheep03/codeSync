@@ -129,11 +129,16 @@ export const POST = async (request) => {
     }
 
     const uniqueHandles = new Set(
-      [codeforcesId1, codeforcesId2, codeforcesId3].filter(Boolean)
+      [codeforcesId1, codeforcesId2, codeforcesId3]
+        .filter(Boolean)
+        .map((id) => id.toLowerCase())
     );
+
     if (
       uniqueHandles.size !==
-      [codeforcesId1, codeforcesId2, codeforcesId3].filter(Boolean).length
+      [codeforcesId1, codeforcesId2, codeforcesId3]
+        .filter(Boolean)
+        .map((id) => id.toLowerCase()).length
     ) {
       return new Response(
         JSON.stringify({
@@ -451,8 +456,9 @@ export const POST = async (request) => {
           );
         }
 
-        const rating_of_question = roundOff(Math.random() * 
-          (upperDifficulty - lowerDifficulty)) + parseInt(lowerDifficulty);
+        const rating_of_question =
+          roundOff(Math.random() * (upperDifficulty - lowerDifficulty)) +
+          parseInt(lowerDifficulty);
         //randomly select an index for the rating
         let index = Math.floor(
           Math.random() * classified_questions[rating_of_question].length
@@ -547,7 +553,8 @@ export const POST = async (request) => {
       timeEnding: newDate.toISOString(),
       contestantType,
       team: teamId ? teamId : undefined,
-      distributeRandomly : data.chooseDifficulty == "distributeRandomly" ? true : false,
+      distributeRandomly:
+        data.chooseDifficulty == "distributeRandomly" ? true : false,
       chooseDifficulty: data.chooseDifficulty == "true" ? true : false,
       diffArr: data.chooseDifficulty != "false" ? diffArr : undefined,
       startYear,

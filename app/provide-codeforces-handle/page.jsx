@@ -14,10 +14,8 @@ const ProvideCodeforcesHandle = () => {
   const [taskUrl, setTaskUrl] = useState("");
   const [problem, setProblem] = useState({});
   const [authenticityChecked, setAuthenticityChecked] = useState(false);
-  const [authenticity, setAuthenticity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [verificationLoading, setVerificationLoading] = useState(false);
   const [timer, setTimer] = useState(timeAlloted);
   const [timerActive, setTimerActive] = useState(false);
   const router = useRouter();
@@ -74,7 +72,6 @@ const ProvideCodeforcesHandle = () => {
   };
 
   const verifyAuthenticity = async () => {
-    setVerificationLoading(true);
     try {
       const res = await fetch("/api/verify-authenticity", {
         method: "POST",
@@ -88,7 +85,6 @@ const ProvideCodeforcesHandle = () => {
         }),
       });
       const data = await res.json();
-      setAuthenticity(data.authentic);
       setAuthenticityChecked(true);
       if (data.ok && data.authentic) {
         toast.success("Your Codeforces handle has been verified successfully!");
@@ -101,7 +97,6 @@ const ProvideCodeforcesHandle = () => {
       console.log(error);
       toast.error("Error during verification. Please try again.");
     } finally {
-      setVerificationLoading(false);
       setTimerActive(false);
     }
   };
@@ -140,7 +135,7 @@ const ProvideCodeforcesHandle = () => {
             <FaExternalLinkAlt />
           </Link>
         </div>
-        <div className="mt-[65px] text-center">
+        {/* <div className="mt-[65px] text-center">
           <button
             onClick={() => {
               setVerificationLoading(true);
@@ -155,7 +150,7 @@ const ProvideCodeforcesHandle = () => {
               ? "Verifying..."
               : "I have submitted the question"}
           </button>
-        </div>
+        </div> */}
 
         {timerActive && (
           <p className="mt-8 text-gray-600 text-center">
